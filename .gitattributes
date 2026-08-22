@@ -1,0 +1,9 @@
+# Los archivos binarios no se tocan: evitar conversiones de fin de línea
+*.pdf binary
+*.docx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+
+# Documentación en texto, normalizada a LF en el repositorio
+*.md text eol=lf
