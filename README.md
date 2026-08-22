@@ -1,7 +1,7 @@
-# [Nombre del equipo]
+# Summate
 
-Integrantes: [nombre 1], [nombre 2], [nombre 3], [nombre 4], [nombre 5]
+Integrantes: Agasi Alejo, Huergo Estefanía, Naspleda Julián, Panigazzi Agustín, Rios Cristian
 
-Producto: [una línea describiendo el producto — se completa en el TP1]
+Producto: ¿Dónde queda?, una aplicación web que calcula y muestra la ruta más corta entre dos puntos del campus de la UNLaM.
 
-Segmento de la comunidad UNLaM: [se completa en el TP1]
+Segmento de la comunidad UNLaM: Ingresantes y estudiantes de primer año que todavía no conocen bien la distribución del campus.
