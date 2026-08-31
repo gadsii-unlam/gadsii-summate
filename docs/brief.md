@@ -69,3 +69,43 @@
 | 5 | Cuando llueve, los usuarios prefieren una ruta interior aunque sea más larga que el recorrido exterior más corto. | Presentar a U1, U2 y U3 ambos recorridos en un escenario de lluvia y registrar su elección y el motivo; luego contrastar el comportamiento en una prueba realizada con lluvia real. |
 
 El **supuesto 1 es el crítico**: si no se verifica, el problema que da origen al producto no existe con la relevancia que le atribuimos y toda la propuesta pierde sentido. Por eso es el primero que se pone a prueba en el relevamiento.
+
+# Brief de Producto — versión 2
+
+**Qué cambió respecto de la versión 1 y por qué:** en la primera versión habíamos armado el perfil del Navegante a partir de lo que nosotros suponíamos. Para esta versión usamos las respuestas de una encuesta hecha a cinco ingresantes y estudiantes de primer año de la UNLaM. Con esos resultados pudimos describir mejor al usuario, saber en qué momentos tiene problemas para ubicarse y revisar los supuestos del TP1. El problema principal se mantiene porque cuatro de las cinco personas encuestadas tuvieron dificultades para encontrar aulas o sectores. También encontramos dos cuestiones que no habíamos tenido en cuenta: la señal de Internet dentro del campus es irregular y no todos eligen el mismo tipo de camino cuando llueve.
+
+## Perfil del usuario real
+
+El usuario principal sigue siendo un ingresante o estudiante de primer año que todavía no conoce bien el campus. La diferencia es que ahora el perfil está basado en las respuestas de U1 a U5, disponibles en la [encuesta](evidencia/tp2/Encuesta%20sobre%20orientación%20en%20el%20campus%20%E2%80%94%20UNLaM(1-5).xlsx) y en el [resumen de resultados](evidencia/tp2/Resultados_Forms.pdf).
+
+De las cinco personas encuestadas, tres van al campus entre una y dos veces por semana y dos van entre tres y cuatro veces. Ninguna respondió que va todos los días. El promedio de dificultad para orientarse fue de 6 sobre 10.
+
+A cuatro les pasó entre dos y seis veces no encontrar un aula o sector. La última vez que tuvieron ese problema perdieron entre cinco y diez minutos, y todos habían llegado tarde al menos una vez por no encontrar el lugar. A la quinta persona no le había pasado. Esto muestra que no todos se pierden con la misma frecuencia, pero que el problema existe. Además, los cinco llevan siempre el celular y se conectan con datos móviles de señal irregular.
+
+## Necesidades, problemas y contexto de uso relevados
+
+La principal necesidad es encontrar un aula o sector rápido y tener indicaciones claras para llegar. También necesitan saber por dónde seguir si encuentran un pasillo, una escalera o una puerta cerrada. Como la señal no es buena, la información del recorrido debería poder seguir consultándose aunque la conexión se corte por un momento.
+
+El problema no es solamente no saber dónde queda un lugar. Cuatro usuarios perdieron entre cinco y diez minutos la última vez que les pasó y los cuatro habían llegado tarde por ese motivo. También cuatro encontraron sectores cerrados varias veces. Dos pudieron dar la vuelta sin problemas, uno tardó bastante en encontrar otro camino y otro tuvo que preguntarle a alguien.
+
+Hoy resuelven estas situaciones de distintas maneras. Tres usaron el mapa de la Universidad y otra persona lo conocía, aunque nunca lo había usado. También buscan carteles, consultan la web de la UNLaM o WhatsApp, preguntan a otras personas o caminan hasta encontrar el lugar. Esto muestra que tienen información disponible, pero que muchas veces necesitan combinar varios recursos para poder llegar.
+
+La aplicación se usaría desde el celular mientras el estudiante se mueve por el campus, por ejemplo antes de una clase, un examen o un trámite. En esos momentos puede tener poco tiempo, encontrarse con un camino cerrado o estar bajo la lluvia. Sobre este último punto, tres usuarios prefieren desviarse para no mojarse aunque tarden un poco más, mientras que dos prefieren llegar por el camino más rápido. Por eso conviene mostrar las dos opciones y dejar que cada persona elija.
+
+## Hipótesis de valor
+
+Creemos que los ingresantes y estudiantes de primer año de la UNLaM tienen problemas para encontrar aulas y sectores cuando todavía no conocen bien el campus o cuando un camino que conocen está cerrado. Esto puede hacer que pierdan entre cinco y diez minutos y que lleguen tarde. Nuestra solución es _¿Dónde queda?_, una aplicación web para celular que muestra una ruta desde el punto de partida hasta el destino, tiene en cuenta los sectores cerrados y permite elegir entre un camino rápido y otro más resguardado cuando llueve.
+
+Sabremos que la propuesta funciona si, en una prueba con al menos cinco usuarios del grupo principal, cuatro logran llegar a un destino en menos de cinco minutos, sin pedir indicaciones y sin intentar pasar por un acceso cerrado, usando la conexión disponible en el campus.
+
+## Estado de los supuestos del TP1
+
+| # | Supuesto del TP1 | Estado | Evidencia |
+| --- | --- | --- | --- |
+| **1 (crítico)** | Los ingresantes y estudiantes de primer año tienen dificultades para encontrar aulas, dependencias y servicios durante sus primeras semanas en la UNLaM. | **Confirmado** | A U1, U2, U3 y U4 les pasó entre dos y seis veces. La última vez perdieron entre cinco y diez minutos y todos habían llegado tarde al menos una vez. A U5 no le había pasado. |
+| 2 | Una ruta dibujada resulta más útil para este grupo que consultar solamente un mapa estático del campus. | **No se pudo comprobar** | Tres usuarios habían usado el mapa institucional y uno lo conocía, pero en la encuesta no comparamos el mapa con una ruta dibujada. Por eso todavía no podemos confirmar ni descartar este supuesto. |
+| 3 | La mayoría lleva un teléfono celular con acceso a Internet mientras se desplaza por el campus. | **Confirmado** | Los cinco llevan siempre el celular y tienen datos móviles. Los cinco también dijeron que la señal es irregular. |
+| 4 | Los cierres temporales de pasillos o accesos pueden volver incorrecta una ruta conocida y necesitan reflejarse en la aplicación. | **Confirmado** | Cuatro de cinco encontraron sectores cerrados varias veces. Uno tardó bastante en encontrar otro camino y otro tuvo que preguntar. Todavía falta probar con el prototipo si mostrar esos cierres resuelve el problema. |
+| 5 | Cuando llueve, los usuarios prefieren una ruta interior aunque sea más larga que el recorrido exterior más corto. | **Confirmado** | Tres de cinco prefieren desviarse aunque tarden un poco más. Los otros dos eligen el camino más rápido, así que la preferencia existe pero no es igual para todos. Además, la respuesta no se comprobó en una situación de lluvia real. |
+
+Con los resultados de la encuesta no se cayó ninguno de los supuestos del TP1. El supuesto 2 quedó pendiente porque no hicimos la comparación necesaria para comprobarlo. Tampoco agregamos supuestos nuevos: la señal irregular y las distintas preferencias cuando llueve son hallazgos del relevamiento.
