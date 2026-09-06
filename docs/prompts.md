@@ -7,3 +7,4 @@
 | 2026-08-28 | OpenAI Codex (GPT-5)  | Creación y revisión del documento del punto 1 del TP2 a partir del formato del TP1; selección y justificación breve de encuestas o cuestionarios como técnica de análisis de usuarios. | TP2 |
 | 2026-08-30 | OpenAI Codex (GPT-5)  | Redacción de los puntos restantes del TP2 en base a la evidencia adjunta de la encuesta.                                                                                               | TP2 |
 | 2026-08-31 | OpenAI Codex (GPT-5)  | Mejora de la redacción del brief de producto (`docs/brief.md`)                                                                            | TP2 |
+| 2026-09-06 | OpenAI Codex (GPT-5)  | Asistencia únicamente en la redacción de los puntos 1 a 4 del TP3, a partir de las decisiones, el análisis y el contenido previamente definidos por el equipo.                         | TP3 |
