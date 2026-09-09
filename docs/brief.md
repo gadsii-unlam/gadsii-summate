@@ -60,13 +60,13 @@
 
 ### 6. Supuestos
 
-| # | Supuesto | Cómo se comprobaría |
-| --- | --- | --- |
-| **1 (crítico)** | Los ingresantes y estudiantes de primer año tienen dificultades para encontrar aulas, dependencias y servicios durante sus primeras semanas en la UNLaM. | Entrevistas a U1, U2 y U3 y una prueba de recorrido en la que relaten o evidencien desorientación, demoras, pedidos de indicaciones o recorridos equivocados. |
-| 2 | Una ruta dibujada resulta más útil para este grupo que consultar solamente un mapa estático del campus. | Ofrecer ambas alternativas en una prueba y registrar cuál es más usada. |
-| 3 | La mayoría de los usuarios del segmento lleva un teléfono celular con acceso a Internet mientras se desplaza por el campus. | Preguntar a U1, U2 y U3 qué dispositivo usan habitualmente y verificar en los recorridos de prueba que puedan abrir la aplicación web y consultar una ruta en el momento. |
-| 4 | Los cierres temporales de pasillos o accesos pueden volver incorrecta una ruta conocida y necesitan reflejarse en la aplicación. | Relevar cierres o desvíos ocurridos en el campus y consultar a usuarios y personal si esas situaciones generan recorridos fallidos o pedidos de indicaciones. |
-| 5 | Cuando llueve, los usuarios prefieren una ruta interior aunque sea más larga que el recorrido exterior más corto. | Presentar a U1, U2 y U3 ambos recorridos en un escenario de lluvia y registrar su elección y el motivo; luego contrastar el comportamiento en una prueba realizada con lluvia real. |
+| #               | Supuesto                                                                                                                                                 | Cómo se comprobaría                                                                                                                                                                 |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1 (crítico)** | Los ingresantes y estudiantes de primer año tienen dificultades para encontrar aulas, dependencias y servicios durante sus primeras semanas en la UNLaM. | Entrevistas a U1, U2 y U3 y una prueba de recorrido en la que relaten o evidencien desorientación, demoras, pedidos de indicaciones o recorridos equivocados.                       |
+| 2               | Una ruta dibujada resulta más útil para este grupo que consultar solamente un mapa estático del campus.                                                  | Ofrecer ambas alternativas en una prueba y registrar cuál es más usada.                                                                                                             |
+| 3               | La mayoría de los usuarios del segmento lleva un teléfono celular con acceso a Internet mientras se desplaza por el campus.                              | Preguntar a U1, U2 y U3 qué dispositivo usan habitualmente y verificar en los recorridos de prueba que puedan abrir la aplicación web y consultar una ruta en el momento.           |
+| 4               | Los cierres temporales de pasillos o accesos pueden volver incorrecta una ruta conocida y necesitan reflejarse en la aplicación.                         | Relevar cierres o desvíos ocurridos en el campus y consultar a usuarios y personal si esas situaciones generan recorridos fallidos o pedidos de indicaciones.                       |
+| 5               | Cuando llueve, los usuarios prefieren una ruta interior aunque sea más larga que el recorrido exterior más corto.                                        | Presentar a U1, U2 y U3 ambos recorridos en un escenario de lluvia y registrar su elección y el motivo; luego contrastar el comportamiento en una prueba realizada con lluvia real. |
 
 El **supuesto 1 es el crítico**: si no se verifica, el problema que da origen al producto no existe con la relevancia que le atribuimos y toda la propuesta pierde sentido. Por eso es el primero que se pone a prueba en el relevamiento.
 
@@ -76,7 +76,7 @@ El **supuesto 1 es el crítico**: si no se verifica, el problema que da origen a
 
 ## Perfil del usuario real
 
-El usuario principal sigue siendo un ingresante o estudiante de primer año que todavía no conoce bien el campus. La diferencia es que ahora el perfil está basado en las respuestas de U1 a U5, disponibles en la [encuesta](evidencia/tp2/Encuesta%20sobre%20orientación%20en%20el%20campus%20%E2%80%94%20UNLaM(1-5).xlsx) y en el [resumen de resultados](evidencia/tp2/Resultados_Forms.pdf).
+El usuario principal sigue siendo un ingresante o estudiante de primer año que todavía no conoce bien el campus. La diferencia es que ahora el perfil está basado en las respuestas de U1 a U5, disponibles en la [encuesta](<evidencia/tp2/Encuesta%20sobre%20orientación%20en%20el%20campus%20%E2%80%94%20UNLaM(1-5).xlsx>) y en el [resumen de resultados](evidencia/tp2/Resultados_Forms.pdf).
 
 De las cinco personas encuestadas, tres van al campus entre una y dos veces por semana y dos van entre tres y cuatro veces. Ninguna respondió que va todos los días. El promedio de dificultad para orientarse fue de 6 sobre 10.
 
@@ -100,12 +100,63 @@ Sabremos que la propuesta funciona si, en una prueba con al menos cinco usuarios
 
 ## Estado de los supuestos del TP1
 
-| # | Supuesto del TP1 | Estado | Evidencia |
-| --- | --- | --- | --- |
-| **1 (crítico)** | Los ingresantes y estudiantes de primer año tienen dificultades para encontrar aulas, dependencias y servicios durante sus primeras semanas en la UNLaM. | **Confirmado** | A U1, U2, U3 y U4 les pasó entre dos y seis veces. La última vez perdieron entre cinco y diez minutos y todos habían llegado tarde al menos una vez. A U5 no le había pasado. |
-| 2 | Una ruta dibujada resulta más útil para este grupo que consultar solamente un mapa estático del campus. | **No se pudo comprobar** | Tres usuarios habían usado el mapa institucional y uno lo conocía, pero en la encuesta no comparamos el mapa con una ruta dibujada. Por eso todavía no podemos confirmar ni descartar este supuesto. |
-| 3 | La mayoría lleva un teléfono celular con acceso a Internet mientras se desplaza por el campus. | **Confirmado** | Los cinco llevan siempre el celular y tienen datos móviles. Los cinco también dijeron que la señal es irregular. |
-| 4 | Los cierres temporales de pasillos o accesos pueden volver incorrecta una ruta conocida y necesitan reflejarse en la aplicación. | **Confirmado** | Cuatro de cinco encontraron sectores cerrados varias veces. Uno tardó bastante en encontrar otro camino y otro tuvo que preguntar. Todavía falta probar con el prototipo si mostrar esos cierres resuelve el problema. |
-| 5 | Cuando llueve, los usuarios prefieren una ruta interior aunque sea más larga que el recorrido exterior más corto. | **Confirmado** | Tres de cinco prefieren desviarse aunque tarden un poco más. Los otros dos eligen el camino más rápido, así que la preferencia existe pero no es igual para todos. Además, la respuesta no se comprobó en una situación de lluvia real. |
+| #               | Supuesto del TP1                                                                                                                                         | Estado                   | Evidencia                                                                                                                                                                                                                               |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1 (crítico)** | Los ingresantes y estudiantes de primer año tienen dificultades para encontrar aulas, dependencias y servicios durante sus primeras semanas en la UNLaM. | **Confirmado**           | A U1, U2, U3 y U4 les pasó entre dos y seis veces. La última vez perdieron entre cinco y diez minutos y todos habían llegado tarde al menos una vez. A U5 no le había pasado.                                                           |
+| 2               | Una ruta dibujada resulta más útil para este grupo que consultar solamente un mapa estático del campus.                                                  | **No se pudo comprobar** | Tres usuarios habían usado el mapa institucional y uno lo conocía, pero en la encuesta no comparamos el mapa con una ruta dibujada. Por eso todavía no podemos confirmar ni descartar este supuesto.                                    |
+| 3               | La mayoría lleva un teléfono celular con acceso a Internet mientras se desplaza por el campus.                                                           | **Confirmado**           | Los cinco llevan siempre el celular y tienen datos móviles. Los cinco también dijeron que la señal es irregular.                                                                                                                        |
+| 4               | Los cierres temporales de pasillos o accesos pueden volver incorrecta una ruta conocida y necesitan reflejarse en la aplicación.                         | **Confirmado**           | Cuatro de cinco encontraron sectores cerrados varias veces. Uno tardó bastante en encontrar otro camino y otro tuvo que preguntar. Todavía falta probar con el prototipo si mostrar esos cierres resuelve el problema.                  |
+| 5               | Cuando llueve, los usuarios prefieren una ruta interior aunque sea más larga que el recorrido exterior más corto.                                        | **Confirmado**           | Tres de cinco prefieren desviarse aunque tarden un poco más. Los otros dos eligen el camino más rápido, así que la preferencia existe pero no es igual para todos. Además, la respuesta no se comprobó en una situación de lluvia real. |
 
 Con los resultados de la encuesta no se cayó ninguno de los supuestos del TP1. El supuesto 2 quedó pendiente porque no hicimos la comparación necesaria para comprobarlo. Tampoco agregamos supuestos nuevos: la señal irregular y las distintas preferencias cuando llueve son hallazgos del relevamiento.
+
+# Brief de Producto — versión 3
+
+**Qué cambió respecto de la versión 2 y por qué:** la versión 2 dejó cerrado el perfil del usuario real y la hipótesis de valor, pero todavía describía el producto con las cinco funcionalidades completas del TP1. En esta versión recortamos esa definición a lo que efectivamente vamos a construir para ponerla a prueba: definimos el scope del MVP, separamos qué se construye de qué se simula, describimos el flujo principal de punta a punta y elegimos los atributos de usabilidad que vamos a priorizar. El cambio se hace ahora porque el TP3 es el momento en el que pasamos de la definición del problema al diseño de la interacción, y necesitamos un alcance chico y suficiente para validar la hipótesis con usuarios reales. Las decisiones nuevas más importantes son tres: la API de clima se simula en lugar de integrarse, el panel de administración de cierres queda afuera (los tramos cerrados se precargan a mano) y las funcionalidades de servicio más cercano y horarios de puntos de interés se posponen. Nada de esto reemplaza a las versiones anteriores: el segmento, el problema, el usuario primario y los supuestos siguen vigentes tal como quedaron en las versiones 1 y 2.
+
+## Scope del MVP
+
+El MVP se acota a lo mínimo necesario para probar la hipótesis de valor de la versión 2: que un ingresante o estudiante de primer año pueda llegar a un destino del campus desde el celular, en poco tiempo, sin pedir indicaciones y sin ser dirigido por un acceso cerrado.
+
+| Incluido en el MVP                                                  | Para qué parte de la hipótesis sirve                                                                                                |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Selección de origen y destino desde el celular.                     | Permite plantear el recorrido concreto que el usuario necesita resolver.                                                            |
+| Cálculo y dibujo de una ruta clara sobre el mapa.                   | Prueba si las indicaciones permiten llegar sin ayuda y dentro del tiempo definido.                                                  |
+| Exclusión de tramos cerrados al calcular la ruta.                   | Permite verificar que el usuario no sea dirigido por un acceso no disponible.                                                       |
+| Consulta de una API meteorológica simulada y adaptación de la ruta. | Permite probar la propuesta de ofrecer un recorrido más resguardado cuando llueve sin depender todavía de un servicio externo real. |
+
+| Excluido del MVP                                                   | Por qué se excluye                                                                                                                                       |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Conexión real con una API meteorológica externa.                   | Para el MVP se simulan respuestas de lluvia y ausencia de lluvia; así se prueba la adaptación de la ruta sin depender de la disponibilidad del servicio. |
+| Búsqueda del servicio más cercano y horarios de puntos de interés. | Amplía los casos de uso, pero no es necesaria para probar que el usuario llegue a un destino asignado.                                                   |
+| Panel de administración de cierres.                                | Los tramos cerrados se precargan manualmente antes de la prueba. El MVP debe respetarlos al calcular, pero no necesita una interfaz para gestionarlos.   |
+
+## Qué se construye y qué se simula
+
+| Elemento                                 | Se construye                                                                                               | Se simula / se resuelve a mano                                     | Por qué                                                                                            |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| Interfaz web móvil                       | Pantallas y controles para elegir origen, destino y solicitar la ruta.                                     | No se simula.                                                      | Es el componente de software propio con el que interactúa el usuario.                              |
+| Mapa y motor de rutas                    | Cálculo del recorrido y representación visual sobre el mapa.                                               | No se simula.                                                      | Permite evaluar si la ruta guía al usuario.                                                        |
+| Cierres temporales                       | El algoritmo evita los tramos marcados como no disponibles.                                                | El equipo precarga los cierres; no hay panel administrador.        | Se construye el comportamiento que recibe el Navegante; sólo se simula la gestión previa del dato. |
+| API meteorológica y adaptación climática | La aplicación consulta un servicio simulado, interpreta lluvia o ausencia de lluvia y adapta el recorrido. | Se simula la respuesta del servicio externo para ambos escenarios. | Permite evaluar la adaptación climática antes de integrar la API real.                             |
+
+## Flujo principal del MVP
+
+El flujo central se concentra en una única tarea: obtener y seguir una ruta válida hasta un destino del campus desde el celular.
+
+1. **Abrir la aplicación.** El Navegante accede a la aplicación web móvil y visualiza el mapa junto con los campos de origen y destino.
+2. **Indicar el recorrido.** Selecciona el punto desde el que parte y el aula o sector al que necesita llegar. La opción para calcular se habilita cuando ambos datos son válidos.
+3. **Solicitar la ruta.** La aplicación consulta los cierres precargados y el servicio meteorológico simulado antes de calcular el recorrido.
+4. **Adaptar la recomendación.** El motor excluye siempre los tramos cerrados. Si no llueve, prioriza la ruta más corta; si llueve, recomienda la más resguardada y mantiene disponible la alternativa más rápida.
+5. **Mostrar el recorrido.** La ruta elegida se dibuja claramente sobre el mapa, con origen y destino identificados.
+6. **Seguir la ruta y llegar.** Una vez cargado el recorrido, permanece visible sin requerir actualizaciones continuas.
+
+## Atributos de usabilidad priorizados
+
+Se priorizan eficiencia, tasa de errores y facilidad de aprendizaje, porque son los atributos que inciden directamente en la hipótesis de valor y en el contexto relevado en el TP2.
+
+| Atributo priorizado          | Justificación a partir del TP2                                                                                                                                                                                                                                                                                                                                                                      |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Eficiencia**               | Cuatro de los cinco usuarios perdieron entre cinco y diez minutos la última vez que no encontraron un destino y todos ellos llegaron tarde al menos una vez. Además, la consulta puede ocurrir antes de una clase, examen o trámite, con poco margen de tiempo. Por eso el recorrido debe obtenerse con pocos pasos para el usuario y permitir llegar rápidamente, como establece la hipótesis.     |
+| **Tasa de errores**          | Cuatro usuarios encontraron pasillos, escaleras, puertas o sectores cerrados; uno tardó bastante en hallar otra ruta y otro tuvo que preguntar. El MVP debe prevenir la selección incompleta de origen o destino y, sobre todo, evitar que la ruta conduzca por un tramo cerrado. Llegar sin pedir ayuda ni intentar usar un acceso no disponible forma parte del criterio de validación.           |
+| **Facilidad de aprendizaje** | El usuario primario está formado por ingresantes y estudiantes de primer año que todavía no conocen el campus. Los recursos actuales son dispersos y, ante una duda, combinan mapa institucional, carteles, web, WhatsApp, otras personas o prueba y error. La aplicación debe entenderse en el primer uso, desde el celular y sin capacitación: elegir origen, elegir destino y solicitar la ruta. |

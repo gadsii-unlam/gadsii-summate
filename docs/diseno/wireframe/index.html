@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Dónde queda? — Wireframe de baja fidelidad (TP3 · punto 8)</title>
+<style>
+  :root {
+    --tinta: #2b2b2b;
+    --tinta-suave: #6f6f6f;
+    --linea: #b5b5b5;
+    --linea-fuerte: #2b2b2b;
+    --papel: #ffffff;
+    --fondo: #f2f1ef;
+    --bloque: #e4e4e2;
+    --bloque-claro: #f6f6f5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--fondo);
+    color: var(--tinta);
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  /* ---------- Encabezado ---------- */
+  header.barra {
+    border-bottom: 1px solid var(--linea-fuerte);
+    background: var(--papel);
+    padding: 14px 24px 12px;
+  }
+  header.barra h1 { font-size: 16px; margin: 0 0 2px; }
+  header.barra p.sub { margin: 0; font-size: 12px; color: var(--tinta-suave); }
+  .controles {
+    display: flex; flex-wrap: wrap; gap: 18px; align-items: center;
+    margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--linea);
+  }
+  .control { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .control > span.etiqueta { color: var(--tinta-suave); text-transform: uppercase; letter-spacing: .06em; font-size: 10px; }
+  .seg { display: inline-flex; border: 1px solid var(--linea-fuerte); }
+  .seg button {
+    font: inherit; font-size: 12px; padding: 4px 10px; background: var(--papel);
+    border: 0; border-right: 1px solid var(--linea-fuerte); cursor: pointer; color: var(--tinta);
+  }
+  .seg button:last-child { border-right: 0; }
+  .seg button[aria-pressed="true"] { background: var(--tinta); color: var(--papel); }
+
+  /* ---------- Cuerpo ---------- */
+  main { display: grid; grid-template-columns: 240px minmax(430px, 1fr) minmax(300px, 380px); align-items: start; }
+  @media (max-width: 1100px) { main { grid-template-columns: 1fr; } }
+
+  nav.indice { border-right: 1px solid var(--linea); padding: 18px 16px 40px; }
+  nav.indice h2, aside.notas h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--tinta-suave); margin: 0 0 10px; font-weight: 600; }
+  nav.indice ol { list-style: none; margin: 0 0 20px; padding: 0; }
+  nav.indice li { margin-bottom: 2px; }
+  nav.indice button {
+    width: 100%; text-align: left; font: inherit; font-size: 13px; background: transparent;
+    border: 1px solid transparent; padding: 6px 8px; cursor: pointer; color: var(--tinta);
+  }
+  nav.indice button:hover { border-color: var(--linea); }
+  nav.indice button[aria-current="true"] { background: var(--tinta); color: var(--papel); }
+  nav.indice .leyenda { font-size: 11px; color: var(--tinta-suave); border-top: 1px dashed var(--linea); padding-top: 12px; }
+  nav.indice .leyenda p { margin: 0 0 8px; }
+
+  section.escenario { padding: 22px 24px 60px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .titulo-pantalla { align-self: stretch; }
+  .titulo-pantalla h2 { font-size: 15px; margin: 0 0 2px; }
+  .titulo-pantalla p { margin: 0; font-size: 12px; color: var(--tinta-suave); }
+
+  /* ---------- Teléfono ---------- */
+  .telefono { position: relative; width: 390px; height: 780px; border: 2px solid var(--linea-fuerte); background: var(--papel); overflow: hidden; flex-shrink: 0; }
+  .estado { height: 22px; border-bottom: 1px solid var(--linea); display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 10px; color: var(--tinta-suave); }
+  .lienzo { position: absolute; top: 22px; left: 0; right: 0; bottom: 0; }
+  .lienzo > svg.mapa { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* ---------- Piezas de interfaz (baja fidelidad) ---------- */
+  .tarjeta { background: var(--papel); border: 1px solid var(--linea-fuerte); }
+  .fila { display: flex; align-items: center; gap: 10px; padding: 10px 12px; min-height: 46px; }
+  .fila + .fila { border-top: 1px dashed var(--linea); }
+  .marca { width: 12px; height: 12px; border: 2px solid var(--tinta); flex-shrink: 0; }
+  .marca.redonda { border-radius: 50%; }
+  .txt { font-size: 14px; }
+  .txt.tenue { color: var(--tinta-suave); }
+  .mini { font-size: 11px; color: var(--tinta-suave); }
+  .boton { border: 1px solid var(--linea-fuerte); background: var(--papel); padding: 11px 14px; text-align: center; font-size: 13px; }
+  .boton.principal { background: var(--tinta); color: var(--papel); }
+  .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--linea-fuerte); background: var(--papel); padding: 5px 9px; font-size: 11px; }
+  .hoja { position: absolute; left: 0; right: 0; bottom: 0; background: var(--papel); border-top: 1px solid var(--linea-fuerte); padding: 10px 14px 16px; }
+  .asa { width: 44px; height: 4px; background: var(--linea); margin: 0 auto 10px; }
+  .rotulo { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--tinta-suave); margin-bottom: 6px; }
+  .lista .item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 0; border-bottom: 1px dashed var(--linea); }
+  .lista .item:last-child { border-bottom: 0; }
+  .placeholder { background: var(--bloque); border: 1px dashed var(--linea); color: var(--tinta-suave); font-size: 11px; display: flex; align-items: center; justify-content: center; }
+  .segmento { display: flex; border: 1px solid var(--linea-fuerte); }
+  .segmento > div { flex: 1; text-align: center; padding: 10px 4px; font-size: 12px; border-right: 1px solid var(--linea-fuerte); }
+  .segmento > div:last-child { border-right: 0; }
+  .segmento > div.activo { background: var(--tinta); color: var(--papel); }
+
+  /* ---------- Zonas interactivas ---------- */
+  .hs { cursor: pointer; position: relative; }
+  body.mostrar-hs .hs { outline: 1px dashed var(--tinta-suave); outline-offset: 1px; }
+  body.mostrar-hs .hs::after {
+    content: "\2192 " attr(data-rotulo);
+    position: absolute; right: 2px; bottom: 2px;
+    font-size: 9px; background: var(--tinta); color: var(--papel); padding: 1px 4px; pointer-events: none;
+  }
+  .hs:hover { background: rgba(0,0,0,.05); }
+
+  /* ---------- Marcadores de anotación ---------- */
+  .marcador {
+    position: absolute; width: 20px; height: 20px; border-radius: 50%;
+    border: 1px solid var(--linea-fuerte); background: var(--papel); color: var(--tinta);
+    font-size: 11px; display: flex; align-items: center; justify-content: center;
+    z-index: 5;
+  }
+  .marcador.resaltado { background: var(--tinta); color: var(--papel); }
+
+  aside.notas { border-left: 1px solid var(--linea); padding: 22px 22px 60px; }
+  aside.notas ol { list-style: none; margin: 0; padding: 0; }
+  aside.notas li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; margin-bottom: 14px; font-size: 12.5px; }
+  aside.notas li .num {
+    width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--linea-fuerte);
+    display: flex; align-items: center; justify-content: center; font-size: 11px;
+  }
+  aside.notas li.resaltado .num { background: var(--tinta); color: var(--papel); }
+  aside.notas .salidas { margin-top: 22px; border-top: 1px dashed var(--linea); padding-top: 12px; }
+  aside.notas .salidas ul { list-style: none; margin: 0; padding: 0; font-size: 12px; }
+  aside.notas .salidas ul li { display: block; margin-bottom: 6px; }
+
+  /* ---------- Vista de flujo ---------- */
+  .flujo { padding: 24px 24px 60px; max-width: 1120px; }
+  .flujo svg { width: 100%; height: auto; border: 1px solid var(--linea); background: var(--papel); }
+  table.conexiones { border-collapse: collapse; width: 100%; margin-top: 22px; font-size: 12.5px; background: var(--papel); }
+  table.conexiones th, table.conexiones td { border: 1px solid var(--linea); padding: 7px 9px; text-align: left; vertical-align: top; }
+  table.conexiones th { background: var(--bloque-claro); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--tinta-suave); }
+  .oculto { display: none !important; }
+  footer.pie { border-top: 1px solid var(--linea); padding: 14px 24px 30px; font-size: 11px; color: var(--tinta-suave); }
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <h1>¿Dónde queda? — Wireframe de baja fidelidad del flujo principal del MVP</h1>
+  <p class="sub">Equipo Summate · TP3, punto 8 · Desarrollo de la alternativa elegida: <b>B — Eficiencia</b> (mapa único con panel). Sin diseño visual: escala de grises, sin colores ni estilos definitivos.</p>
+  <div class="controles">
+    <div class="control">
+      <span class="etiqueta">Vista</span>
+      <div class="seg" id="seg-vista">
+        <button data-vista="pantallas" aria-pressed="true">Pantallas</button>
+        <button data-vista="flujo" aria-pressed="false">Mapa de flujo</button>
+      </div>
+    </div>
+    <div class="control">
+      <span class="etiqueta">Zonas interactivas</span>
+      <div class="seg" id="seg-hs">
+        <button data-hs="off" aria-pressed="true">Ocultas</button>
+        <button data-hs="on" aria-pressed="false">Visibles</button>
+      </div>
+    </div>
+    <div class="control">
+      <span class="etiqueta">Clima simulado — control del prototipo, no de la interfaz</span>
+      <div class="seg" id="seg-clima">
+        <button data-clima="seco" aria-pressed="true">No llueve</button>
+        <button data-clima="lluvia" aria-pressed="false">Llueve</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="vista-pantallas">
+  <nav class="indice">
+    <h2>Pantallas</h2>
+    <ol id="indice-lista"></ol>
+    <div class="leyenda">
+      <p><b>Cómo leerlo.</b> Los bloques grises son contenido representado, no diseñado. Las líneas punteadas indican separaciones, no estilos.</p>
+      <p>Los círculos numerados señalan el elemento que explica cada anotación de la derecha.</p>
+      <p>Las áreas tocables están activas: al hacer clic navegan. Con «Zonas interactivas → Visibles» se marcan con borde punteado y el destino de cada una.</p>
+    </div>
+  </nav>
+
+  <section class="escenario">
+    <div class="titulo-pantalla">
+      <h2 id="p-titulo"></h2>
+      <p id="p-sub"></p>
+    </div>
+    <div class="telefono">
+      <div class="estado"><span>UNLaM · datos móviles</span><span>13:52</span></div>
+      <div class="lienzo" id="lienzo"></div>
+    </div>
+  </section>
+
+  <aside class="notas">
+    <h2>Anotaciones de diseño</h2>
+    <ol id="notas-lista"></ol>
+    <div class="salidas">
+      <h2>Navegación desde esta pantalla</h2>
+      <ul id="salidas-lista"></ul>
+    </div>
+  </aside>
+</main>
+
+<div class="flujo oculto" id="vista-flujo">
+  <h2 style="font-size:15px;margin:0 0 4px;">Mapa de flujo</h2>
+  <p style="margin:0 0 16px;font-size:12.5px;color:var(--tinta-suave);max-width:75ch;">
+    Estructura de la alternativa B: hay un único punto de entrada (P1) que no se abandona para consultar. Los selectores (P2 y P5) se abren encima del mapa y el resultado aparece en el mismo lugar. El resultado tiene dos versiones —la ruta más corta (P3) y la techada (P4)—: cuál se muestra primero lo decide el servicio meteorológico simulado, y pasar de una a la otra es un toque que sólo existe cuando llueve.
+  </p>
+  <svg viewBox="0 0 1020 540" role="img" aria-label="Diagrama de navegación entre las seis pantallas">
+    <defs>
+      <marker id="punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 z" fill="#2b2b2b"></path>
+      </marker>
+    </defs>
+    <g fill="none" stroke="#2b2b2b" stroke-width="1.2" marker-end="url(#punta)">
+      <path d="M125 246 V70 H570"></path>
+      <path d="M212 258 L300 155"></path>
+      <path d="M212 292 L300 388"></path>
+      <path d="M482 130 L570 82"></path>
+      <path d="M482 152 L570 198"></path>
+      <path d="M482 168 H560 V415 H570"></path>
+      <path d="M482 402 H520 V238 H570"></path>
+      <path d="M636 180 V118"></path>
+      <path d="M690 112 V176"></path>
+    </g>
+    <g fill="none" stroke="#2b2b2b" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#punta)">
+      <path d="M660 246 V330 H393 V180"></path>
+      <path d="M752 80 H930 V500 H125 V315"></path>
+    </g>
+
+    <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
+      <g stroke="#2b2b2b" stroke-width="1.4" fill="#ffffff">
+        <rect x="40" y="246" width="172" height="64"></rect>
+        <rect x="305" y="112" width="177" height="64"></rect>
+        <rect x="305" y="373" width="177" height="64"></rect>
+        <rect x="575" y="48" width="177" height="64"></rect>
+        <rect x="575" y="180" width="177" height="64"></rect>
+        <rect x="575" y="383" width="177" height="64"></rect>
+      </g>
+      <g font-size="12" fill="#2b2b2b">
+        <text x="52" y="270">P1 · Pantalla única</text>
+        <text x="52" y="290" fill="#6f6f6f" font-size="11">mapa + panel · inicio</text>
+        <text x="317" y="136">P2 · Elegir destino</text>
+        <text x="317" y="156" fill="#6f6f6f" font-size="11">hoja sobre el mapa</text>
+        <text x="317" y="397">P5 · Cambiar origen</text>
+        <text x="317" y="417" fill="#6f6f6f" font-size="11">mismo componente que P2</text>
+        <text x="587" y="72">P3 · Resultado</text>
+        <text x="587" y="92" fill="#6f6f6f" font-size="11">ruta más corta · 4 min</text>
+        <text x="587" y="204">P4 · Resultado</text>
+        <text x="587" y="224" fill="#6f6f6f" font-size="11">ruta techada · 6 min</text>
+        <text x="587" y="407">P6 · Sin ruta</text>
+        <text x="587" y="427" fill="#6f6f6f" font-size="11">accesos cerrados</text>
+      </g>
+      <g font-size="10.5" fill="#6f6f6f">
+        <text x="150" y="62">atajo: tocar un último destino (1 toque)</text>
+        <text x="216" y="198">tocar «¿A dónde vas?»</text>
+        <text x="222" y="350">tocar el origen</text>
+        <text x="352" y="364">destino sin acceso disponible</text>
+        <text x="490" y="104">no llueve</text>
+        <text x="492" y="176">llueve</text>
+        <text x="628" y="152" text-anchor="end">«Más corto · 4 min»</text>
+        <text x="700" y="152">«Techado · 6 min» (sólo con lluvia)</text>
+        <text x="400" y="324">corregir un dato</text>
+        <text x="300" y="516">«Finalizar viaje» — vuelve al inicio desde cualquier resultado</text>
+      </g>
+    </g>
+  </svg>
+
+  <table class="conexiones">
+    <thead>
+      <tr><th style="width:20%">Desde</th><th style="width:26%">Disparador (acción del usuario)</th><th style="width:22%">Hacia</th><th>Por qué está así</th></tr>
+    </thead>
+    <tbody id="tabla-conexiones"></tbody>
+  </table>
+</div>
+
+<footer class="pie">
+  Wireframe de baja fidelidad · <code>docs/diseno/wireframe/index.html</code> · Base: brief de producto v3 (scope del MVP, flujo principal y atributos de usabilidad priorizados) y punto 7 del TP3 (elección de la alternativa B — Eficiencia).
+</footer>
+
+<script>
+/* =========================================================
+   Estado
+   ========================================================= */
+var clima = "seco";          // control del prototipo: "seco" | "lluvia"
+var actual = "p1";
+
+/* =========================================================
+   Fondo común: mapa del campus en baja fidelidad
+   ========================================================= */
+function mapa(op) {
+  op = op || {};
+  var ruta = op.ruta || null;             // "corta" | "techada"
+  var destino = op.destino || null;       // { x, y, texto }
+  var cerrado = op.cerrado !== false;     // marca del tramo cerrado precargado
+  var tenue = op.tenue === true;
+
+  /* El contenido se ubica en la banda visible del teléfono: por debajo del panel
+     de origen y destino y por encima de la hoja inferior. */
+  var rutas = {
+    "corta":   "M110 470 H145 V200 H250 V170",
+    "techada": "M110 470 H300 V200 H250 V170"
+  };
+
+  var trazo = "";
+  if (ruta) {
+    trazo =
+      '<path d="' + rutas[ruta] + '" fill="none" stroke="#2b2b2b" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"></path>' +
+      '<path d="' + rutas[ruta] + '" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-dasharray="6 7" stroke-linecap="round"></path>';
+    if (ruta === "corta") {
+      /* El único tramo descubierto del recorrido más corto se marca siempre:
+         es una propiedad de la ruta y no del clima. */
+      trazo +=
+        '<g id="m-exterior">' +
+        '<path d="M110 470 H145 V312" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round"></path>' +
+        '<path d="M110 470 H145 V312" fill="none" stroke="#2b2b2b" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"></path>' +
+        '<rect x="16" y="424" width="122" height="20" fill="#ffffff" stroke="#2b2b2b" stroke-width="1"></rect>' +
+        '<text x="23" y="438" font-size="11" fill="#2b2b2b">tramo al aire libre</text>' +
+        '</g>';
+    }
+  }
+
+  var marcaCerrado = cerrado
+    ? '<g id="m-cerrado"><path d="M182 304 l16 16 M198 304 l-16 16" stroke="#2b2b2b" stroke-width="2.4" fill="none"></path>' +
+      '<rect x="206" y="302" width="104" height="20" fill="#ffffff" stroke="#2b2b2b" stroke-width="1"></rect>' +
+      '<text x="213" y="316" font-size="11" fill="#2b2b2b">pasillo cerrado</text></g>'
+    : "";
+
+  var marcaDestino = destino
+    ? '<g id="m-destino"><rect x="' + (destino.x - 7) + '" y="' + (destino.y - 7) + '" width="14" height="14" fill="#2b2b2b"></rect>' +
+      '<rect x="' + (destino.x + 12) + '" y="' + (destino.y - 17) + '" width="' + (destino.texto.length * 6.4 + 14) + '" height="21" fill="#ffffff" stroke="#2b2b2b" stroke-width="1"></rect>' +
+      '<text x="' + (destino.x + 19) + '" y="' + (destino.y - 3) + '" font-size="11.5" fill="#2b2b2b">' + destino.texto + '</text></g>'
+    : "";
+
+  return '' +
+  '<svg class="mapa" viewBox="0 0 390 780" preserveAspectRatio="xMidYMid slice" style="opacity:' + (tenue ? ".4" : "1") + '">' +
+    '<rect width="390" height="780" fill="#ededeb"></rect>' +
+    '<g stroke="#c6c6c4" stroke-width="1.4" stroke-dasharray="5 6" fill="none">' +
+      '<path d="M0 200 H390"></path><path d="M0 312 H390"></path><path d="M0 406 H390"></path><path d="M0 470 H390"></path>' +
+      '<path d="M145 70 V560"></path><path d="M300 70 V560"></path>' +
+    '</g>' +
+    '<g fill="#dedcd8" stroke="#b5b5b5" stroke-width="1.2">' +
+      '<rect x="20" y="140" width="112" height="50"></rect>' +
+      '<rect x="163" y="130" width="112" height="60"></rect>' +
+      '<rect x="312" y="140" width="66" height="50"></rect>' +
+      '<rect x="20" y="214" width="102" height="86"></rect>' +
+      '<rect x="163" y="214" width="112" height="86"></rect>' +
+      '<rect x="315" y="214" width="63" height="86"></rect>' +
+      '<rect x="20" y="326" width="105" height="68"></rect>' +
+      '<rect x="170" y="326" width="200" height="68"></rect>' +
+    '</g>' +
+    '<g font-size="10.5" fill="#6f6f6f" font-family="Segoe UI, Helvetica, Arial, sans-serif">' +
+      '<text x="28" y="158">Edificio A</text>' +
+      '<text x="171" y="148">Edificio B</text>' +
+      '<text x="318" y="158">Edif. C</text>' +
+      '<text x="28" y="232">Comedor</text>' +
+      '<text x="171" y="232">Edificio D</text>' +
+      '<text x="321" y="232">Bibliot.</text>' +
+      '<text x="28" y="344">Edificio E</text>' +
+      '<text x="178" y="344">Playón · sector exterior</text>' +
+    '</g>' +
+    marcaCerrado + trazo + marcaDestino +
+    '<g id="m-origen"><circle cx="110" cy="470" r="9" fill="#ffffff" stroke="#2b2b2b" stroke-width="4"></circle>' +
+    '<rect x="126" y="460" width="128" height="21" fill="#ffffff" stroke="#2b2b2b" stroke-width="1"></rect>' +
+    '<text x="133" y="475" font-size="11.5" fill="#2b2b2b">Entrada principal</text></g>' +
+  '</svg>';
+}
+
+/* =========================================================
+   Piezas reutilizables de la interfaz
+   ========================================================= */
+function chip(texto) {
+  return '<div style="position:absolute;top:132px;left:12px;"><div class="chip" data-el="chip">' + texto + '</div></div>';
+}
+
+function panelSuperior(op) {
+  op = op || {};
+  var destino = op.destino || null;
+  return '' +
+  '<div class="tarjeta" style="position:absolute;top:12px;left:12px;right:12px;">' +
+    '<div class="fila hs" data-el="panel-origen" data-goto="p5" data-rotulo="P5" title="Tocar el origen para cambiarlo">' +
+      '<div class="marca redonda"></div>' +
+      '<div style="flex:1"><div class="txt">Entrada principal</div><div class="mini">último origen usado</div></div>' +
+      '<div class="mini">cambiar</div>' +
+    '</div>' +
+    '<div class="fila hs" data-el="panel-destino" data-goto="p2" data-rotulo="P2" title="Tocar el destino">' +
+      '<div class="marca"></div>' +
+      (destino
+        ? '<div style="flex:1"><div class="txt">' + destino + '</div><div class="mini">destino</div></div><div class="mini">cambiar</div>'
+        : '<div style="flex:1"><div class="txt tenue">¿A dónde vas?</div></div><div class="mini">buscar</div>') +
+    '</div>' +
+  '</div>';
+}
+
+function selector(op) {
+  var esOrigen = op.origen === true;
+  var filas = op.filas.map(function (f, i) {
+    return '<div class="item hs" data-el="item-' + i + '" data-goto="' + f.goto + '" data-rotulo="' + f.rotulo + '">' +
+             '<div><div class="txt">' + f.nombre + '</div><div class="mini">' + f.detalle + '</div></div>' +
+             '<div class="mini">' + (f.extra || "") + '</div>' +
+           '</div>';
+  }).join("");
+  return '' +
+  '<div style="position:absolute;top:146px;left:0;right:0;bottom:0;background:#ffffff;border-top:1px solid #2b2b2b;display:flex;flex-direction:column;">' +
+    '<div data-el="selector-cabecera" style="padding:12px 14px 10px;border-bottom:1px dashed #b5b5b5;display:flex;gap:10px;align-items:center;">' +
+      '<div class="hs" data-goto="' + op.volverA + '" data-rotulo="volver" style="border:1px solid #2b2b2b;width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">&#8592;</div>' +
+      '<div class="tarjeta" style="flex:1;padding:9px 12px;font-size:13px;color:#6f6f6f;">' +
+        (esOrigen ? "Buscar un punto de partida" : "Buscar aula, edificio o dependencia") +
+      '</div>' +
+    '</div>' +
+    '<div style="flex:1;padding:12px 14px 0;overflow:hidden;">' +
+      '<div class="rotulo">' + op.rotuloLista + '</div>' +
+      '<div class="lista">' + filas + '</div>' +
+    '</div>' +
+    '<div class="placeholder" data-el="teclado" style="height:200px;margin:12px;">teclado del sistema — no se diseña</div>' +
+  '</div>';
+}
+
+/* Hoja del resultado: criterio (sólo con lluvia), tiempo y cierre del viaje. */
+function hojaResultado(op) {
+  return '' +
+  '<div class="hoja">' +
+    '<div class="asa"></div>' +
+    (op.segmento || "") +
+    '<div data-el="tiempo" style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;">' +
+      '<div style="font-size:22px;">' + op.minutos + ' min</div>' +
+      '<div class="mini">' + op.detalle + '</div>' +
+    '</div>' +
+    '<div class="boton principal hs" data-el="boton-finalizar" data-goto="p1" data-rotulo="P1">Finalizar viaje</div>' +
+  '</div>';
+}
+
+/* =========================================================
+   Pantallas
+   ========================================================= */
+var pantallas = {
+
+  p1: {
+    titulo: "P1 · Pantalla única — inicio",
+    sub: "Único punto de entrada. El mapa ocupa la pantalla completa y los controles flotan encima; el origen ya viene cargado, así que queda un solo dato pendiente.",
+    render: function () {
+      return mapa({}) +
+        panelSuperior({}) +
+        chip(clima === "lluvia" ? "Llueve · se prioriza la ruta techada" : "No llueve · se prioriza la ruta más corta") +
+        '<div class="hoja">' +
+          '<div class="asa"></div>' +
+          '<div class="rotulo" data-el="rotulo-ultimos">Últimos destinos</div>' +
+          '<div class="lista">' +
+            '<div class="item hs" data-el="item-0" data-goto="RESULTADO" data-rotulo="ruta"><div><div class="txt">Aula 4 — Edificio B</div><div class="mini">consultado ayer</div></div><div class="mini">4 min</div></div>' +
+            '<div class="item hs" data-el="item-1" data-goto="RESULTADO" data-rotulo="ruta"><div><div class="txt">Biblioteca — Edificio C</div><div class="mini">consultado la semana pasada</div></div><div class="mini">7 min</div></div>' +
+            '<div class="item hs" data-el="item-2" data-goto="RESULTADO" data-rotulo="ruta"><div><div class="txt">Dirección de Alumnos</div><div class="mini">consultado la semana pasada</div></div><div class="mini">3 min</div></div>' +
+          '</div>' +
+        '</div>';
+    },
+    notas: function () {
+      return [
+        { ref: '[data-el="panel-origen"]', dx: -80, t: "<b>Origen precargado con el último usado.</b> La consulta arranca con un solo campo vacío: el usuario apurado no tiene que cargar dos datos antes de ver algo. Es la decisión que sostiene los dos toques de la alternativa B." },
+        { ref: '[data-el="panel-destino"]', dx: -80, t: "<b>Origen y destino siempre visibles y editables en el mismo panel.</b> Es la compensación que acordamos al elegir B: como no hay pantalla de revisión previa, corregir un dato mal elegido cuesta un toque y no rehacer el flujo." },
+        { ref: '[data-el="chip"]', lado: "fuera-der", dx: 4, t: "<b>El clima simulado se muestra antes de calcular.</b> Así el criterio con el que se va a elegir el camino no aparece como sorpresa recién en el resultado. Es informativo: el usuario no tiene que configurarlo." },
+        { x: 336, y: 322, t: "<b>El mapa está detrás desde el primer momento.</b> Da contexto y ayuda al primer uso: el usuario ubica la entrada principal antes de pedir nada." },
+        { ref: '[data-el="rotulo-ultimos"]', t: "<b>Últimos destinos siempre a la vista.</b> Convierten la consulta repetida en un solo toque y sirven además de ejemplo de qué se puede pedir: es lo que reemplaza a la pantalla de bienvenida que traía la alternativa A." }
+      ];
+    },
+    salidas: [
+      { t: "Tocar el campo de destino", d: "P2 · Elegir destino" },
+      { t: "Tocar un último destino (atajo)", d: "P3 o P4, según el clima simulado" },
+      { t: "Tocar el origen", d: "P5 · Cambiar origen" }
+    ]
+  },
+
+  p2: {
+    titulo: "P2 · Elegir destino",
+    sub: "Hoja que se abre sobre el mapa sin reemplazar la pantalla. Se puede elegir de una lista o escribir.",
+    render: function () {
+      return mapa({ tenue: true }) +
+        panelSuperior({}) +
+        selector({
+          volverA: "p1",
+          rotuloLista: "Últimos destinos y lugares del campus",
+          filas: [
+            { nombre: "Aula 4 — Edificio B", detalle: "último destino", extra: "4 min", goto: "RESULTADO", rotulo: "ruta" },
+            { nombre: "Biblioteca — Edificio C", detalle: "último destino", extra: "7 min", goto: "RESULTADO", rotulo: "ruta" },
+            { nombre: "Dirección de Alumnos", detalle: "dependencia", extra: "3 min", goto: "RESULTADO", rotulo: "ruta" },
+            { nombre: "Comedor universitario", detalle: "dependencia", extra: "—", goto: "p6", rotulo: "P6" },
+            { nombre: "Aula 12 — Edificio E", detalle: "aula", extra: "6 min", goto: "RESULTADO", rotulo: "ruta" }
+          ]
+        });
+    },
+    notas: function () {
+      return [
+        { ref: '[data-el="panel-destino"]', dx: -80, t: "<b>El panel de origen y destino no se va.</b> El usuario ve contra qué origen está eligiendo, y por eso la hoja no necesita repetir ese dato ni pedir una confirmación." },
+        { ref: '[data-el="selector-cabecera"]', t: "<b>Volver no borra lo cargado.</b> La flecha devuelve a P1 con el origen intacto: salir de la búsqueda nunca cuesta empezar de nuevo." },
+        { ref: '[data-el="item-0"]', dx: -64, t: "<b>Se puede elegir sin escribir.</b> El usuario primario no siempre conoce el nombre exacto del aula o de la dependencia; la lista visible baja la exigencia del primer uso, que es justamente lo que más resigna la alternativa B." },
+        { ref: '[data-el="item-2"]', dx: -64, t: "<b>Los tiempos se muestran ya en la lista.</b> Adelantan parte del resultado y permiten descartar un destino equivocado antes de calcular." },
+        { ref: '[data-el="teclado"]', t: "<b>El teclado no se diseña acá.</b> Es un componente del sistema operativo: en baja fidelidad sólo se reserva el espacio que ocupa, porque condiciona cuánta lista queda visible." }
+      ];
+    },
+    salidas: [
+      { t: "Elegir un destino con ruta disponible", d: "P3 o P4, según el clima simulado" },
+      { t: "Elegir «Comedor universitario»", d: "P6 · Sin ruta disponible" },
+      { t: "Volver (←)", d: "P1 · Pantalla única" },
+      { t: "Tocar el origen en el panel", d: "P5 · Cambiar origen" }
+    ]
+  },
+
+  p3: {
+    titulo: "P3 · Resultado — ruta más corta",
+    sub: "El resultado aparece en la misma pantalla: no hay navegación entre pedir la ruta y verla. Es lo que se muestra cuando no llueve y también lo que se obtiene si, lloviendo, el usuario elige el camino más corto.",
+    render: function () {
+      var llueve = clima === "lluvia";
+      var segmento = llueve
+        ? '<div class="segmento" style="margin-bottom:12px;">' +
+            '<div class="hs" data-el="seg-alt" data-goto="p4" data-rotulo="P4">Techado · 6 min</div>' +
+            '<div class="activo" data-el="seg-activo">Más corto · 4 min</div>' +
+          '</div>'
+        : "";
+      return mapa({ ruta: "corta", destino: { x: 250, y: 170, texto: "Aula 4" } }) +
+        panelSuperior({ destino: "Aula 4 — Edificio B" }) +
+        chip(llueve ? "Llueve · elegiste el camino más corto" : "No llueve · ruta más corta") +
+        hojaResultado({ minutos: 4, detalle: "260 m · llegás 13:56", segmento: segmento });
+    },
+    notas: function () {
+      var n = [
+        { ref: '[data-el="panel-destino"]', dx: -80, t: "<b>Pedir y ver ocurren en el mismo lugar.</b> Es el núcleo de la alternativa elegida: cada pantalla intermedia se descuenta del presupuesto de cinco minutos con el que se valida la hipótesis del TP2. El panel pasa de formulario a resumen sin moverse, así que un dato mal elegido se corrige donde se descubre." },
+        { ref: "#m-destino", lado: "fuera-abajo", dx: -30, dy: 4, t: "<b>La ruta se dibuja completa, con origen y destino identificados.</b> Una vez cargada no necesita actualizarse, lo que la vuelve utilizable con la señal irregular que declararon los cinco usuarios del TP2: seguir el camino no depende de seguir conectado." },
+        { ref: "#m-cerrado", lado: "fuera-der", dx: 4, t: "<b>Los tramos cerrados los excluye el motor y quedan marcados en el mapa.</b> No se le pide al usuario que confirme nada ni se le explica el cálculo con un texto: el error se previene antes, y el mapa muestra por qué el camino da esa vuelta." },
+        { ref: "#m-exterior", lado: "fuera-der", dx: 6, t: "<b>El único tramo descubierto queda señalado sobre el recorrido.</b> Es una propiedad de esta ruta y no del clima, así que se muestra siempre: con lluvia es lo que le permite al usuario decidir si le conviene el camino techado." }
+      ];
+      if (clima === "lluvia") {
+        n.push({ ref: '[data-el="seg-alt"]', lado: "izq", dx: 4, t: "<b>Con lluvia aparece el criterio elegido junto a su alternativa.</b> Volver a la ruta techada cuesta el mismo toque y no pide confirmación: la decisión es reversible y el sistema no vuelve a discutirla. Sin lluvia el control no existe, porque no hay una segunda opción que ofrecer." });
+      }
+      n.push({ ref: '[data-el="tiempo"]', t: "<b>Tiempo, distancia y hora de llegada, sin explicaciones agregadas.</b> El dato que motiva la consulta es «¿llego a horario?»; lo demás ya está dicho sobre el mapa." });
+      n.push({ ref: '[data-el="boton-finalizar"]', dx: -4, t: "<b>Una sola acción al pie.</b> El recorrido queda en pantalla mientras el usuario camina y lo único que resta es cerrarlo al llegar; para consultar otra cosa se toca el destino en el panel, que está siempre disponible." });
+      return n;
+    },
+    salidas: [
+      { t: "«Techado · 6 min» (sólo con lluvia)", d: "P4 · Resultado — ruta techada" },
+      { t: "Tocar el destino en el panel", d: "P2 · Elegir destino" },
+      { t: "Tocar el origen en el panel", d: "P5 · Cambiar origen" },
+      { t: "«Finalizar viaje»", d: "P1 · Pantalla única" }
+    ]
+  },
+
+  p4: {
+    titulo: "P4 · Resultado — ruta techada (con lluvia)",
+    sub: "Cuando el servicio meteorológico simulado informa lluvia, el sistema recomienda la ruta más resguardada y deja la más corta a un toque.",
+    render: function () {
+      var segmento =
+        '<div class="segmento" style="margin-bottom:12px;">' +
+          '<div class="activo" data-el="seg-activo">Techado · 6 min</div>' +
+          '<div class="hs" data-el="seg-alt" data-goto="p3" data-rotulo="P3">Más corto · 4 min</div>' +
+        '</div>';
+      return mapa({ ruta: "techada", destino: { x: 250, y: 170, texto: "Aula 4" } }) +
+        panelSuperior({ destino: "Aula 4 — Edificio B" }) +
+        chip("Llueve · se prioriza la ruta techada") +
+        hojaResultado({ minutos: 6, detalle: "390 m · llegás 13:58", segmento: segmento });
+    },
+    notas: function () {
+      return [
+        { x: 334, y: 344, t: "<b>La ruta recomendada es visiblemente más larga en el mapa.</b> En baja fidelidad el recorrido techado y el más corto tienen que distinguirse por su trazado y no por el color: acá el camino rodea por el sector cubierto en lugar de cruzar el playón." },
+        { ref: "#m-cerrado", lado: "fuera-der", dx: 4, t: "<b>El cierre precargado se sigue respetando.</b> La adaptación climática se suma a la exclusión de los tramos cerrados; no la reemplaza." },
+        { ref: '[data-el="seg-activo"]', lado: "izq", dx: 2, t: "<b>Se recomienda, no se impone.</b> En el TP2 la preferencia con lluvia no fue uniforme: tres de cinco se desvían para no mojarse y dos van igual por el camino más rápido. El sistema toma partido por la mayoría y deja la otra opción a la vista." },
+        { ref: '[data-el="seg-alt"]', lado: "der", dx: -4, t: "<b>Los dos tiempos están antes de elegir y el cambio no pide confirmación.</b> El costo de la decisión se lee en el propio control, y como es reversible con el mismo toque, confirmarlo —como proponía la alternativa C— sería un paso que no evita ningún error." },
+        { ref: '[data-el="tiempo"]', t: "<b>El tiempo corresponde al criterio activo.</b> Cambiar de criterio cambia el número y el trazado, y nada más: el usuario no vuelve a cargar la consulta." },
+        { ref: '[data-el="boton-finalizar"]', dx: -4, t: "<b>La misma acción de cierre que en P3.</b> Las dos versiones del resultado son la misma pantalla con distinto criterio, así que se comportan igual." }
+      ];
+    },
+    salidas: [
+      { t: "«Más corto · 4 min»", d: "P3 · Resultado — ruta más corta" },
+      { t: "Tocar el destino en el panel", d: "P2 · Elegir destino" },
+      { t: "Tocar el origen en el panel", d: "P5 · Cambiar origen" },
+      { t: "«Finalizar viaje»", d: "P1 · Pantalla única" }
+    ]
+  },
+
+  p5: {
+    titulo: "P5 · Cambiar origen",
+    sub: "Aparece sólo cuando el usuario lo pide. Es el mismo componente que el selector de destino, con la lista adaptada.",
+    render: function () {
+      return mapa({ tenue: true }) +
+        panelSuperior({}) +
+        selector({
+          origen: true,
+          volverA: "RESULTADO",
+          rotuloLista: "Accesos y puntos de partida frecuentes",
+          filas: [
+            { nombre: "Entrada principal", detalle: "último origen usado", extra: "", goto: "RESULTADO", rotulo: "ruta" },
+            { nombre: "Entrada por Florencio Varela", detalle: "acceso", extra: "", goto: "RESULTADO", rotulo: "ruta" },
+            { nombre: "Aula 4 — Edificio B", detalle: "donde estás cursando", extra: "", goto: "RESULTADO", rotulo: "ruta" },
+            { nombre: "Biblioteca — Edificio C", detalle: "dependencia", extra: "", goto: "RESULTADO", rotulo: "ruta" }
+          ]
+        });
+    },
+    notas: function () {
+      return [
+        { ref: '[data-el="panel-origen"]', dx: -80, t: "<b>Al elegir, la ruta se recalcula sola y se vuelve al resultado.</b> No hay un botón «calcular» intermedio: cambiar un dato y ver el efecto es una sola acción." },
+        { ref: '[data-el="selector-cabecera"]', t: "<b>Un solo componente para los dos campos.</b> Origen y destino se eligen con la misma hoja y el mismo buscador: se aprende una vez y se usa dos veces, que es la facilidad de aprendizaje que la estructura B sí puede permitirse." },
+        { ref: '[data-el="item-0"]', dx: -64, t: "<b>La primera opción es el origen que ya estaba.</b> Abrir el selector por error no obliga a elegir algo distinto ni a recordar cuál era el valor anterior." },
+        { ref: '[data-el="item-2"]', dx: -64, t: "<b>Los puntos de partida no son los mismos que los destinos.</b> Se ofrecen los accesos del campus y los últimos lugares consultados, porque el usuario suele partir de donde acaba de estar." }
+      ];
+    },
+    salidas: [
+      { t: "Elegir un punto de partida", d: "P3 o P4 · la ruta se recalcula sola" },
+      { t: "Volver (←)", d: "Al estado anterior, sin cambiar el origen" }
+    ]
+  },
+
+  p6: {
+    titulo: "P6 · Sin ruta disponible",
+    sub: "Caso límite de los cierres precargados: el destino existe, pero ningún camino disponible llega hasta él.",
+    render: function () {
+      return mapa({ tenue: true, destino: { x: 70, y: 258, texto: "Comedor" } }) +
+        panelSuperior({ destino: "Comedor universitario" }) +
+        '<div class="tarjeta" data-el="mensaje" style="position:absolute;top:360px;left:12px;right:12px;padding:14px;">' +
+          '<div data-el="mensaje-titulo" style="font-size:15px;margin-bottom:6px;padding-right:34px;">No hay un camino disponible</div>' +
+          '<div class="mini" data-el="mensaje-texto" style="margin-bottom:14px;padding-right:34px;">Los dos accesos al Comedor están cerrados por refacciones. Te marcamos dónde queda para que puedas acercarte por otro lado.</div>' +
+          '<div style="display:flex;flex-direction:column;gap:8px;">' +
+            '<div class="boton principal hs" data-el="boton-otro" data-goto="p2" data-rotulo="P2">Elegir otro destino</div>' +
+            '<div class="boton hs" data-goto="p1" data-rotulo="P1">Volver al mapa</div>' +
+          '</div>' +
+        '</div>';
+    },
+    notas: function () {
+      return [
+        { ref: '[data-el="panel-destino"]', dx: -80, t: "<b>El destino consultado queda en el panel.</b> El usuario comprueba que el sistema entendió bien lo que pidió y que el problema no es un dato mal cargado." },
+        { ref: "#m-destino", lado: "fuera-der", dx: 6, t: "<b>El destino igual se marca en el mapa.</b> Aunque no haya recorrido posible, saber dónde queda el lugar ya resuelve parte de la consulta y permite acercarse por otro lado." },
+        { ref: '[data-el="mensaje-titulo"]', t: "<b>El sistema informa, no deja el mapa vacío.</b> Sin este estado, la exclusión de tramos cerrados produciría una pantalla sin ruta y sin explicación: exactamente la situación que el TP2 relevó como la más costosa." },
+        { ref: '[data-el="mensaje-texto"]', t: "<b>El mensaje está escrito en términos del campus.</b> «Los accesos están cerrados por refacciones», no un error del sistema: el usuario tiene que poder decidir qué hacer, no entender qué falló." },
+        { ref: '[data-el="boton-otro"]', dx: -4, t: "<b>Siempre hay una acción siguiente.</b> Elegir otro destino vuelve directo al selector, con el origen intacto." }
+      ];
+    },
+    salidas: [
+      { t: "«Elegir otro destino»", d: "P2 · Elegir destino" },
+      { t: "«Volver al mapa»", d: "P1 · Pantalla única" },
+      { t: "Tocar el origen en el panel", d: "P5 · Cambiar origen" }
+    ]
+  }
+};
+
+var orden = ["p1", "p2", "p3", "p4", "p5", "p6"];
+
+var conexiones = [
+  ["P1 · Pantalla única", "Tocar el campo «¿A dónde vas?»", "P2 · Elegir destino", "Es el único dato que falta: el origen ya viene precargado."],
+  ["P1 · Pantalla única", "Tocar un destino de «Últimos destinos»", "P3 o P4 · Resultado", "Atajo de un toque para la consulta repetida, sin pasar por la búsqueda."],
+  ["P1 · Pantalla única", "Tocar el origen del panel", "P5 · Cambiar origen", "El origen precargado tiene que poder corregirse antes de calcular."],
+  ["P2 · Elegir destino", "Elegir un destino con ruta disponible", "P3 (no llueve) o P4 (llueve)", "Cuál de las dos versiones del resultado se muestra primero lo decide el clima simulado, no el usuario."],
+  ["P2 · Elegir destino", "Elegir un destino sin acceso disponible", "P6 · Sin ruta disponible", "Los cierres precargados pueden dejar un destino aislado, y eso hay que decirlo."],
+  ["P2 · Elegir destino", "Volver (←)", "P1 · Pantalla única", "Cancelar la búsqueda no borra el origen ya cargado."],
+  ["P3 · Ruta más corta", "«Techado · 6 min» (el control sólo existe con lluvia)", "P4 · Ruta techada", "Sin lluvia no hay una segunda opción que ofrecer, así que el control no se muestra."],
+  ["P4 · Ruta techada", "«Más corto · 4 min»", "P3 · Ruta más corta", "La preferencia con lluvia no es uniforme: se recomienda, no se impone, y el cambio es reversible sin confirmar."],
+  ["P3 o P4 · Resultado", "Tocar el origen o el destino del panel", "P5 o P2", "Corregir un dato mal elegido cuesta un toque y no rehacer la consulta."],
+  ["P3 o P4 · Resultado", "«Finalizar viaje»", "P1 · Pantalla única", "Cierra el recorrido al llegar y devuelve al único punto de entrada."],
+  ["P5 · Cambiar origen", "Elegir un punto de partida", "P3 o P4 · Resultado recalculado", "El recálculo es automático: no hay un botón «calcular» intermedio."],
+  ["P5 · Cambiar origen", "Volver (←)", "Estado anterior", "Abrir el selector por error no debe cambiar nada."],
+  ["P6 · Sin ruta disponible", "«Elegir otro destino»", "P2 · Elegir destino", "El estado de error siempre ofrece la acción siguiente."],
+  ["P6 · Sin ruta disponible", "«Volver al mapa»", "P1 · Pantalla única", "Salida sin costo hacia el punto de entrada."]
+];
+
+/* =========================================================
+   Render y navegación
+   ========================================================= */
+var lienzo = document.getElementById("lienzo");
+
+function resolver(destino) {
+  if (destino === "RESULTADO") return clima === "lluvia" ? "p4" : "p3";
+  return destino;
+}
+
+/* Los marcadores se anclan al elemento que explica cada anotación, así quedan
+   siempre sobre la pieza correcta aunque cambie el contenido de la pantalla. */
+function colocarMarcador(nota, i) {
+  var m = document.createElement("div");
+  m.className = "marcador";
+  m.setAttribute("data-nota", i);
+  m.textContent = i + 1;
+
+  if (nota.ref) {
+    var el = lienzo.querySelector(nota.ref);
+    if (!el) return;
+    var r = el.getBoundingClientRect();
+    var base = lienzo.getBoundingClientRect();
+    var top = r.top - base.top + r.height / 2 - 10;
+    var left = r.right - base.left - 26;
+    if (nota.lado === "izq") left = r.left - base.left + 6;
+    if (nota.lado === "fuera-der") left = r.right - base.left;
+    if (nota.lado === "fuera-izq") left = r.left - base.left - 20;
+    if (nota.lado === "fuera-arriba") top = r.top - base.top - 24;
+    if (nota.lado === "fuera-abajo") top = r.bottom - base.top;
+    m.style.left = (left + (nota.dx || 0)) + "px";
+    m.style.top = (top + (nota.dy || 0)) + "px";
+  } else {
+    m.style.left = nota.x + "px";
+    m.style.top = nota.y + "px";
+  }
+
+  lienzo.appendChild(m);
+}
+
+function pintar() {
+  var p = pantallas[actual];
+  document.getElementById("p-titulo").textContent = p.titulo;
+  document.getElementById("p-sub").textContent = p.sub;
+
+  lienzo.innerHTML = p.render();
+
+  var notas = p.notas().filter(function (n) {
+    return !n.ref || lienzo.querySelector(n.ref);
+  });
+  notas.forEach(colocarMarcador);
+
+  document.getElementById("notas-lista").innerHTML = notas.map(function (n, i) {
+    return '<li data-nota="' + i + '"><span class="num">' + (i + 1) + '</span><span>' + n.t + '</span></li>';
+  }).join("");
+
+  document.getElementById("salidas-lista").innerHTML = p.salidas.map(function (s) {
+    return '<li><b>' + s.t + '</b> → ' + s.d + '</li>';
+  }).join("");
+
+  Array.prototype.forEach.call(document.querySelectorAll("#indice-lista button"), function (b) {
+    b.setAttribute("aria-current", b.getAttribute("data-p") === actual ? "true" : "false");
+  });
+}
+
+function fijarClima(valor) {
+  clima = valor;
+  Array.prototype.forEach.call(document.querySelectorAll("#seg-clima button"), function (b) {
+    b.setAttribute("aria-pressed", b.getAttribute("data-clima") === valor ? "true" : "false");
+  });
+}
+
+function ir(destino) {
+  destino = resolver(destino);
+  if (!pantallas[destino]) return;
+  /* La ruta techada sólo se recomienda con lluvia: entrar a P4 desde el índice
+     ajusta el escenario simulado en lugar de mostrar un estado imposible. */
+  if (destino === "p4" && clima !== "lluvia") fijarClima("lluvia");
+  actual = destino;
+  pintar();
+}
+
+document.getElementById("indice-lista").innerHTML = orden.map(function (id) {
+  return '<li><button data-p="' + id + '">' + pantallas[id].titulo + "</button></li>";
+}).join("");
+
+document.getElementById("indice-lista").addEventListener("click", function (e) {
+  var b = e.target.closest("button");
+  if (b) ir(b.getAttribute("data-p"));
+});
+
+lienzo.addEventListener("click", function (e) {
+  var z = e.target.closest(".hs");
+  if (z) ir(z.getAttribute("data-goto"));
+});
+
+/* Resaltado marcador <-> anotación */
+function vincular(contenedor) {
+  contenedor.addEventListener("mouseover", function (e) {
+    var el = e.target.closest("[data-nota]");
+    if (!el) return;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-nota="' + el.getAttribute("data-nota") + '"]'), function (x) {
+      x.classList.add("resaltado");
+    });
+  });
+  contenedor.addEventListener("mouseout", function () {
+    Array.prototype.forEach.call(document.querySelectorAll(".resaltado"), function (x) {
+      x.classList.remove("resaltado");
+    });
+  });
+}
+vincular(lienzo);
+vincular(document.getElementById("notas-lista"));
+
+/* Controles de la barra superior */
+function segmento(id, cb) {
+  document.getElementById(id).addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b) return;
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function (x) {
+      x.setAttribute("aria-pressed", x === b ? "true" : "false");
+    });
+    cb(b);
+  });
+}
+
+segmento("seg-vista", function (b) {
+  var flujo = b.getAttribute("data-vista") === "flujo";
+  document.getElementById("vista-flujo").classList.toggle("oculto", !flujo);
+  document.getElementById("vista-pantallas").classList.toggle("oculto", flujo);
+});
+
+segmento("seg-hs", function (b) {
+  document.body.classList.toggle("mostrar-hs", b.getAttribute("data-hs") === "on");
+});
+
+segmento("seg-clima", function (b) {
+  clima = b.getAttribute("data-clima");
+  if (clima === "seco" && actual === "p4") actual = "p3";
+  pintar();
+});
+
+document.getElementById("tabla-conexiones").innerHTML = conexiones.map(function (c) {
+  return "<tr><td>" + c[0] + "</td><td>" + c[1] + "</td><td>" + c[2] + "</td><td>" + c[3] + "</td></tr>";
+}).join("");
+
+pintar();
+</script>
+</body>
+</html>
