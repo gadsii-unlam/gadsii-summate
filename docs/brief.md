@@ -160,3 +160,51 @@ Se priorizan eficiencia, tasa de errores y facilidad de aprendizaje, porque son 
 | **Eficiencia**               | Cuatro de los cinco usuarios perdieron entre cinco y diez minutos la última vez que no encontraron un destino y todos ellos llegaron tarde al menos una vez. Además, la consulta puede ocurrir antes de una clase, examen o trámite, con poco margen de tiempo. Por eso el recorrido debe obtenerse con pocos pasos para el usuario y permitir llegar rápidamente, como establece la hipótesis.     |
 | **Tasa de errores**          | Cuatro usuarios encontraron pasillos, escaleras, puertas o sectores cerrados; uno tardó bastante en hallar otra ruta y otro tuvo que preguntar. El MVP debe prevenir la selección incompleta de origen o destino y, sobre todo, evitar que la ruta conduzca por un tramo cerrado. Llegar sin pedir ayuda ni intentar usar un acceso no disponible forma parte del criterio de validación.           |
 | **Facilidad de aprendizaje** | El usuario primario está formado por ingresantes y estudiantes de primer año que todavía no conocen el campus. Los recursos actuales son dispersos y, ante una duda, combinan mapa institucional, carteles, web, WhatsApp, otras personas o prueba y error. La aplicación debe entenderse en el primer uso, desde el celular y sin capacitación: elegir origen, elegir destino y solicitar la ruta. |
+
+# Brief de Producto — versión 4
+
+**Qué cambió respecto de la versión 3 y por qué:** en el TP4 recibimos la evaluación de Bananza sobre el wireframe de _¿Dónde queda?_ y respondimos sus observaciones. La devolución mostró que resolver la consulta con pocos toques no alcanza si el usuario parte de un origen equivocado, no sabe cómo llegar desde el edificio hasta el aula o pierde la información por un corte de señal. Esta versión incorpora las correcciones que llevaremos al TP5, las propuestas que cuestionamos y las mejoras que quedan para después. Mantenemos el segmento, la hipótesis de valor y los atributos priorizados; ajustamos la interacción dentro del alcance del MVP. Son cambios previstos para su construcción y prueba, no resultados ya validados con usuarios.
+
+## Evaluación recibida y relación con el usuario
+
+Bananza valoró la eficiencia del mapa con panel y el cálculo sin un botón adicional, pero señaló riesgos en la prevención de errores y en la facilidad de aprendizaje. Los hallazgos se relacionan con los datos del TP2: cuatro de cinco usuarios tuvieron dificultades para encontrar aulas o sectores, perdieron entre cinco y diez minutos y llegaron tarde al menos una vez; los cinco declararon datos móviles con señal irregular. Además, cuatro encontraron accesos cerrados en varias oportunidades.
+
+Tomamos como referencia el informe de Bananza y la respuesta del equipo en el punto 6 del [TP4](entregas/TP4-Summate.docx). Los números de hallazgo que siguen corresponden a ese informe. La evaluación que realizamos sobre Followare forma parte del TP4, pero los ajustes de este brief se refieren a nuestro producto.
+
+## Correcciones que entran en el MVP del TP5
+
+| Hallazgos de Bananza | Cambio previsto | Por qué lo incorporamos |
+| --- | --- | --- |
+| **1 y 2 — Origen precargado y dificultad para reconocer el punto de partida.** | Mostrar el último origen como una sugerencia que debe confirmarse en el mismo panel antes de calcular. Agregar referencias reconocibles, como biblioteca y comedor, a la selección del origen. | Un ingresante puede no conocer los nombres del campus. Ahorrar un toque no compensa comenzar desde un lugar incorrecto. |
+| **3 — La ruta llega al edificio, pero no orienta hasta el aula.** | Agregar, para las aulas incluidas en la prueba, la entrada, el piso y la escalera o ascensor que corresponda, con datos verificados. | La hipótesis exige llegar al destino sin pedir indicaciones; llegar solamente al edificio deja parte de la tarea sin resolver. |
+| **5 y 7 — Falta de respuesta ante problemas de conexión.** | Mostrar “Sin conexión” y permitir reintentar. Conservar el mapa y la ruta ya cargados durante el recorrido; si aún no hay ruta, mantener disponible el mapa. Si falla el servicio de clima simulado, avisar y permitir elegir el criterio de recorrido sin asumir que no llueve. | La señal irregular fue declarada por los cinco usuarios. El recorrido debe seguir siendo consultable ante un corte momentáneo. |
+| **8 — Falta de un indicador de cálculo.** | Mostrar “Buscando el camino…” mientras se obtiene la ruta. | El usuario necesita distinguir una espera de una acción que no se registró. |
+| **9 — Destino sin acceso identificado con “-”.** | Reemplazar el guion por “Sin acceso ahora” en la lista de destinos. | Permite conocer el impedimento antes de intentar obtener el recorrido. |
+| **6 y 10 — Ayuda y primer uso insuficientes.** | Incluir ayuda breve junto a los controles y una indicación inicial cuando todavía no haya destinos recientes. | La facilidad de aprendizaje no puede depender de un historial que el usuario nuevo todavía no tiene. |
+| **11 — Cambio de origen que altera el destino o genera una ruta no solicitada.** | Mantener visible el destino al cambiar el origen. Si no hay destino elegido, volver al inicio sin calcular una ruta al Aula 4. | El recorrido debe responder a la selección del usuario y conservar su contexto. |
+| **12 — Nombres inconsistentes entre el mapa y la lista.** | Unificar los nombres de edificios y lugares en toda la interfaz. | Las referencias deben permitir reconocer el mismo destino sin interpretaciones adicionales. |
+
+## Propuestas cuestionadas y mejoras postergadas
+
+**Reportes colaborativos de cierres (4).** Aceptamos que la información sobre cierres debe reflejarse en las rutas, pero no incorporaremos reportes con fotos y texto en este MVP. El TP2 muestra el problema de los accesos cerrados, pero no relevó disposición a reportarlos ni cómo validar esos avisos. La señal irregular también limita el envío de imágenes. Para el TP5 mantenemos la decisión del TP3: el equipo precarga los cierres y el motor excluye esos tramos. El reporte colaborativo queda pendiente de validación posterior.
+
+**Sección de tutoriales (6).** Aceptamos la falta de orientación, pero cuestionamos que requiera severidad 3 y una sección de guías extensas. El TP2 muestra consultas con poco margen de tiempo y no aporta evidencia de que un tutorial sea necesario. Primero incorporaremos ayuda breve en contexto y comprobaremos si permite completar la tarea. Las guías extensas quedan postergadas hasta contar con esa evidencia.
+
+**Selección de un punto libre sobre el mapa (2).** Para el TP5 sumaremos referencias reconocibles a la selección del origen. La posibilidad de tocar cualquier punto del mapa queda para después, según lo que observemos al probar si esas referencias alcanzan para ubicarse.
+
+También se mantienen las exclusiones de la versión 3: API meteorológica real, panel de administración de cierres, búsqueda del servicio más cercano y horarios de puntos de interés.
+
+## Flujo principal ajustado para el TP5
+
+1. **Abrir la aplicación.** Mostrar el mapa, los campos de origen y destino y una indicación breve si es el primer uso.
+2. **Indicar el recorrido.** Elegir el origen entre referencias reconocibles o confirmar el último sugerido, y seleccionar el destino. Ambos datos permanecen visibles y editables.
+3. **Obtener la ruta.** Con origen confirmado y destino válido, calcular automáticamente, consultar los cierres precargados y el clima simulado, y mostrar el estado de espera.
+4. **Resolver la espera o el fallo.** Si falla la conexión, informar y permitir reintentar sin borrar la información ya cargada. Si falla la consulta climática, permitir elegir el criterio de recorrido.
+5. **Seguir el recorrido.** Mostrar la ruta y las indicaciones de llegada al aula o sector. Con lluvia, recomendar la alternativa resguardada y mantener disponible la más rápida. Excluir siempre los tramos cerrados precargados.
+6. **Corregir sin perder el contexto.** Permitir cambiar el origen conservando el destino. Sin destino elegido, volver al inicio sin generar una ruta. Mantener disponible el recorrido ya cargado durante el desplazamiento.
+
+## Aprendizaje y validación pendiente
+
+Aprendimos que la eficiencia se mide en el recorrido completo, no solamente en los toques necesarios para dibujar una ruta. Un origen equivocado o una llegada incompleta puede devolver el tiempo que ahorramos en la interfaz. Por eso conservamos el mapa con panel, pero reforzamos la prevención de errores y la comprensión del primer uso.
+
+La hipótesis de valor no cambia: en una prueba con al menos cinco usuarios del grupo primario, cuatro deberán llegar a un destino asignado en menos de cinco minutos, sin pedir indicaciones ni intentar pasar por un acceso cerrado, usando la conectividad disponible en el campus. En el TP5 observaremos especialmente si reconocen el origen, comprenden las indicaciones hasta el aula y pueden continuar consultando el recorrido ante una interrupción de señal. La evaluación heurística permite anticipar problemas; la prueba con usuarios sigue pendiente.
