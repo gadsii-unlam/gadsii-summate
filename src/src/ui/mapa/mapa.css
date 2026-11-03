@@ -1,0 +1,45 @@
+.mapa {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Las zonas no pintadas del plano son transparentes: debajo va el color de la vereda. */
+  background: var(--color-fondo-mapa);
+  touch-action: none;
+  font-family: var(--fuente);
+}
+
+.mapa.leaflet-container {
+  background: var(--color-fondo-mapa);
+}
+
+.mapa:focus-visible {
+  outline: 2px solid var(--color-primario);
+  outline-offset: -4px;
+}
+
+/* Lienzos SVG de las líneas (src/ui/mapa/vectores.ts): dibujan también lo que queda fuera de su
+   recuadro, así al arrastrar la ruta ya está entera. El recuadro no recibe toques: solo las
+   líneas tocables (Leaflet les pone pointer-events), y los gestos llegan al mapa. */
+.mapa .leaflet-pane > svg {
+  overflow: visible;
+  pointer-events: none;
+}
+
+.mapa__pin {
+  background: none;
+  border: 0;
+  filter: drop-shadow(0 1px 2px rgb(60 64 67 / 0.4));
+}
+
+.mapa .leaflet-control-zoom a {
+  width: var(--toque-min);
+  height: var(--toque-min);
+  line-height: var(--toque-min);
+  font-size: 22px;
+  color: var(--color-texto);
+}
+
+.mapa .leaflet-bottom.leaflet-right {
+  margin: 0 var(--esp-2) var(--esp-4) 0;
+}

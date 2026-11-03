@@ -1,0 +1,20 @@
+{
+  "$schema": "./entradas.schema.json",
+  "entrada-ed-este-400-500-lado-este": "entrada este del pasillo 400/500",
+  "entrada-ed-este-400-500-lado-oeste": "entrada oeste del pasillo 400/500",
+  "entrada-ed-este-kinesiologia": "entrada del hall de Kinesiología",
+  "entrada-ed-este-norte-lado-este": "entrada este del pasillo norte",
+  "entrada-ed-este-norte-lado-oeste": "entrada oeste del pasillo norte",
+  "entrada-ed-oeste-anses": "entrada junto a ANSES",
+  "entrada-ed-oeste-auditorios-lado-este": "entrada este del hall de los auditorios",
+  "entrada-ed-oeste-auditorios-lado-oeste": "entrada oeste del hall de los auditorios",
+  "entrada-ed-oeste-aulas-1-9": "entrada de las aulas 1 a 9",
+  "entrada-ed-oeste-graduados": "entrada junto a la Dirección de Graduados",
+  "entrada-ed-oeste-norte-lado-este": "entrada este del pasillo norte",
+  "entrada-ed-oeste-norte-lado-oeste": "entrada oeste del pasillo norte",
+  "entrada-ed-oeste-patio-aulas-250": "salida al patio de las aulas 250",
+  "entrada-ed-oeste-socioculturales": "entrada junto a la Oficina de Socio Culturales",
+  "entrada-ed-sur-norte": "entrada norte",
+  "entrada-ed-sur-oeste-norte": "entrada oeste del pasillo norte",
+  "entrada-ed-sur-oeste-sur": "entrada oeste del pasillo sur"
+}

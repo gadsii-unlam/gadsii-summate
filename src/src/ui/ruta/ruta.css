@@ -1,0 +1,292 @@
+/* Vista de la ruta (mostrar-ruta-e-indicaciones): marcadores, leyenda y hoja de resultado. */
+
+/* ---- Marcadores del mapa ------------------------------------------------------------------ */
+
+.ruta__marcador {
+  /* Leaflet les pone fondo y borde blancos a los divIcon: se quitan. */
+  background: none;
+  border: 0;
+}
+
+.ruta__origen {
+  display: block;
+  box-sizing: content-box;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgb(60 64 67 / 0.45);
+}
+
+.ruta__puerta {
+  display: block;
+  box-sizing: content-box;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgb(60 64 67 / 0.45);
+}
+
+/* Con una ruta en pantalla el plano pasa a gris suave: la ruta y la sala de destino (que van en
+   otros panes) quedan en color. Los números de aula se siguen leyendo. */
+.mapa .leaflet-plano-pane {
+  transition: filter 0.3s ease;
+}
+
+.mapa--con-ruta .leaflet-plano-pane {
+  filter: grayscale(1) contrast(0.9) brightness(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapa .leaflet-plano-pane {
+    transition: none;
+  }
+}
+
+.ruta__maniobra {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-superficie);
+  border: 2px solid var(--color-primario-oscuro);
+}
+
+/* ---- Leyenda ------------------------------------------------------------------------------ */
+
+.ruta-leyenda {
+  position: absolute;
+  right: calc(var(--margen-lateral) + var(--seguro-derecha));
+  z-index: 800;
+  margin: 0;
+  padding: var(--esp-2) var(--esp-3);
+  list-style: none;
+  border-radius: 8px;
+  background: var(--color-superficie);
+  box-shadow: var(--elevacion-1);
+  font-size: var(--texto-leyenda);
+  color: var(--color-texto);
+  pointer-events: none;
+}
+
+.ruta-leyenda li {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 20px;
+}
+
+/* ---- Hoja de resultado -------------------------------------------------------------------- */
+
+.ruta-resultado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-2) 0 var(--esp-3);
+  color: var(--color-texto);
+}
+
+.ruta-resultado__resumen {
+  margin: 0;
+  font-size: var(--texto-titulo-ficha);
+  font-weight: var(--peso-titulo);
+}
+
+.ruta-resultado__aire {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-1);
+  margin: 0;
+  font-size: var(--texto-secundario);
+  color: var(--color-texto-secundario);
+}
+
+.ruta-resultado__nota {
+  margin: 0;
+  font-size: var(--texto-secundario);
+  color: var(--color-texto-secundario);
+}
+
+.ruta-resultado__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.ruta-solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- Chips de alternativas ---------------------------------------------------------------- */
+
+.ruta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ruta-chip {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: var(--toque-min);
+  min-width: var(--toque-min);
+  padding: var(--esp-1) var(--esp-4);
+  border-radius: var(--radio-chip);
+  border: 1px solid var(--color-borde);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font-size: var(--texto-secundario);
+  font-weight: var(--peso-titulo);
+  text-align: left;
+}
+
+.ruta-chip[aria-pressed='true'] {
+  border-color: var(--color-primario-oscuro);
+  background: #e8f0fe;
+  color: var(--color-primario-oscuro);
+}
+
+.ruta-chip__detalle {
+  font-size: var(--texto-leyenda);
+  font-weight: var(--peso-cuerpo);
+}
+
+.ruta-resultado__desvio {
+  margin: 0;
+  padding: var(--esp-2) var(--esp-3);
+  border-radius: 8px;
+  background: #fce8e6;
+  font-size: var(--texto-secundario);
+  color: var(--color-texto);
+}
+
+.ruta-sin-ruta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-2) 0 var(--esp-3);
+}
+
+.ruta-sin-ruta__titulo {
+  margin: 0;
+  font-size: var(--texto-titulo-seccion);
+  font-weight: var(--peso-titulo);
+  color: var(--color-error-texto);
+}
+
+.ruta-sin-ruta__texto {
+  margin: 0;
+  font-size: var(--texto-secundario);
+  color: var(--color-texto);
+}
+
+.ruta-chip__subtitulo {
+  font-size: var(--texto-leyenda);
+  font-weight: var(--peso-cuerpo);
+  color: var(--color-texto-secundario);
+}
+
+.ruta-chip[aria-pressed='true'] .ruta-chip__detalle {
+  font-size: var(--texto-leyenda);
+  font-weight: var(--peso-cuerpo);
+}
+
+.ruta-resultado__desvio {
+  margin: 0;
+  padding: var(--esp-2) var(--esp-3);
+  border-radius: 8px;
+  background: #fce8e6;
+  font-size: var(--texto-secundario);
+  color: var(--color-texto);
+}
+
+.ruta-sin-ruta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-2) 0 var(--esp-3);
+}
+
+.ruta-sin-ruta__titulo {
+  margin: 0;
+  font-size: var(--texto-titulo-seccion);
+  font-weight: var(--peso-titulo);
+  color: var(--color-error-texto);
+}
+
+.ruta-sin-ruta__texto {
+  margin: 0;
+  font-size: var(--texto-secundario);
+  color: var(--color-texto);
+}
+
+.ruta-chip__subtitulo {
+  color: var(--color-primario-oscuro);
+}
+
+/* ---- Espera ------------------------------------------------------------------------------- */
+
+.ruta-espera {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: var(--esp-3) 0;
+}
+
+.ruta-espera__barra {
+  position: relative;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #d2e3fc;
+}
+
+.ruta-espera__barra::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  border-radius: 2px;
+  background: var(--color-primario);
+  animation: ruta-espera 1.2s var(--curva-salida) infinite;
+}
+
+@keyframes ruta-espera {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ruta-espera__barra::before {
+    animation: none;
+    width: 100%;
+    opacity: 0.6;
+  }
+}
+
+.ruta-espera__titulo {
+  margin: 0;
+  font-size: var(--texto-cuerpo);
+  font-weight: var(--peso-titulo);
+  color: var(--color-texto);
+}
+
+.ruta-espera__trayecto {
+  margin: 0;
+  font-size: var(--texto-secundario);
+  color: var(--color-texto-secundario);
+}
+
+/* Área de toque de la alternativa gris: invisible, pero recibe el toque aunque no tenga color. */
+.leaflet-pane > svg path.leaflet-interactive.ruta__alternativa-toque {
+  pointer-events: stroke;
+}

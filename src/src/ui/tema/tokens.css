@@ -1,0 +1,82 @@
+/*
+ * Tokens visuales de ¿Dónde queda? (design.md de construir-interfaz-movil, D3).
+ * Solo modo claro. Todo color de la interfaz pasa por un token, así un modo oscuro futuro
+ * solo redefine estas variables. Los colores de los marcadores del mapa están espejados en
+ * `tokens.ts` (Leaflet los necesita en TypeScript).
+ */
+:root {
+  /* Paleta */
+  --color-primario: #1a73e8;
+  --color-primario-oscuro: #174ea6;
+  --color-sobre-primario: #ffffff;
+  --color-destino: #ea4335; /* solo gráfico (pin): nunca como color de texto */
+  --color-destino-borde: #b31412;
+  --color-error-texto: #c5221f;
+  --color-superficie: #ffffff;
+  --color-superficie-variante: #f1f3f4;
+  --color-borde: #dadce0;
+  --color-texto: #202124;
+  --color-texto-secundario: #5f6368;
+  --color-fondo-mapa: #f8f8f8;
+  --color-primario-sobre-oscuro: #8ab4f8; /* acción sobre la barra oscura "Sin conexión" */
+  --color-velo: rgb(32 33 36 / 0.32);
+
+  /* Elevación */
+  --elevacion-1: 0 1px 2px rgb(60 64 67 / 0.3), 0 1px 3px 1px rgb(60 64 67 / 0.15);
+  --elevacion-2: 0 1px 2px rgb(60 64 67 / 0.3), 0 2px 6px 2px rgb(60 64 67 / 0.15);
+  --elevacion-3: 0 -1px 3px rgb(60 64 67 / 0.3), 0 -4px 8px 3px rgb(60 64 67 / 0.15);
+
+  /* Tipografía (sin fuentes web) */
+  --fuente: Roboto, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --texto-titulo-ficha: 1.375rem;
+  --texto-titulo-seccion: 1rem;
+  --texto-cuerpo: 1rem;
+  --texto-secundario: 0.875rem;
+  --texto-leyenda: 0.75rem;
+  --peso-titulo: 500;
+  --peso-cuerpo: 400;
+
+  /* Radios */
+  --radio-tarjeta: 28px;
+  --radio-hoja: 16px;
+  --radio-chip: 16px;
+  --radio-boton: 22px;
+
+  /* Espaciado (base de 4 px) */
+  --esp-1: 4px;
+  --esp-2: 8px;
+  --esp-3: 12px;
+  --esp-4: 16px;
+  --esp-5: 24px;
+  --esp-6: 32px;
+  --margen-lateral: 16px;
+
+  /* Objetivos táctiles */
+  --toque-min: 44px;
+  --boton-circular: 48px;
+  --alto-fila: 64px;
+
+  /* Capas (z-index) */
+  --capa-mapa: 0;
+  --capa-botones: 10;
+  --capa-hoja: 20;
+  --capa-tarjeta: 30;
+  --capa-busqueda: 40;
+  --capa-avisos: 50;
+
+  /* Áreas seguras de iOS */
+  --seguro-arriba: env(safe-area-inset-top, 0px);
+  --seguro-abajo: env(safe-area-inset-bottom, 0px);
+  --seguro-izquierda: env(safe-area-inset-left, 0px);
+  --seguro-derecha: env(safe-area-inset-right, 0px);
+
+  /* Animación */
+  --duracion-hoja: 250ms;
+  --curva-salida: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duracion-hoja: 0ms;
+  }
+}

@@ -1,0 +1,67 @@
+.ayuda {
+  position: fixed;
+  z-index: var(--capa-busqueda);
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-superficie);
+  padding: var(--seguro-arriba) var(--seguro-derecha) 0 var(--seguro-izquierda);
+}
+
+.pantalla--escritorio .ayuda {
+  right: auto;
+  width: 408px;
+  box-shadow: var(--elevacion-2);
+}
+
+.ayuda__cabecera {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  padding: var(--esp-2) var(--esp-2) var(--esp-2) var(--margen-lateral);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.ayuda__cabecera h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: var(--peso-titulo);
+}
+
+.ayuda__cabecera h2:focus {
+  outline: none;
+}
+
+.ayuda__cuerpo {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--esp-3) var(--margen-lateral) calc(var(--esp-5) + var(--seguro-abajo));
+}
+
+.ayuda__pasos {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.ayuda__pasos li {
+  margin-bottom: var(--esp-2);
+}
+
+.ayuda__leyenda {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ayuda__leyenda li {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: var(--toque-min);
+}
+
+.ayuda__ubicacion {
+  margin: var(--esp-4) 0 var(--esp-2);
+}

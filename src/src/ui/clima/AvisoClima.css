@@ -1,0 +1,54 @@
+.aviso-clima {
+  margin: var(--esp-2) 0 0;
+  font-size: var(--texto-secundario);
+  color: var(--color-texto-secundario);
+}
+
+.aviso-clima--falla p {
+  margin: 0;
+  color: var(--color-texto);
+}
+
+.aviso-clima__nota {
+  margin-top: var(--esp-1);
+}
+
+.aviso-clima__opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+  margin-top: var(--esp-2);
+}
+
+.aviso-clima__opcion {
+  display: flex;
+  flex: 1 1 140px;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: var(--toque-min);
+  padding: var(--esp-2) var(--esp-3);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-chip);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font: inherit;
+  text-align: left;
+}
+
+.aviso-clima__opcion[aria-pressed='true'] {
+  border-color: var(--color-primario);
+  color: var(--color-primario-oscuro);
+}
+
+.aviso-clima__nombre {
+  font-weight: var(--peso-titulo);
+}
+
+.aviso-clima__detalle {
+  font-size: var(--texto-leyenda);
+  color: var(--color-texto-secundario);
+}
+
+.aviso-clima__reintentar {
+  margin-top: var(--esp-2);
+}
