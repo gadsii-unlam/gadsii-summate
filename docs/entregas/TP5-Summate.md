@@ -83,7 +83,7 @@ El guion completo está en [`docs/evidencia/tp5/guion-sesion.md`](../evidencia/t
 | Tarea | Situación | Mide |
 | --- | --- | --- |
 | T1 | Primer día de una materia en el Aula 255; entró por la entrada principal y la clase empieza en 10 minutos. | M1, primer uso sin explicación |
-| T2 | Salió de la Biblioteca y la clase se pasó al Aula 418. La entrada del Edificio Este por la que pasa la ruta más corta está cerrada y señalizada con cinta; no se le menciona. | M2 y M1 |
+| T2 | Salió de la Biblioteca y la clase se pasó al Aula 418. La entrada del Edificio Este por la que pasa la ruta más corta está cerrada y señalizada con una cinta que colocó el equipo; no se le menciona. | M2 y M1 |
 | T3 | Se le pide que imagine que llueve fuerte (no llovía ese día): está en el Buffet y tiene que llegar al Aula 108. En la aplicación, el equipo activa el clima simulado en lluvia sin que el usuario lo vea. | M1 y alternativa según el clima |
 
 Elegimos recorridos que no son iguales en todos los casos: con el motor del MVP comprobamos que el cierre de T2 obliga a un desvío (de 185,5 m a 238 m) y que en T3 la ruta resguardada difiere de la más corta (254 m contra 211 m). Una primera elección de T3 (Aula 120) se descartó porque ambas rutas coincidían y no habría probado nada.
@@ -175,7 +175,7 @@ También hubo un resultado a favor que no estaba previsto: U2 había dicho en el
 
 **M2, el seguimiento del desvío.**
 
-Mirado a simple vista, el resultado parece tranquilizador: en T2 nadie pasó por el tramo cerrado (los tres «No» en `registro.md`) y los tres terminaron caminando el desvío. Pero U2 y U3 se detuvieron frente a la cinta (U2, T2, 17:15:40; U3, T2, 18:19:50), la cinta que señalizaba el cierre en el lugar, no una decisión que les haya llevado la aplicación. U3 lo dijo: «No me fijé en lo rojo hasta que ya estaba ahí.» Si el cierre del campus no tuviera cinta, el mismo comportamiento los habría llevado al tramo cerrado.
+Mirado a simple vista, el resultado parece tranquilizador: en T2 nadie pasó por el tramo cerrado (los tres «No» en `registro.md`) y los tres terminaron caminando el desvío. Pero U2 y U3 se detuvieron frente a la cinta (U2, T2, 17:15:40; U3, T2, 18:19:50), la cinta que el equipo colocó para señalizar el cierre, no una decisión que les haya llevado la aplicación. U3 lo dijo: «No me fijé en lo rojo hasta que ya estaba ahí.» Si el cierre del campus no tuviera cinta, el mismo comportamiento los habría llevado al tramo cerrado.
 
 Lo que protege contra esa lectura es que el criterio exige caminar el desvío **sin acercarse** al cierre, lo que da 1 de 3 y no 3 de 3. Quien lea «nadie pasó por el tramo cerrado» sin esa condición se queda con una conclusión que la hipótesis no justifica.
 
