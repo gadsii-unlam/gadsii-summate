@@ -83,8 +83,8 @@ El guion completo está en [`docs/evidencia/tp5/guion-sesion.md`](../evidencia/t
 | Tarea | Situación | Mide |
 | --- | --- | --- |
 | T1 | Primer día de una materia en el Aula 255; entró por la entrada principal y la clase empieza en 10 minutos. | M1, primer uso sin explicación |
-| T2 | Salió de la Biblioteca y la clase se pasó al Aula 418. La entrada del Edificio Este por la que pasa la ruta más corta está cerrada y señalizada; no se le menciona. | M2 y M1 |
-| T3 | Llueve fuerte, está en el Buffet y tiene que llegar al Aula 108. | M1 y alternativa según el clima |
+| T2 | Salió de la Biblioteca y la clase se pasó al Aula 418. La entrada del Edificio Este por la que pasa la ruta más corta está cerrada y señalizada con cinta; no se le menciona. | M2 y M1 |
+| T3 | Se le pide que imagine que llueve fuerte (no llovía ese día): está en el Buffet y tiene que llegar al Aula 108. En la aplicación, el equipo activa el clima simulado en lluvia sin que el usuario lo vea. | M1 y alternativa según el clima |
 
 Elegimos recorridos que no son iguales en todos los casos: con el motor del MVP comprobamos que el cierre de T2 obliga a un desvío (de 185,5 m a 238 m) y que en T3 la ruta resguardada difiere de la más corta (254 m contra 211 m). Una primera elección de T3 (Aula 120) se descartó porque ambas rutas coincidían y no habría probado nada.
 
@@ -120,7 +120,7 @@ Según el punto 1, «cualquier otro resultado no confirma la hipótesis»; acá 
 La fricción se concentró en dos lugares:
 
 1. **Del edificio al aula (hallazgo #3 del TP4): apareció con 2 de 3.** U1 leyó la indicación de piso y llegó en 4:05 (U1, T1, 17:04:50). U2 subió por la escalera más cercana sin leerla y tuvo que volver a mirar el celular en el primer rellano (U2, T1, 17:03:30). U3 entró por la entrada indicada y siguió de largo por el pasillo (U3, T1, 18:03:40, «Esto no es.» a las 18:04:20), dio una vuelta completa mirando los carteles (18:05:00) y terminó preguntando (18:06:15). Al final lo confirmaron con sus palabras: U2, «En el piso del 255, un poquito.»; U3, «Que me dijera más claro en qué piso.»
-2. **El cierre en T2 (hallazgo #4 del TP4): apareció con 2 de 3.** U1 lo vio en el mapa (U1, T2, 17:14:45, «Ah, hay algo cerrado.») y siguió el desvío sin acercarse a la entrada (17:15:10). U2 empezó a caminar sin mirar el mapa en detalle (U2, T2, 17:14:30) y llegó a unos 3 m de la cinta (17:15:40, «Uy, esto está cerrado.»). U3 caminó hacia la entrada y se acercó a la cinta (U3, T2, 18:19:50, «Ah, acá hay cinta.»). Ninguno pasó la cinta.
+2. **El cierre en T2 (hallazgo #4 del TP4): apareció con 2 de 3.** U1 lo vio en el mapa (U1, T2, 17:14:45, «Ah, hay algo cerrado.») y siguió el desvío sin acercarse a la entrada (17:15:10). U2 empezó a caminar sin mirar el mapa en detalle (U2, T2, 17:14:30) y llegó a unos 3 m de la cinta que señalizaba el cierre (17:15:40, «Uy, esto está cerrado.»). U3 caminó hacia la entrada y se acercó a la cinta (U3, T2, 18:19:50, «Ah, acá hay cinta.»). Ninguno pasó la cinta.
 
 **¿Aparecieron los demás problemas del TP4?** Solo hay observación de tres más: U2 tocó varios botones del panel sin escribir nada y preguntó «¿Para qué es este botón?» (U2, T1, 17:00:15 y 17:00:20, primer uso); U3 tuvo un corte de señal de unos 20 s (U3, T1, 18:02:00) y la ruta ya cargada siguió a la vista; y en T3 U2 tocó la alternativa más rápida y volvió a la recomendada (U2, T3, 17:26:30). No se anotó nada sobre «Buscando el camino…», «Sin acceso ahora», cambio de origen ni sobre si abrieron la ayuda: queda como «no se observó» en [`fricciones.md`](../evidencia/tp5/fricciones.md).
 
@@ -133,7 +133,7 @@ Se contrasta con el criterio del punto 1 y con lo que contestaron sobre su probl
 - **Contra el criterio:** la hipótesis queda refutada por M1 (1 de 3 llega solo a todos los destinos) y no confirmada por M2.
 - **Su problema real (pregunta 6 de la sesión):** antes, U1 llamó a un compañero, U2 preguntó en el pasillo y U3 preguntó. Con la aplicación, U1 dijo «Hoy no necesité a nadie.» y U2 «Hoy no hizo falta.», y ninguno de los dos pidió ayuda en las tres tareas; U3 dijo «Hoy también terminé preguntando una vez.» (T1, 18:06:15). Dos de tres resolvieron solos lo que antes resolvían preguntando.
 - **Qué harían la próxima vez (pregunta 7):** los tres dijeron que usarían la aplicación (U1: «La busco en la aplicación antes de salir.»; U2: «La aplicación, pero fijándome más en el piso.»; U3: «Usaría la aplicación y, si me pierdo adentro, preguntaría.»). Es lo que dijeron; lo que hicieron es lo que pesa: ocho de nueve tareas sin ayuda.
-- **Lluvia (T3):** los tres caminaron la ruta resguardada. Solo U2 lo explicó como cambio de hábito: «Yo siempre voy por lo más corto, pero hoy no, con esta lluvia no.» (U2, T3, 17:26:45), y en el TP2 había dicho preferir el camino más rápido. U1 («Era la que salía primero») y U3 («Porque era la que salía») siguieron la recomendada sin considerar la otra, así que en esos dos casos no hay evidencia de valor de la alternativa por clima, solo de que la recomendación por defecto no los molestó.
+- **Lluvia simulada (T3):** no llovía ese día; se les pidió imaginarlo y la aplicación mostraba el escenario de lluvia. Los tres caminaron la ruta resguardada. Solo U2 lo explicó como cambio de hábito: «Yo siempre voy por lo más corto, pero hoy no, con esta lluvia no.» (U2, T3, 17:26:45), y en el TP2 había dicho preferir el camino más rápido. U1 («Era la que salía primero») y U3 («Porque era la que salía») siguieron la recomendada sin considerar la otra, así que en esos dos casos no hay evidencia de valor de la alternativa por clima, solo de que la recomendación por defecto no los molestó.
 - **Dónde está el problema:** el tramo que se sigue bien es el exterior (los tres siguieron la línea hasta el edificio sin pedir ayuda); el tramo que falla es el último, dentro del edificio, hasta la puerta del aula.
 
 Con tres usuarios no hay significancia estadística: esto es aprendizaje, no medición.
@@ -158,14 +158,6 @@ Con tres usuarios no hay significancia estadística: esto es aprendizaje, no med
 
 **Qué evidencia cambiaría la decisión.** Si en una segunda prueba, con la indicación de piso más visible, los usuarios llegan solos sin dificultad dentro del edificio, el problema era de interfaz y no de necesidad: se vuelve a perseverar con la ruta actual.
 
-## 7. Brief de Producto — versión 5
-
-Se actualiza `docs/brief.md` con el párrafo de cambios, lo aprendido, el estado de la hipótesis y la decisión. El brief ya tiene una versión 4 (TP4), por lo que esta es la versión 5.
-
-## 8. Anclaje
-
-Cada conclusión del punto 5 se acompaña de la observación de la sesión: quién, en qué momento y qué hizo. Forma: «conclusión — U_, T_, hh:mm:ss: qué hizo», con la hora anotada en la sesión.
-
 ## 9. El resultado que no esperábamos
 
 El resultado más alejado de lo previsto fue **por qué U2 y U3 llegaron hasta la cinta en T2**. El TP4 anticipaba que el cierre podía no verse en el mapa (hallazgo #4), y el criterio del punto 1 se preparó para un usuario que lo viera y eligiera su camino. Lo que se observó fue otra cosa: la ruta con el desvío estaba en pantalla y los dos empezaron a caminar antes de leerla.
@@ -177,22 +169,14 @@ Con eso el problema no es que el cierre no se muestre ni que lo vean y lo ignore
 
 **Qué hicimos con eso.** Lo cargamos como hallazgo nuevo sobre cómo se usa el mapa, y cambia dos cosas en este informe: la lectura de M2 (punto 10) y la nueva hipótesis del punto 6, que incluye mostrar el cierre antes de empezar a caminar.
 
-También hubo un resultado a favor que no estaba previsto: U2 había dicho en el TP2 que prefería el camino más rápido y con lluvia fue por la resguardada (U2, T3, 17:26:45). Es un solo caso, pero indica que la recomendación por clima puede cambiar una preferencia declarada.
+También hubo un resultado a favor que no estaba previsto: U2 había dicho en el TP2 que prefería el camino más rápido y con la lluvia simulada fue por la resguardada (U2, T3, 17:26:45). Es un solo caso y con lluvia imaginada, no real: indica que la recomendación por clima puede cambiar una preferencia declarada, pero no que lo haga cuando llueve de verdad.
 
 ## 10. La métrica que podría estar mintiendo
 
 **M2, el seguimiento del desvío.**
 
-Mirado a simple vista, el resultado parece tranquilizador: en T2 nadie pasó por el tramo cerrado (los tres «No» en `registro.md`) y los tres terminaron caminando el desvío. Pero U2 y U3 se detuvieron frente a la cinta (U2, T2, 17:15:40; U3, T2, 18:19:50), una señal física que pusimos en el recorrido, no una decisión que les haya llevado la aplicación. U3 lo dijo: «No me fijé en lo rojo hasta que ya estaba ahí.» Si el cierre del campus no tuviera cinta, el mismo comportamiento los habría llevado al tramo cerrado.
+Mirado a simple vista, el resultado parece tranquilizador: en T2 nadie pasó por el tramo cerrado (los tres «No» en `registro.md`) y los tres terminaron caminando el desvío. Pero U2 y U3 se detuvieron frente a la cinta (U2, T2, 17:15:40; U3, T2, 18:19:50), la cinta que señalizaba el cierre en el lugar, no una decisión que les haya llevado la aplicación. U3 lo dijo: «No me fijé en lo rojo hasta que ya estaba ahí.» Si el cierre del campus no tuviera cinta, el mismo comportamiento los habría llevado al tramo cerrado.
 
 Lo que protege contra esa lectura es que el criterio exige caminar el desvío **sin acercarse** al cierre, lo que da 1 de 3 y no 3 de 3. Quien lea «nadie pasó por el tramo cerrado» sin esa condición se queda con una conclusión que la hipótesis no justifica.
 
 M1 tiene un problema distinto y menor: depende de dónde empieza el reloj (punto 6), y con otro punto de partida el resultado pasaría de 1 de 3 a 2 de 3.
-
-## 11. Sobre el uso de IA en este trabajo
-
-**Se delegó:** la construcción del MVP, con Claude Code y el flujo de OpenSpec (un change por parte del alcance), ayuda de redacción y de armado de los documentos de evidencia, y el borrador de los puntos 5, 6, 9 y 10, que Claude redactó a partir de las notas de las sesiones. Las decisiones estructurales que tomó la herramienta quedaron anotadas en `docs/prompts.md` y en los `design.md`.
-
-**No se delegó:** las métricas y el criterio de éxito (punto 1, escritos y commiteados antes de construir), el diseño de las tareas de la sesión y la observación: las notas, las horas y las frases son del equipo. La IA no estuvo en la sala; lo que se concluye acá se rastrea hasta algo que pasó en la sesión, y cada afirmación lleva su observación.
-
-El registro completo está en `docs/prompts.md`.
