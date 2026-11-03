@@ -1,0 +1,69 @@
+/* Capa de tramos cerrados y etiqueta de fecha simulada (aplicar-cierres-temporales). */
+
+.cierre__icono {
+  /* Leaflet le pone fondo y borde blancos a los divIcon: se quitan. */
+  background: none;
+  border: 0;
+}
+
+.cierre__objetivo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.cierre__icono:focus-visible .cierre__objetivo {
+  outline: 3px solid var(--color-primario);
+  outline-offset: -3px;
+}
+
+.cierre__detalle {
+  font-family: var(--fuente);
+  color: var(--color-texto);
+  max-width: 240px;
+}
+
+.cierre__detalle p {
+  margin: 0;
+}
+
+.cierre__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-1);
+  font-size: var(--texto-secundario);
+  font-weight: var(--peso-titulo);
+  color: var(--color-error-texto);
+}
+
+.cierre__motivo {
+  margin-top: var(--esp-1);
+  font-size: var(--texto-cuerpo);
+}
+
+.cierre__hasta {
+  margin-top: var(--esp-1);
+  font-size: var(--texto-secundario);
+  color: var(--color-texto-secundario);
+}
+
+.cierre__fecha-simulada {
+  position: fixed;
+  top: calc(var(--seguro-arriba) + var(--esp-2));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--capa-avisos);
+  margin: 0;
+  padding: var(--esp-1) var(--esp-3);
+  border-radius: var(--radio-chip);
+  background: var(--color-texto);
+  color: var(--color-superficie);
+  font-family: var(--fuente);
+  font-size: var(--texto-leyenda);
+  font-weight: var(--peso-titulo);
+  box-shadow: var(--elevacion-1);
+  pointer-events: none;
+  white-space: nowrap;
+}

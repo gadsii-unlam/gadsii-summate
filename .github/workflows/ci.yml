@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# La app vive en src/.
+defaults:
+  run:
+    working-directory: src
+
+jobs:
+  verificar:
+    name: Lint, tipos, tests y build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: src/.nvmrc
+          cache: npm
+          cache-dependency-path: src/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm test
+      # El build corre antes `npm run datos:build`: falla si el grafo no valida.
+      - run: npm run build
+      # Chequeo estricto de public/data/cierres.json contra el grafo generado por el build.
+      - run: npm run validar-cierres
+      - name: Subir reporte de datos del campus
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-datos
+          path: src/scripts/salida/reporte-datos.md
+          if-no-files-found: ignore
+          retention-days: 30
+
+  e2e:
+    name: E2E (Chromium móvil)
+    needs: verificar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: src/.nvmrc
+          cache: npm
+          cache-dependency-path: src/package-lock.json
+      - run: npm ci
+      - name: Versión de Playwright
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Caché de navegadores de Playwright
+        id: cache-playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      - name: Instalar Chromium
+        if: steps.cache-playwright.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Dependencias del sistema para Chromium
+        if: steps.cache-playwright.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+      - run: npm run test:e2e
+      - name: Subir reporte de Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            src/playwright-report/
+            src/test-results/
+          retention-days: 14

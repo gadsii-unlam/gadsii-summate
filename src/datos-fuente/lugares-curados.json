@@ -1,0 +1,104 @@
+{
+  "$schema": "./lugares-curados.schema.json",
+  "edificios": {
+    "central": "Campus",
+    "edificio-oeste": "Edificio Oeste",
+    "edificio-este": "Edificio Este",
+    "edificio-sur": "Edificio Sur",
+    "primer-piso": "Galería del 1er piso"
+  },
+  "lugares": {
+    "entrada-campus-florencio-varela": {
+      "nombre": "Entrada Florencio Varela",
+      "alias": ["Entrada principal", "Florencio Varela 1903"]
+    },
+    "entrada-campus-la-paz": {
+      "nombre": "Entrada La Paz",
+      "alias": ["Entrada estacionamiento"]
+    },
+    "entrada-campus-peron-norte": {
+      "nombre": "Entrada Pte. Perón (norte)",
+      "alias": ["Entrada Perón", "Entrada estacionamiento"]
+    },
+    "entrada-campus-peron-sur": {
+      "nombre": "Entrada Pte. Perón (sur)",
+      "alias": ["Entrada Perón", "Entrada estacionamiento"]
+    },
+    "biblioteca": {
+      "nombre": "Biblioteca Leopoldo Marechal",
+      "categoria": "servicio",
+      "alias": ["Biblioteca"],
+      "puertas": ["acceso-biblioteca-oeste", "acceso-biblioteca-este"]
+    },
+    "gimnasio": {
+      "nombre": "Gimnasio J.M. Fangio",
+      "categoria": "servicio",
+      "alias": ["Gimnasio", "Gimnasio Juan Manuel Fangio"],
+      "puertas": ["acceso-gimnasio-norte", "acceso-gimnasio-sur"]
+    },
+    "rectorado": {
+      "nombre": "Rectorado",
+      "categoria": "oficina",
+      "puertas": ["puerta-rectorado-interior", "puerta-rectorado-exterior"]
+    },
+    "lab-habilidades-clinicas": {
+      "nombre": "Laboratorio de Habilidades Clínicas",
+      "categoria": "laboratorio",
+      "puertas": [
+        "puerta-lab-habilidades-clinicas-puerta-1",
+        "puerta-lab-habilidades-clinicas-puerta-2"
+      ]
+    },
+    "dpto-cs-economicas": {
+      "alias": ["Departamento de Ciencias Económicas", "Económicas"]
+    },
+    "dpto-cs-salud": {
+      "alias": ["Departamento de Ciencias de la Salud", "Salud"]
+    },
+    "dpto-derecho": {
+      "alias": ["Departamento de Derecho y Ciencia Política", "Derecho"]
+    },
+    "dpto-humanidades": {
+      "alias": ["Departamento de Humanidades y Ciencias Sociales", "Humanidades"]
+    },
+    "escuela-artes-medios": {
+      "nombre": "Escuela de Artes y Medios de Comunicación",
+      "alias": ["Escuela de Artes y Medios", "Artes y Medios"]
+    },
+    "direccion-alumnos": {
+      "alias": ["Dir. de Alumnos", "alumnos"]
+    },
+    "direccion-pedagogia": {
+      "alias": ["Dirección de Pedagogía Universitaria"]
+    },
+    "cau": {
+      "alias": ["Centro de Atención Universitaria"]
+    },
+    "salon-americas": {
+      "nombre": "Salón de las Américas"
+    },
+    "radio": {
+      "nombre": "Radio Universidad",
+      "alias": ["Radio"]
+    },
+    "patio-aulas-250": {
+      "categoria": "servicio"
+    }
+  },
+  "referencias": [
+    "entrada-campus-florencio-varela",
+    "entrada-campus-la-paz",
+    "entrada-campus-peron-norte",
+    "entrada-campus-peron-sur",
+    "biblioteca",
+    "buffet",
+    "salon-americas",
+    "teatro",
+    "gimnasio",
+    "rectorado"
+  ],
+  "sinSala": ["dpto-derecho"],
+  "otrosPisos": [],
+  "pendientes": [],
+  "exteriorForzado": {}
+}

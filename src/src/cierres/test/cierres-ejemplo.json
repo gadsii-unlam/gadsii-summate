@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "actualizado": "2026-11-02T18:00:00-03:00",
+  "cierres": [
+    {
+      "id": "obra-entrada-edificio-sur",
+      "motivo": "Obra en la entrada oeste del Edificio Sur",
+      "nodos": ["entrada-ed-sur-oeste-sur"],
+      "desde": "2026-11-03T07:00:00-03:00",
+      "hasta": "2026-11-14T23:00:00-03:00"
+    },
+    {
+      "id": "vereda-entrada-principal",
+      "motivo": "Vereda en reparación frente a la entrada principal",
+      "aristas": [
+        "arista__cruce--ext-calle-sur-rectorado--ext-vereda-oeste-edificio-sur__cruce--ext-calle-sur-rectorado--ext-franja-entre-edificios-oeste"
+      ]
+    },
+    {
+      "id": "escalera-radio",
+      "motivo": "Escalera junto a la Radio cerrada por mantenimiento",
+      "nodos": ["escalera-radio-primer-piso"],
+      "hasta": "2026-11-05T13:00:00-03:00"
+    }
+  ]
+}

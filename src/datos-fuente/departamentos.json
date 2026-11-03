@@ -1,0 +1,72 @@
+{
+  "$schema": "./departamentos.schema.json",
+  "nombres": {
+    "humanidades": "Humanidades y Ciencias Sociales",
+    "economicas": "Ciencias Económicas",
+    "formacion-continua": "Formación Continua",
+    "arquitectura": "Arquitectura",
+    "centro-estudiantes": "Socioculturales",
+    "salud": "Ciencias de la Salud",
+    "derecho": "Derecho y Ciencia Política",
+    "artes-y-medios": "Artes y Medios"
+  },
+  "aulas": {
+    "humanidades": [
+      101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119,
+      120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134
+    ],
+    "economicas": [
+      309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327,
+      328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346,
+      347, 348, 349
+    ],
+    "formacion-continua": [
+      220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238,
+      239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 301, 302, 303, 304, 305, 306, 307, 308
+    ],
+    "arquitectura": [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261,
+      262, 263, 264, 265, 266, 267
+    ],
+    "centro-estudiantes": [
+      201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219
+    ],
+    "derecho": [
+      401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419,
+      420, 421, 501, 502, 503, 507
+    ],
+    "salud": [
+      504, 505, 506, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523,
+      524, 525, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612
+    ]
+  },
+  "lugares": {
+    "dpto-humanidades": "humanidades",
+    "rectorado": "humanidades",
+    "direccion-bienestar-estudiantil": "humanidades",
+    "dpto-cs-economicas": "economicas",
+    "direccion-alumnos": "economicas",
+    "auditorio-marti": "economicas",
+    "auditorio-rene-nicoletti": "economicas",
+    "formacion-continua": "formacion-continua",
+    "direccion-pedagogia": "formacion-continua",
+    "lab-idiomas": "formacion-continua",
+    "cau": "arquitectura",
+    "lab-electronica": "arquitectura",
+    "lab-fisica-oeste": "arquitectura",
+    "buffet": "centro-estudiantes",
+    "direccion-graduados": "centro-estudiantes",
+    "oficina-socioculturales": "centro-estudiantes",
+    "dpto-cs-salud": "salud",
+    "lab-kinesiologia": "salud",
+    "dpto-derecho": "derecho",
+    "lab-microscopia": "derecho",
+    "lab-extension": "derecho",
+    "lab-desarrollo-materiales-educativos": "derecho",
+    "lab-habilidades-clinicas": "derecho",
+    "lab-planta-baja-1": "derecho",
+    "lab-planta-baja-2": "derecho",
+    "escuela-artes-medios": "artes-y-medios",
+    "laboratorios-medios": "artes-y-medios"
+  }
+}

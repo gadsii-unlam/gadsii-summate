@@ -1,0 +1,322 @@
+/* Disposición general y piezas compartidas (botones, filas, títulos). */
+
+.pantalla {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-fondo-mapa);
+}
+
+.pantalla__principal {
+  position: absolute;
+  inset: 0;
+}
+
+.pantalla__mapa {
+  position: absolute;
+  inset: 0;
+  z-index: var(--capa-mapa);
+  background: var(--color-fondo-mapa);
+}
+
+/* Escritorio: el mapa empieza donde termina el panel lateral (ANCHO_PANEL). Si quedara debajo,
+   los límites del plano no dejarían llevar a la vista lo que tapa el panel al hacer zoom. */
+.pantalla--escritorio .pantalla__mapa {
+  left: 408px;
+}
+
+/* ---- Tarjeta superior ------------------------------------------------------------------ */
+
+.tarjeta-superior {
+  position: absolute;
+  z-index: var(--capa-tarjeta);
+  top: calc(var(--seguro-arriba) + 8px);
+  left: calc(var(--seguro-izquierda) + var(--margen-lateral));
+  right: calc(var(--seguro-derecha) + var(--margen-lateral));
+  pointer-events: none;
+}
+
+/* Arrastrar sobre la tarjeta o los botones no mueve la página (ni dispara "tirar para recargar");
+   los chips scrollean de costado por su cuenta. */
+.tarjeta-superior,
+.botones-flotantes {
+  touch-action: none;
+}
+
+.tarjeta-superior > * {
+  pointer-events: auto;
+}
+
+@media (min-width: 600px) {
+  .tarjeta-superior {
+    right: auto;
+    width: min(560px - 2 * var(--margen-lateral), calc(100% - 2 * var(--margen-lateral)));
+  }
+}
+
+.pantalla--escritorio .tarjeta-superior {
+  top: var(--esp-4);
+  left: var(--esp-4);
+  width: calc(408px - 2 * var(--esp-4));
+}
+
+/* ---- Botones circulares ---------------------------------------------------------------- */
+
+.botones-flotantes {
+  position: absolute;
+  z-index: var(--capa-botones);
+  right: calc(var(--seguro-derecha) + var(--margen-lateral));
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  transition: bottom var(--duracion-hoja) var(--curva-salida);
+}
+
+.botones-flotantes[hidden] {
+  display: none;
+}
+
+.pantalla--escritorio .botones-flotantes {
+  bottom: 120px;
+  right: var(--esp-3);
+}
+
+.boton-circular {
+  display: grid;
+  place-items: center;
+  width: var(--boton-circular);
+  height: var(--boton-circular);
+  border-radius: 50%;
+  background: var(--color-superficie);
+  color: var(--color-texto-secundario);
+  box-shadow: var(--elevacion-2);
+}
+
+.boton-circular:active {
+  background: var(--color-superficie-variante);
+}
+
+/* ---- Botones -------------------------------------------------------------------------- */
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  min-height: var(--toque-min);
+  padding: 0 var(--esp-5);
+  border-radius: var(--radio-boton);
+  font-size: var(--texto-secundario);
+  font-weight: var(--peso-titulo);
+}
+
+.boton--primario {
+  background: var(--color-primario);
+  color: var(--color-sobre-primario);
+}
+
+.boton--primario:active {
+  background: var(--color-primario-oscuro);
+}
+
+.boton--secundario {
+  background: var(--color-superficie);
+  color: var(--color-primario-oscuro);
+  border: 1px solid var(--color-borde);
+}
+
+.boton-icono {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--toque-min);
+  height: var(--toque-min);
+  border-radius: 50%;
+  color: var(--color-texto-secundario);
+}
+
+.boton-icono:active {
+  background: var(--color-superficie-variante);
+}
+
+.boton-icono--chico {
+  width: 36px;
+  height: 36px;
+  position: relative;
+}
+
+/* La zona táctil se extiende a 44 px. */
+.boton-icono--chico::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+}
+
+/* ---- Títulos y textos ----------------------------------------------------------------- */
+
+.titulo-hoja {
+  margin: var(--esp-2) 0 var(--esp-1);
+  font-size: var(--texto-titulo-ficha);
+  font-weight: var(--peso-titulo);
+  line-height: 1.3;
+}
+
+.titulo-hoja--chico {
+  font-size: var(--texto-titulo-seccion);
+}
+
+.titulo-hoja:focus {
+  outline: none;
+}
+
+.titulo-hoja:focus-visible {
+  outline: 2px solid var(--color-primario);
+}
+
+.titulo-seccion {
+  margin: var(--esp-4) 0 var(--esp-1);
+  font-size: var(--texto-secundario);
+  font-weight: var(--peso-titulo);
+  color: var(--color-texto-secundario);
+}
+
+.ayuda-breve {
+  margin: var(--esp-1) 0 var(--esp-2);
+  font-size: var(--texto-secundario);
+  color: var(--color-texto-secundario);
+}
+
+.hoja-seccion {
+  margin-top: var(--esp-2);
+}
+
+/* ---- Filas ---------------------------------------------------------------------------- */
+
+.lista-filas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-4);
+  width: 100%;
+  min-height: var(--alto-fila);
+  padding: var(--esp-2) 0;
+  text-align: left;
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-superficie-variante);
+}
+
+.fila:active,
+.fila--activa {
+  background: var(--color-superficie-variante);
+}
+
+.fila__icono {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-superficie-variante);
+  color: var(--color-texto-secundario);
+}
+
+.fila__textos {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.fila__nombre {
+  font-size: var(--texto-cuerpo);
+  color: var(--color-texto);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fila__nombre strong {
+  font-weight: 700;
+}
+
+.fila__detalle {
+  font-size: var(--texto-secundario);
+  color: var(--color-texto-secundario);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fila__estado {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-1);
+  font-size: var(--texto-leyenda);
+  font-weight: var(--peso-titulo);
+  color: var(--color-error-texto);
+}
+
+/* ---- Inicio, ficha y panel ------------------------------------------------------------ */
+
+.primer-uso {
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--radio-chip);
+  background: var(--color-superficie-variante);
+}
+
+.primer-uso p {
+  margin: 0 0 var(--esp-3);
+}
+
+.ficha {
+  padding-bottom: var(--esp-3);
+}
+
+.ficha__detalle {
+  margin: 0 0 var(--esp-3);
+  font-size: var(--texto-secundario);
+  color: var(--color-texto-secundario);
+}
+
+.ficha__mas {
+  border-top: 1px solid var(--color-borde);
+  padding-top: var(--esp-3);
+}
+
+.ficha__mas p {
+  margin: 0 0 var(--esp-2);
+}
+
+.estado-acceso__texto {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-1);
+  margin: 0 0 var(--esp-2);
+  font-size: var(--texto-secundario);
+  font-weight: var(--peso-titulo);
+  color: var(--color-error-texto);
+}
+
+.sugerencia .boton {
+  margin-bottom: var(--esp-2);
+}
+
+.contenido-ruta {
+  padding: var(--esp-3) 0;
+  color: var(--color-texto-secundario);
+}
+
+.pantalla--aviso {
+  display: grid;
+  place-items: center;
+  padding: var(--esp-5);
+  text-align: center;
+  color: var(--color-texto-secundario);
+}

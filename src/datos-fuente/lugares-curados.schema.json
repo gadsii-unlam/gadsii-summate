@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "lugares-curados.schema.json",
+  "title": "Nombres y datos de lugares curados a mano (pisan lo derivado del grafo)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "edificios",
+    "lugares",
+    "referencias",
+    "otrosPisos",
+    "pendientes",
+    "exteriorForzado"
+  ],
+  "definitions": {
+    "categoria": {
+      "enum": ["aula", "laboratorio", "bano", "oficina", "servicio", "auditorio", "entrada"]
+    },
+    "idNodo": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "textos": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  },
+  "properties": {
+    "$schema": { "type": "string" },
+    "edificios": {
+      "description": "Nombre visible del edificio de cada departamento (tiene que coincidir con el plano). `servicios` no va: cada servicio es su propio edificio.",
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z0-9-]+$" },
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "lugares": {
+      "description": "Correcciones por id de lugar (`<depto>-<resto>`, por ejemplo `humanidades-banos-mujeres`).",
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z0-9-]+$" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 1,
+        "properties": {
+          "nombre": { "type": "string", "minLength": 1 },
+          "edificio": { "type": "string", "minLength": 1 },
+          "categoria": { "$ref": "#/definitions/categoria" },
+          "alias": { "$ref": "#/definitions/textos" },
+          "puertas": {
+            "description": "Fija a mano las puertas del lugar (pisa la agrupación automática). La primera es la principal.",
+            "type": "array",
+            "items": { "$ref": "#/definitions/idNodo" },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "sinSala": {
+      "description": "Ids de lugares que no se resaltan como destino aunque el plano tenga una forma detrás de su puerta (por ejemplo, si la puerta está mal ubicada): se usa el pin.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+      "uniqueItems": true
+    },
+    "referencias": {
+      "description": "Ids de lugares que se ofrecen como referencias reconocibles para elegir el origen.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+      "uniqueItems": true
+    },
+    "otrosPisos": {
+      "description": "Lugares de pisos sin puntos en el grafo. Solo entran al catálogo con `verificado: true`.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "nombre", "depto", "piso", "accesos", "indicacion", "verificado"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "nombre": { "type": "string", "minLength": 1 },
+          "edificio": { "type": "string", "minLength": 1 },
+          "depto": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "categoria": { "$ref": "#/definitions/categoria" },
+          "piso": { "enum": ["1", "2", "3"] },
+          "accesos": {
+            "description": "Nodos de planta baja por los que se llega (puerta de la escalera o del edificio).",
+            "type": "array",
+            "items": { "$ref": "#/definitions/idNodo" },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "indicacion": { "type": "string", "minLength": 1 },
+          "alias": { "$ref": "#/definitions/textos" },
+          "verificado": { "type": "boolean" }
+        }
+      }
+    },
+    "pendientes": {
+      "description": "Lugares conocidos que todavía no tienen nodo de puerta en el plano (se reportan, no frenan).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["depto", "lugar", "nota"],
+        "properties": {
+          "depto": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "lugar": { "type": "string", "minLength": 1 },
+          "nota": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "exteriorForzado": {
+      "description": "Excepciones a la regla de tramo exterior, por id de arista (`true` exterior, `false` interior).",
+      "type": "object",
+      "propertyNames": { "pattern": "^arista__.+__.+$" },
+      "additionalProperties": { "type": "boolean" }
+    }
+  }
+}

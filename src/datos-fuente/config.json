@@ -1,0 +1,7 @@
+{
+  "$schema": "./config.schema.json",
+  "metrosPorPx": 0.18,
+  "toleranciaOrtogonalPx": 0.6,
+  "diagonalesPermitidas": ["arista__cruce-camino-diagonal-franja__cruce-camino-diagonal-vereda"],
+  "respaldo": { "escala": 1 }
+}

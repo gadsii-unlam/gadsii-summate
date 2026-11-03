@@ -1,0 +1,42 @@
+# Dependencias
+node_modules/
+
+# Build
+dist/
+dist-ssr/
+*.tsbuildinfo
+
+# Datos generados por el pipeline (preparar-datos-campus); solo se versionan el README y los
+# cierres precargados a mano (aplicar-cierres-temporales)
+public/data/*
+!public/data/README.md
+!public/data/cierres.json
+
+# Reporte del pipeline de datos (npm run datos:build); en el CI se sube como artefacto
+scripts/salida/
+
+# Reportes de tests
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+coverage/
+.vitest/
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.local
+.wrangler/

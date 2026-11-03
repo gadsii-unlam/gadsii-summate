@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "departamentos.schema.json",
+  "title": "Departamento académico de cada lugar (el plano no lo dice: sale del plano anterior)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["nombres", "aulas", "lugares"],
+  "definitions": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" }
+  },
+  "properties": {
+    "$schema": { "type": "string" },
+    "nombres": {
+      "description": "Nombre visible de cada departamento, por slug.",
+      "type": "object",
+      "propertyNames": { "$ref": "#/definitions/slug" },
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "aulas": {
+      "description": "Números de aula de cada departamento (un número va en un solo departamento).",
+      "type": "object",
+      "propertyNames": { "$ref": "#/definitions/slug" },
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "integer", "minimum": 0 },
+        "uniqueItems": true
+      }
+    },
+    "lugares": {
+      "description": "Departamento de los lugares que no son aulas numeradas, por id de lugar (`dpto-derecho`, `lab-microscopia`…).",
+      "type": "object",
+      "propertyNames": { "$ref": "#/definitions/slug" },
+      "additionalProperties": { "$ref": "#/definitions/slug" }
+    }
+  }
+}

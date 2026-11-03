@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "config.schema.json",
+  "title": "Parámetros del pipeline de datos (npm run datos:build)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["metrosPorPx", "toleranciaOrtogonalPx", "respaldo"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "metrosPorPx": {
+      "description": "Metros por px del plano. Calibrado comparando distancias entre aulas con el plano anterior (0,35 m/px); ajustar midiendo un tramo real.",
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "toleranciaOrtogonalPx": {
+      "description": "Desvío máximo en x o en y para que una arista cuente como horizontal o vertical.",
+      "type": "number",
+      "minimum": 0
+    },
+    "diagonalesPermitidas": {
+      "description": "Ids de las aristas que pueden ir en diagonal (caminos que en el campus son diagonales de verdad). Cualquier otra diagonal frena el build.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^arista__.+__.+$" },
+      "uniqueItems": true
+    },
+    "respaldo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["escala"],
+      "properties": {
+        "escala": {
+          "description": "Escala de la imagen única de respaldo respecto del plano.",
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    }
+  }
+}

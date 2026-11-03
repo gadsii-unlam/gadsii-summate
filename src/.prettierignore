@@ -1,0 +1,18 @@
+# Generados
+dist/
+coverage/
+playwright-report/
+test-results/
+public/data/
+package-lock.json
+
+# Documentación y datos que el equipo mantiene a mano o exporta de Figma
+docs/
+openspec/
+.claude/
+CLAUDE.md
+datos-fuente/grafo.json
+datos-fuente/mapa-base.svg
+grafo.svg
+mapa-unlam.svg
+scripts/salida/
