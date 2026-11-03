@@ -15,6 +15,6 @@ El código está en [`src/`](src/); cómo levantarlo, los scripts y la estructur
 ## Documentación
 
 - [`docs/brief.md`](docs/brief.md): Brief de Producto, documento vivo con una versión por TP.
-- [`docs/entregas/`](docs/entregas/): informes entregados. El del TP5 es [`TP5-Summate.md`](docs/entregas/TP5-Summate.md); el PDF se genera con `bash docs/entregas/generar-pdf.sh`.
+- [`docs/entregas/`](docs/entregas/): informes entregados de cada TP, en `.docx` y `.pdf` (por ejemplo, [`TP5-Summate.pdf`](docs/entregas/TP5-Summate.pdf)). El PDF se genera a partir del `.docx`.
 - [`docs/evidencia/tp5/`](docs/evidencia/tp5/): evidencia de la prueba con usuarios del TP5 (guion, registro, fricciones y notas de cada sesión).
 - [`docs/prompts.md`](docs/prompts.md): registro del trabajo con IA.
