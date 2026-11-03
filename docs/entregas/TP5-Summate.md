@@ -111,7 +111,7 @@ Resultado contra el criterio escrito en el punto 1 (detalle en [`registro.md`](.
 | M1: llegaron solos a las tres tareas | 1 de 3 (U1) | al menos 2 | No. Cumple la condición de **refutación** (como máximo 1 de 3). |
 | M2: caminaron el desvío en T2 sin acercarse al cierre | 1 de 3 (U1) | al menos 2 | No. La refutación por M2 tampoco se cumple: U2 y U3 terminaron tomando el desvío y ninguno dijo haber visto el cierre y elegido su camino. |
 
-Según el punto 1, «cualquier otro resultado no confirma la hipótesis»; acá además M1 la refuta. Cada afirmación va con la observación que la sostiene (punto 8).
+Según el punto 1, «cualquier otro resultado no confirma la hipótesis»; acá además M1 la refuta. Cada afirmación va con la observación que la sostiene: usuario, tarea y hora anotada en la sesión.
 
 ### Capa de usabilidad — ¿el MVP funciona bien?
 
