@@ -11,11 +11,11 @@ Una fila por hecho: cada vez que el usuario duda, se equivoca, pide ayuda o hace
 | U2 | T1 | 17:03:30 | Dentro del edificio | Error | Subió por la escalera más cercana sin leer la indicación de piso y tuvo que volver a mirar el celular en el primer rellano. | Nada espontáneo (después: «Adentro me confundí un poco con el piso.») | 3 |
 | U2 | T2 | 17:15:40 | Entrada del Edificio Este (pasillo 400/500) | Error | Empezó a caminar sin mirar el mapa en detalle, se acercó a unos 3 m de la cinta y se detuvo; a las 17:16:00 volvió a mirar el celular y retomó por el desvío. | «Uy, esto está cerrado.» (17:15:45) | 4 |
 | U2 | T3 | 17:26:30 | Selección de ruta | Hizo algo distinto de lo esperado | Tocó la alternativa más rápida, la miró unos 4 s y volvió a la recomendada (resguardada). | «Yo siempre voy por lo más corto, pero hoy no, con esta lluvia no.» (17:26:45) | Recomendación con lluvia (TP3) |
-| U3 | T1 | 17:02:00 | Señal | Incidente | Corte de señal de unos 20 s (hasta 17:02:20); la ruta ya cargada siguió a la vista y no afectó el recorrido. | Nada espontáneo | 5-7 |
-| U3 | T1 | 17:03:40 | Pasillo del Edificio, sector de las aulas 250 | Error | Entró por la entrada indicada y siguió de largo, pasando el sector de las aulas 250, junto al Salón de las Américas. | «Esto no es.» (17:04:20) | 3 |
-| U3 | T1 | 17:05:00 | Pasillo | Duda | Se detuvo, dio una vuelta completa mirando los carteles y volvió a mirar el celular. | Nada espontáneo | 3 |
-| U3 | T1 | 17:06:15 | Pasillo | Pidió ayuda | Le preguntó a una persona que pasaba dónde quedaba el 255 y llegó siguiendo su indicación (17:08:30). | «¿Sabés dónde está el 255?» | 3 |
-| U3 | T2 | 17:19:50 | Entrada del Edificio Este (pasillo 400/500, lado oeste) | Error | Caminó hacia la entrada, se acercó a la cinta y no pasó; a las 17:20:30 volvió sobre sus pasos y siguió el desvío. | «Ah, acá hay cinta.» (17:20:05) | 4 |
+| U3 | T1 | 18:02:00 | Señal | Incidente | Corte de señal de unos 20 s (hasta 18:02:20); la ruta ya cargada siguió a la vista y no afectó el recorrido. | Nada espontáneo | 5-7 |
+| U3 | T1 | 18:03:40 | Pasillo del Edificio, sector de las aulas 250 | Error | Entró por la entrada indicada y siguió de largo, pasando el sector de las aulas 250, junto al Salón de las Américas. | «Esto no es.» (18:04:20) | 3 |
+| U3 | T1 | 18:05:00 | Pasillo | Duda | Se detuvo, dio una vuelta completa mirando los carteles y volvió a mirar el celular. | Nada espontáneo | 3 |
+| U3 | T1 | 18:06:15 | Pasillo | Pidió ayuda | Le preguntó a una persona que pasaba dónde quedaba el 255 y llegó siguiendo su indicación (18:08:30). | «¿Sabés dónde está el 255?» | 3 |
+| U3 | T2 | 18:19:50 | Entrada del Edificio Este (pasillo 400/500, lado oeste) | Error | Caminó hacia la entrada, se acercó a la cinta y no pasó; a las 18:20:30 volvió sobre sus pasos y siguió el desvío. | «Ah, acá hay cinta.» (18:20:05) | 4 |
 
 Tipo: duda · error · pidió ayuda · hizo algo distinto de lo esperado · dijo una cosa e hizo otra · comentario espontáneo · incidente.
 Hallazgo: número del TP4, o «Nuevo (no anticipado)».
