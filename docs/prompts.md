@@ -16,3 +16,4 @@
 | 2026-09-20 | Claude Code (Opus 5)  | Mejora de la redacción de los puntos del TP4, a partir del contenido previamente definido por el equipo.                                                                                                                                    | TP4 |
 | 2026-09-27 | OpenAI Codex (GPT-6) | Asistencia para redactar el punto 6 del TP4, incluyendo la formulación de correcciones para el TP5, objeciones fundamentadas y mejoras postergadas. | TP4 |
 | 2026-09-27 | OpenAI Codex (GPT-6) | Actualización del brief a la versión 4: cambios previstos en el MVP, fundamentos, flujo ajustado y validación pendiente. | TP4 |
+| 2026-11-02 | Claude Code (Opus 5.5) | Asistencia en la redacción de las métricas y el criterio de éxito del punto 1 del TP5 (métricas accionables, métrica vanidosa y criterio de éxito) en `docs/entregas/TP5-Summate.md`. | TP5 |
