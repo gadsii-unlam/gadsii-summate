@@ -208,3 +208,46 @@ También se mantienen las exclusiones de la versión 3: API meteorológica real,
 Aprendimos que la eficiencia se mide en el recorrido completo, no solamente en los toques necesarios para dibujar una ruta. Un origen equivocado o una llegada incompleta puede devolver el tiempo que ahorramos en la interfaz. Por eso conservamos el mapa con panel, pero reforzamos la prevención de errores y la comprensión del primer uso.
 
 La hipótesis de valor no cambia: en una prueba con al menos cinco usuarios del grupo primario, cuatro deberán llegar a un destino asignado en menos de cinco minutos, sin pedir indicaciones ni intentar pasar por un acceso cerrado, usando la conectividad disponible en el campus. En el TP5 observaremos especialmente si reconocen el origen, comprenden las indicaciones hasta el aula y pueden continuar consultando el recorrido ante una interrupción de señal. La evaluación heurística permite anticipar problemas; la prueba con usuarios sigue pendiente.
+
+# Brief de Producto — versión 5
+
+**Qué cambió respecto de la versión 4 y por qué:** la versión 4 reunía correcciones previstas para el MVP, sin validar con usuarios. En el TP5 construimos el MVP, lo probamos con U1, U2 y U3 —tres de los cinco usuarios del TP2— y lo medimos contra el criterio de éxito que escribimos y commiteamos antes de la prueba. El resultado cambia la versión anterior en tres puntos: la hipótesis de valor queda refutada según ese criterio, porque solo 1 de 3 llegó solo a todos los destinos; decidimos pivotar con un pivote de necesidad del consumidor, que agrega una nueva hipótesis de valor; y el supuesto 2 del TP1 pasa de «no se pudo comprobar» a «sostenido en parte». Mantenemos el segmento (ingresantes y estudiantes de primer año), el problema de fondo y las exclusiones de la versión 3. No reemplazamos las versiones anteriores: la hipótesis de las versiones 2 a 4 queda escrita como la que se puso a prueba.
+
+## Qué se construyó y qué se probó
+
+Se construyó el alcance del TP3 con las correcciones del TP4 que aceptamos llevar, sin panel de administración de cierres, con el clima simulado y los cierres cargados a mano, como estaba previsto. La prueba se hizo en el campus: U1 y U3 el 28/10 y U2 el 30/10. Cada usuario resolvió tres tareas planteadas como situaciones: T1 (entrada de Florencio Varela → Aula 255), T2 (Biblioteca → Aula 418, con la entrada del Edificio Este cerrada y señalizada con una cinta que colocó el equipo) y T3 (Buffet → Aula 108, con lluvia imaginada por el usuario y el clima simulado en lluvia en la aplicación; U2 conocía el 108 y fue al Aula 112). El equipo observó sin ayudar y registró con notas y la hora de un cronómetro. La evidencia está en [`docs/evidencia/tp5/`](evidencia/tp5/) y el análisis completo en el [informe del TP5](entregas/TP5-Summate.pdf).
+
+## Resultado contra el criterio de éxito
+
+| | Resultado | Condición para sostener | ¿Se cumple? |
+| --- | --- | --- | --- |
+| **M1:** llegaron solos a las tres tareas (5 minutos o menos, sin pedir indicaciones ni tomar el tramo cerrado) | 1 de 3 (U1) | al menos 2 | No. Cumple la condición de **refutación** (como máximo 1 de 3). |
+| **M2:** caminaron el desvío en T2 sin acercarse al cierre | 1 de 3 (U1) | al menos 2 | No. La refutación por M2 no se cumple: U2 y U3 terminaron en el desvío y ninguno dijo haber visto el cierre y elegido su camino. |
+
+**Estado de la hipótesis de valor: refutada** según el criterio del TP5, por M1. La lectura tiene dos límites: son tres usuarios, y M1 depende de dónde empieza el reloj. Los minutos se cuentan desde la entrega del celular; si se contaran desde que aparece la ruta, U2 en T1 y U3 en T2 quedarían por debajo de 5 minutos y M1 daría 2 de 3. No cambiamos el criterio porque se escribió antes de la prueba; lo que no cambia con ninguna forma de medir es que U3 pidió ayuda en T1.
+
+## Lo que aprendimos
+
+**Usabilidad.** Los tres llegaron a la puerta en las tres tareas (9 de 9) y ocho de nueve sin pedir indicaciones. La fricción se concentró en dos problemas que el TP4 había anticipado. El primero es la llegada del edificio al aula (hallazgo 3), con 2 de 3: U2 subió sin leer la indicación de piso (T1, 17:03:30) y U3 siguió de largo por el pasillo y terminó preguntándole a una persona (T1, 18:03:40 a 18:06:15). El segundo es el cierre (hallazgo 4), también con 2 de 3: U2 y U3 llegaron hasta la cinta antes de tomar el desvío (T2, 17:15:40 y 18:19:50), aunque ninguno la pasó. No apareció ningún problema que el TP4 no hubiera anticipado.
+
+**Negocio.** Dos de tres resolvieron solos lo que antes resolvían preguntando («Hoy no necesité a nadie», dijo U1) y los tres dijeron que la usarían la próxima vez. El tramo exterior se sigue bien; el que falla es el último, dentro del edificio, hasta la puerta del aula. Lo que no esperábamos fue el motivo del problema del cierre: la ruta con el desvío estaba en pantalla, pero U2 y U3 empezaron a caminar antes de mirarla («No me fijé en lo rojo hasta que ya estaba ahí», dijo U3). El cierre no se muestra mal: se mira tarde. Con lluvia simulada los tres caminaron la ruta resguardada, aunque solo U2 lo explicó como un cambio de hábito («Yo siempre voy por lo más corto, pero hoy no»).
+
+## Decisión: pivotar
+
+**Pivotamos, con un pivote de necesidad del consumidor.** El criterio del TP5 establecía este pivote si fallaba M1. Además, el patrón de la prueba lo sostiene: M1 falló en el paso de seguir la ruta y no en el de obtenerla, y dos de tres tuvieron dificultad en el mismo lugar, dentro del edificio, y lo nombraron al final («Que me dijera más claro en qué piso», dijo U3). Lo que necesitan no sería ver una ruta dibujada, sino llegar a la puerta del aula.
+
+**Nueva hipótesis de valor:** creemos que los ingresantes y estudiantes de primer año de la UNLaM llegan al edificio sin dificultad con una ruta en el mapa y que el tiempo se les pierde al orientarse dentro del edificio (piso, pasillo y puerta del aula). Nuestra solución sería una guía de llegada que los lleve de la entrada del edificio a la puerta del aula y que muestre el cierre antes de empezar a caminar.
+
+Lo primero a construir sería esa guía de llegada y el aviso del cierre antes de empezar a caminar. Si una segunda prueba, con la indicación de piso más visible, muestra que los usuarios llegan solos sin dificultad dentro del edificio, el problema era de interfaz y no de necesidad, y volveríamos a perseverar con la ruta actual.
+
+## Estado de los supuestos y validación pendiente
+
+| # | Supuesto del TP1 | Estado | Evidencia |
+| --- | --- | --- | --- |
+| **1 (crítico)** | Los ingresantes y estudiantes de primer año tienen dificultades para encontrar aulas, dependencias y servicios durante sus primeras semanas. | **Sigue confirmado** | En el TP5, U3 volvió a perderse dentro del edificio y a preguntarle a una persona (T1, 18:06:15). |
+| 2 | Una ruta dibujada resulta más útil para este grupo que consultar solamente un mapa estático del campus. | **Sostenido en parte** | Los tres siguieron la ruta dibujada hasta el edificio sin ayuda, pero no se comparó con un mapa estático, y dentro del edificio la ruta no alcanzó para 2 de 3. Es el supuesto que da origen al pivote. |
+| 3 | La mayoría lleva un teléfono celular con acceso a Internet mientras se desplaza por el campus. | **Sigue confirmado** | Los tres usaron su celular propio (U1 con wifi del campus; U2 y U3 con datos móviles). U3 tuvo un corte de señal de unos 20 s y la ruta ya cargada siguió a la vista. |
+| 4 | Los cierres temporales pueden volver incorrecta una ruta conocida y necesitan reflejarse en la aplicación. | **Sostenido en parte** | U1 vio el cierre y siguió el desvío; U2 y U3 llegaron hasta la cinta antes de advertirlo. El cierre tiene que verse antes de empezar a caminar. |
+| 5 | Cuando llueve, los usuarios prefieren una ruta interior aunque sea más larga. | **Sin comprobar con lluvia real** | Con lluvia imaginada y simulada, U2 cambió su preferencia declarada en el TP2; U1 y U3 siguieron la recomendada sin considerar la otra. |
+
+**Validación pendiente.** La prueba fue con tres usuarios, sin significancia estadística, y no incluyó a los otros dos del TP2. La lluvia fue imaginada por los usuarios y simulada en la aplicación, no real, y el cierre de T2 lo señalizó el equipo con una cinta. El umbral de 5 minutos depende de cuándo se empieza a contar. La nueva hipótesis todavía no se probó: falta una guía de llegada dentro del edificio y una prueba con usuarios que no conozcan el campus para ver si les alcanza.
