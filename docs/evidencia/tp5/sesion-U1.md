@@ -15,15 +15,15 @@
 
 | Entrega del celular | Ruta en pantalla | Llegada a la puerta | Min. totales |
 | --- | --- | --- | --- |
-| 14:02:00 | 14:02:35 | 14:06:05 | 4:05 |
+| 17:02:00 | 17:02:35 | 17:06:05 | 4:05 |
 
 **Qué hizo (cronológico, con la hora):**
 
-- 14:02:10 — Abrió la aplicación y recorrió el mapa con el dedo unos 5 s.
-- 14:02:25 — Escribió «255» en el campo de destino y confirmó el origen sin cambiarlo.
-- 14:02:35 — Apareció la ruta; la siguió hasta el edificio.
-- 14:04:50 — Dentro del edificio se detuvo un momento junto a la escalera y leyó la indicación de piso en la pantalla.
-- 14:06:05 — Llegó a la puerta. No pidió indicaciones.
+- 17:02:10 — Abrió la aplicación y recorrió el mapa con el dedo unos 5 s.
+- 17:02:25 — Escribió «255» en el campo de destino y confirmó el origen sin cambiarlo.
+- 17:02:35 — Apareció la ruta; la siguió hasta el edificio.
+- 17:04:50 — Dentro del edificio se detuvo un momento junto a la escalera y leyó la indicación de piso en la pantalla.
+- 17:06:05 — Llegó a la puerta. No pidió indicaciones.
 
 **Qué dijo (textual):**
 
@@ -35,17 +35,17 @@
 
 | Entrega del celular | Ruta en pantalla | Llegada a la puerta | Min. totales |
 | --- | --- | --- | --- |
-| 14:14:00 | 14:14:30 | 14:17:20 | 3:20 |
+| 17:14:00 | 17:14:30 | 17:17:20 | 3:20 |
 
 **Qué hizo (cronológico, con la hora):**
 
-- 14:14:30 — Con la ruta en pantalla, acercó el mapa a la zona de la entrada del Edificio Este.
-- 14:15:10 — Siguió la línea por el desvío. No se acercó a la entrada cerrada.
-- 14:17:20 — Llegó a la puerta.
+- 17:14:30 — Con la ruta en pantalla, acercó el mapa a la zona de la entrada del Edificio Este.
+- 17:15:10 — Siguió la línea por el desvío. No se acercó a la entrada cerrada.
+- 17:17:20 — Llegó a la puerta.
 
 **Qué dijo (textual):**
 
-- «Ah, hay algo cerrado.» (14:14:45, mirando el mapa).
+- «Ah, hay algo cerrado.» (17:14:45, mirando el mapa).
 
 **Respuesta a «¿Cómo decidiste por dónde ir?» (y «¿Qué viste en la pantalla en ese momento?»):** «Fui por donde marcaba la línea.» / «Una zona marcada que la línea esquivaba.»
 
@@ -53,12 +53,12 @@
 
 | Entrega del celular | Ruta en pantalla | Llegada a la puerta | Min. totales |
 | --- | --- | --- | --- |
-| 14:24:00 | 14:24:25 | 14:27:30 | 3:30 |
+| 17:24:00 | 17:24:25 | 17:27:30 | 3:30 |
 
 **Qué hizo (cronológico, con la hora):**
 
-- 14:24:25 — Apareció la ruta recomendada (resguardada). No abrió la alternativa más rápida.
-- 14:27:30 — Llegó a la puerta.
+- 17:24:25 — Apareció la ruta recomendada (resguardada). No abrió la alternativa más rápida.
+- 17:27:30 — Llegó a la puerta.
 
 **Qué dijo (textual):**
 

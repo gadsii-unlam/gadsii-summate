@@ -15,21 +15,21 @@
 
 | Entrega del celular | Ruta en pantalla | Llegada a la puerta | Min. totales |
 | --- | --- | --- | --- |
-| 10:00:00 | 10:01:10 | 10:08:30 | 8:30 |
+| 17:00:00 | 17:01:10 | 17:08:30 | 8:30 |
 
 **Qué hizo (cronológico, con la hora):**
 
-- 10:00:20 — Abrió la aplicación y escribió «255».
-- 10:01:10 — Apareció la ruta. Caminó hasta el edificio.
-- 10:03:40 — Entró por la entrada indicada y siguió de largo por el pasillo, pasando el sector de las aulas 250, junto al Salón de las Américas.
-- 10:05:00 — Se detuvo, dio una vuelta completa mirando los carteles y volvió a mirar el celular.
-- 10:06:15 — Le preguntó a una persona que pasaba dónde quedaba el 255.
-- 10:08:30 — Llegó a la puerta siguiendo la indicación de esa persona.
+- 17:00:20 — Abrió la aplicación y escribió «255».
+- 17:01:10 — Apareció la ruta. Caminó hasta el edificio.
+- 17:03:40 — Entró por la entrada indicada y siguió de largo por el pasillo, pasando el sector de las aulas 250, junto al Salón de las Américas.
+- 17:05:00 — Se detuvo, dio una vuelta completa mirando los carteles y volvió a mirar el celular.
+- 17:06:15 — Le preguntó a una persona que pasaba dónde quedaba el 255.
+- 17:08:30 — Llegó a la puerta siguiendo la indicación de esa persona.
 
 **Qué dijo (textual):**
 
-- «Esto no es.» (10:04:20).
-- «¿Sabés dónde está el 255?» (10:06:15, a una persona del campus).
+- «Esto no es.» (17:04:20).
+- «¿Sabés dónde está el 255?» (17:06:15, a una persona del campus).
 
 **Respuesta a «Contame cómo hiciste para llegar»:** «Fui por la línea hasta el edificio y después no entendí en qué piso era. Le terminé preguntando a alguien.»
 
@@ -37,18 +37,18 @@
 
 | Entrega del celular | Ruta en pantalla | Llegada a la puerta | Min. totales |
 | --- | --- | --- | --- |
-| 10:18:00 | 10:18:40 | 10:23:10 | 5:10 |
+| 17:18:00 | 17:18:40 | 17:23:10 | 5:10 |
 
 **Qué hizo (cronológico, con la hora):**
 
-- 10:18:40 — Apareció la ruta. Se detuvo unos segundos mirando el mapa.
-- 10:19:50 — Caminó hacia la entrada del Edificio Este (pasillo 400/500, lado oeste), se acercó a la cinta y no pasó.
-- 10:20:30 — Volvió sobre sus pasos y siguió el desvío.
-- 10:23:10 — Llegó a la puerta.
+- 17:18:40 — Apareció la ruta. Se detuvo unos segundos mirando el mapa.
+- 17:19:50 — Caminó hacia la entrada del Edificio Este (pasillo 400/500, lado oeste), se acercó a la cinta y no pasó.
+- 17:20:30 — Volvió sobre sus pasos y siguió el desvío.
+- 17:23:10 — Llegó a la puerta.
 
 **Qué dijo (textual):**
 
-- «Ah, acá hay cinta.» (10:20:05).
+- «Ah, acá hay cinta.» (17:20:05).
 
 **Respuesta a «¿Cómo decidiste por dónde ir?» (y «¿Qué viste en la pantalla en ese momento?»):** «Fui por donde me pareció más lógico y me topé con la cinta.» / «No me fijé en lo rojo hasta que ya estaba ahí.»
 
@@ -56,12 +56,12 @@
 
 | Entrega del celular | Ruta en pantalla | Llegada a la puerta | Min. totales |
 | --- | --- | --- | --- |
-| 10:31:00 | 10:31:35 | 10:34:50 | 3:50 |
+| 17:31:00 | 17:31:35 | 17:34:50 | 3:50 |
 
 **Qué hizo (cronológico, con la hora):**
 
-- 10:31:35 — Apareció la ruta recomendada (resguardada). No tocó la alternativa más rápida.
-- 10:34:50 — Llegó a la puerta.
+- 17:31:35 — Apareció la ruta recomendada (resguardada). No tocó la alternativa más rápida.
+- 17:34:50 — Llegó a la puerta.
 
 **Qué dijo (textual):**
 
@@ -81,5 +81,5 @@
 
 ## Incidentes de la sesión
 
-- Corte de señal de unos 20 s en T1 (10:02:00 a 10:02:20). La ruta ya cargada siguió a la vista y no afectó el recorrido.
+- Corte de señal de unos 20 s en T1 (17:02:00 a 17:02:20). La ruta ya cargada siguió a la vista y no afectó el recorrido.
 - Ninguna ayuda dada por error por parte del equipo. La ayuda que recibió U3 en T1 vino de una persona ajena al estudio.

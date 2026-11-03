@@ -15,19 +15,19 @@
 
 | Entrega del celular | Ruta en pantalla | Llegada a la puerta | Min. totales |
 | --- | --- | --- | --- |
-| 15:00:00 | 15:00:50 | 15:05:10 | 5:10 |
+| 17:00:00 | 17:00:50 | 17:05:10 | 5:10 |
 
 **Qué hizo (cronológico, con la hora):**
 
-- 15:00:15 — Abrió la aplicación y tocó varios botones del panel sin escribir nada.
-- 15:00:40 — Escribió «255» en el campo de destino.
-- 15:00:50 — Apareció la ruta; la siguió.
-- 15:03:30 — Entró al edificio y subió por la escalera más cercana, sin leer la indicación de piso. Tuvo que volver a mirar el celular en el primer rellano.
-- 15:05:10 — Llegó a la puerta. No pidió indicaciones.
+- 17:00:15 — Abrió la aplicación y tocó varios botones del panel sin escribir nada.
+- 17:00:40 — Escribió «255» en el campo de destino.
+- 17:00:50 — Apareció la ruta; la siguió.
+- 17:03:30 — Entró al edificio y subió por la escalera más cercana, sin leer la indicación de piso. Tuvo que volver a mirar el celular en el primer rellano.
+- 17:05:10 — Llegó a la puerta. No pidió indicaciones.
 
 **Qué dijo (textual):**
 
-- «¿Para qué es este botón?» (15:00:20, sobre un control del panel).
+- «¿Para qué es este botón?» (17:00:20, sobre un control del panel).
 
 **Respuesta a «Contame cómo hiciste para llegar»:** «Puse el aula y fui siguiendo. Adentro me confundí un poco con el piso.»
 
@@ -35,18 +35,18 @@
 
 | Entrega del celular | Ruta en pantalla | Llegada a la puerta | Min. totales |
 | --- | --- | --- | --- |
-| 15:14:00 | 15:14:30 | 15:18:40 | 4:40 |
+| 17:14:00 | 17:14:30 | 17:18:40 | 4:40 |
 
 **Qué hizo (cronológico, con la hora):**
 
-- 15:14:30 — Apareció la ruta. Empezó a caminar sin mirar el mapa en detalle.
-- 15:15:40 — Se acercó a la entrada del Edificio Este (pasillo 400/500), a unos 3 m de la cinta, y se detuvo.
-- 15:16:00 — Volvió a mirar el celular, vio el trazo y retomó por el desvío.
-- 15:18:40 — Llegó a la puerta.
+- 17:14:30 — Apareció la ruta. Empezó a caminar sin mirar el mapa en detalle.
+- 17:15:40 — Se acercó a la entrada del Edificio Este (pasillo 400/500), a unos 3 m de la cinta, y se detuvo.
+- 17:16:00 — Volvió a mirar el celular, vio el trazo y retomó por el desvío.
+- 17:18:40 — Llegó a la puerta.
 
 **Qué dijo (textual):**
 
-- «Uy, esto está cerrado.» (15:15:45, frente a la cinta).
+- «Uy, esto está cerrado.» (17:15:45, frente a la cinta).
 
 **Respuesta a «¿Cómo decidiste por dónde ir?» (y «¿Qué viste en la pantalla en ese momento?»):** «Primero fui por el camino más directo, que es el que yo conozco. Después vi que la aplicación daba la vuelta.» / «La línea rodeando, ahora que lo mirás.»
 
@@ -54,16 +54,16 @@
 
 | Entrega del celular | Ruta en pantalla | Llegada a la puerta | Min. totales |
 | --- | --- | --- | --- |
-| 15:26:00 | 15:26:30 | 15:29:20 | 3:20 |
+| 17:26:00 | 17:26:30 | 17:29:20 | 3:20 |
 
 **Qué hizo (cronológico, con la hora):**
 
-- 15:26:30 — Apareció la ruta recomendada (resguardada). Tocó la alternativa más rápida, la miró unos 4 s y volvió a la recomendada.
-- 15:29:20 — Llegó a la puerta del Aula 112 por la ruta resguardada, pasando por el bloque 100.
+- 17:26:30 — Apareció la ruta recomendada (resguardada). Tocó la alternativa más rápida, la miró unos 4 s y volvió a la recomendada.
+- 17:29:20 — Llegó a la puerta del Aula 112 por la ruta resguardada, pasando por el bloque 100.
 
 **Qué dijo (textual):**
 
-- «Yo siempre voy por lo más corto, pero hoy no, con esta lluvia no.» (15:26:45).
+- «Yo siempre voy por lo más corto, pero hoy no, con esta lluvia no.» (17:26:45).
 
 **Respuesta a «¿Por qué fuiste por ese camino?»:** «Llovía.»
 

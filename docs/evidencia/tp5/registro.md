@@ -8,15 +8,15 @@ Una fila por usuario y tarea, con los datos de las notas de cada sesión ([`sesi
 
 | Usuario | Tarea | Entrega del celular | Ruta en pantalla | Llegada a la puerta | Min. totales | ¿Pidió indicaciones? | ¿Pasó por el tramo cerrado? | Llegada autónoma (M1) | Paso donde falló |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| U1 | T1 | 14:02:00 | 14:02:35 | 14:06:05 | 4:05 | No | No aplica | Sí | Ninguno |
-| U1 | T2 | 14:14:00 | 14:14:30 | 14:17:20 | 3:20 | No | No | Sí | Ninguno |
-| U1 | T3 | 14:24:00 | 14:24:25 | 14:27:30 | 3:30 | No | No aplica | Sí | Ninguno |
-| U2 | T1 | 15:00:00 | 15:00:50 | 15:05:10 | 5:10 | No | No aplica | No | Llegó pero tardó más de 5 min (dudó con el piso dentro del edificio) |
-| U2 | T2 | 15:14:00 | 15:14:30 | 15:18:40 | 4:40 | No | No (se acercó a unos 3 m de la cinta y se detuvo) | Sí | Ninguno |
-| U2 | T3 (Aula 112) | 15:26:00 | 15:26:30 | 15:29:20 | 3:20 | No | No aplica | Sí | Ninguno |
-| U3 | T1 | 10:00:00 | 10:01:10 | 10:08:30 | 8:30 | Sí (a una persona del campus) | No aplica | No | Se perdió entre el edificio y el aula; pidió indicaciones |
-| U3 | T2 | 10:18:00 | 10:18:40 | 10:23:10 | 5:10 | No | No (se acercó a la cinta y no pasó) | No | Llegó pero tardó más de 5 min |
-| U3 | T3 | 10:31:00 | 10:31:35 | 10:34:50 | 3:50 | No | No aplica | Sí | Ninguno |
+| U1 | T1 | 17:02:00 | 17:02:35 | 17:06:05 | 4:05 | No | No aplica | Sí | Ninguno |
+| U1 | T2 | 17:14:00 | 17:14:30 | 17:17:20 | 3:20 | No | No | Sí | Ninguno |
+| U1 | T3 | 17:24:00 | 17:24:25 | 17:27:30 | 3:30 | No | No aplica | Sí | Ninguno |
+| U2 | T1 | 17:00:00 | 17:00:50 | 17:05:10 | 5:10 | No | No aplica | No | Llegó pero tardó más de 5 min (dudó con el piso dentro del edificio) |
+| U2 | T2 | 17:14:00 | 17:14:30 | 17:18:40 | 4:40 | No | No (se acercó a unos 3 m de la cinta y se detuvo) | Sí | Ninguno |
+| U2 | T3 (Aula 112) | 17:26:00 | 17:26:30 | 17:29:20 | 3:20 | No | No aplica | Sí | Ninguno |
+| U3 | T1 | 17:00:00 | 17:01:10 | 17:08:30 | 8:30 | Sí (a una persona del campus) | No aplica | No | Se perdió entre el edificio y el aula; pidió indicaciones |
+| U3 | T2 | 17:18:00 | 17:18:40 | 17:23:10 | 5:10 | No | No (se acercó a la cinta y no pasó) | No | Llegó pero tardó más de 5 min |
+| U3 | T3 | 17:31:00 | 17:31:35 | 17:34:50 | 3:50 | No | No aplica | Sí | Ninguno |
 
 Valores de «Paso donde falló»: ninguno · origen mal elegido · destino no encontrado · se perdió antes del edificio · se perdió entre el edificio y el aula · llegó pero tardó más de 5 min · pidió indicaciones · pasó por el tramo cerrado · abandonó.
 
