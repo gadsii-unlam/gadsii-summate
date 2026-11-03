@@ -30,7 +30,7 @@ Rutas de referencia calculadas con el motor del MVP (sirven para leer el umbral 
 
 ## Preparación
 
-El día anterior se carga el cierre de T2 en `src/public/data/cierres.json`, se corre `npm run validar-cierres` y se publica. Se camina cada recorrido para anotar el tiempo de referencia.
+El día anterior se carga el cierre de T2 en `src/public/data/cierres.json`, se corre `npm run validar-cierres` y se publica. Se camina cada recorrido para anotar el tiempo de referencia. Al terminar la prueba el cierre se retira del archivo y se vuelve a publicar, por eso `cierres.json` quedó sin cierres en el repositorio.
 
 ```json
 {
