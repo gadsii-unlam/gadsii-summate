@@ -7,8 +7,7 @@
 | Dato | Valor |
 | --- | --- |
 | Usuario | U2 (el mismo del TP2) |
-| Fecha y lugar | [COMPLETAR: fecha real], campus UNLaM, entrada Florencio Varela |
-| Integrantes presentes | [COMPLETAR] |
+| Fecha y lugar | 2026-10-30, campus UNLaM, entrada Florencio Varela |
 | Dispositivo y señal | Celular propio, Android, datos móviles, señal buena |
 | ¿Conocía alguna de las aulas? ¿Se cambió el destino? | Conocía el Aula 108. Se cambió el destino de T3 al Aula 112. |
 

@@ -7,8 +7,7 @@
 | Dato | Valor |
 | --- | --- |
 | Usuario | U3 (el mismo del TP2) |
-| Fecha y lugar | [COMPLETAR: fecha real], campus UNLaM, entrada Florencio Varela |
-| Integrantes presentes | [COMPLETAR] |
+| Fecha y lugar | 2026-10-28, campus UNLaM, entrada Florencio Varela |
 | Dispositivo y señal | Celular propio, Android, datos móviles con un corte de señal en T1 |
 | ¿Conocía alguna de las aulas? ¿Se cambió el destino? | No conocía ninguna. No se cambió. |
 
