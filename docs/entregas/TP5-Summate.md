@@ -96,7 +96,7 @@ Elegimos recorridos que no son iguales en todos los casos: con el motor del MVP 
 
 ## 4. Prueba con usuarios
 
-Participan U1, U2 y U3, los mismos del TP2. Se aplican las reglas del enunciado: el equipo observa y no ayuda, y se registra lo que el usuario hace, no solo lo que dice. La evidencia se versiona en `docs/evidencia/tp5/`:
+Participan U1, U2 y U3, los mismos del TP2. Las sesiones se hicieron en el campus: U1 el 28/10 a las 17:00, U3 el 28/10 a las 18:00 y U2 el 30/10 a las 17:00. Las fechas de la cátedra se movieron respecto de las del enunciado, por eso la prueba quedó después del límite original. Se aplican las reglas del enunciado: el equipo observa y no ayuda, y se registra lo que el usuario hace, no solo lo que dice. La evidencia se versiona en `docs/evidencia/tp5/`:
 
 - [`sesion-U1.md`](../evidencia/tp5/sesion-U1.md), [`sesion-U2.md`](../evidencia/tp5/sesion-U2.md) y [`sesion-U3.md`](../evidencia/tp5/sesion-U3.md): notas de cada sesión, con horas y frases textuales.
 - [`registro.md`](../evidencia/tp5/registro.md): tiempos y resultado por usuario y tarea.
@@ -104,21 +104,59 @@ Participan U1, U2 y U3, los mismos del TP2. Se aplican las reglas del enunciado:
 
 ## 5. Las dos capas
 
-_Se redacta con los registros de la sesión. Cada afirmación va con la observación que la sostiene (punto 8)._
+Resultado contra el criterio escrito en el punto 1 (detalle en [`registro.md`](../evidencia/tp5/registro.md)):
 
-**Capa de usabilidad — ¿el MVP funciona bien?**
+| | Resultado | Condición para sostener | ¿Se cumple? |
+| --- | --- | --- | --- |
+| M1: llegaron solos a las tres tareas | 1 de 3 (U1) | al menos 2 | No. Cumple la condición de **refutación** (como máximo 1 de 3). |
+| M2: caminaron el desvío en T2 sin acercarse al cierre | 1 de 3 (U1) | al menos 2 | No. La refutación por M2 tampoco se cumple: U2 y U3 terminaron tomando el desvío y ninguno dijo haber visto el cierre y elegido su camino. |
 
-| Pregunta | Qué se contesta con `registro.md` y `fricciones.md` |
-| --- | --- |
-| ¿Completaron el flujo y con cuánta fricción? | Llegadas autónomas por tarea, tiempos y fricciones por usuario. |
-| ¿Aparecieron los problemas que el TP4 anticipó? | Lista de `fricciones.md`: cuáles aparecieron, con quién y en qué momento. |
-| ¿Aparecieron otros? | Fricciones marcadas «Nuevo (no anticipado)». |
+Según el punto 1, «cualquier otro resultado no confirma la hipótesis»; acá además M1 la refuta. Cada afirmación va con la observación que la sostiene (punto 8).
 
-**Capa de negocio — ¿la hipótesis se sostiene?** Se contrasta con el criterio del punto 1: M1 (al menos 2 de 3 llegan solos a todos los destinos) y M2 (al menos 2 de 3 caminan el desvío), más lo que contestaron sobre su problema real (preguntas 6 y 7).
+### Capa de usabilidad — ¿el MVP funciona bien?
+
+**¿Completaron el flujo y con cuánta fricción?** Los tres llegaron a la puerta en las tres tareas (9 de 9) y ocho de nueve sin pedir indicaciones. La excepción es U3 en T1: preguntó a una persona del campus dónde quedaba el 255 (U3, T1, 18:06:15, «¿Sabés dónde está el 255?») y llegó a las 18:08:30, con 8:30 en total. Todos los demás tiempos van de 3:20 a 5:10. Los tres obtuvieron la ruta sin ayuda: apareció a los 35, 50 y 70 segundos de entregarles el celular en T1 (U1, U2 y U3).
+
+La fricción se concentró en dos lugares:
+
+1. **Del edificio al aula (hallazgo #3 del TP4): apareció con 2 de 3.** U1 leyó la indicación de piso y llegó en 4:05 (U1, T1, 17:04:50). U2 subió por la escalera más cercana sin leerla y tuvo que volver a mirar el celular en el primer rellano (U2, T1, 17:03:30). U3 entró por la entrada indicada y siguió de largo por el pasillo (U3, T1, 18:03:40, «Esto no es.» a las 18:04:20), dio una vuelta completa mirando los carteles (18:05:00) y terminó preguntando (18:06:15). Al final lo confirmaron con sus palabras: U2, «En el piso del 255, un poquito.»; U3, «Que me dijera más claro en qué piso.»
+2. **El cierre en T2 (hallazgo #4 del TP4): apareció con 2 de 3.** U1 lo vio en el mapa (U1, T2, 17:14:45, «Ah, hay algo cerrado.») y siguió el desvío sin acercarse a la entrada (17:15:10). U2 empezó a caminar sin mirar el mapa en detalle (U2, T2, 17:14:30) y llegó a unos 3 m de la cinta (17:15:40, «Uy, esto está cerrado.»). U3 caminó hacia la entrada y se acercó a la cinta (U3, T2, 18:19:50, «Ah, acá hay cinta.»). Ninguno pasó la cinta.
+
+**¿Aparecieron los demás problemas del TP4?** Solo hay observación de tres más: U2 tocó varios botones del panel sin escribir nada y preguntó «¿Para qué es este botón?» (U2, T1, 17:00:15 y 17:00:20, primer uso); U3 tuvo un corte de señal de unos 20 s (U3, T1, 18:02:00) y la ruta ya cargada siguió a la vista; y en T3 U2 tocó la alternativa más rápida y volvió a la recomendada (U2, T3, 17:26:30). No se anotó nada sobre «Buscando el camino…», «Sin acceso ahora», cambio de origen ni sobre si abrieron la ayuda: queda como «no se observó» en [`fricciones.md`](../evidencia/tp5/fricciones.md).
+
+**¿Aparecieron otros?** No se anotó ningún problema que el TP4 no hubiera anticipado. Lo no previsto fue la causa del problema del cierre, que se desarrolla en el punto 9.
+
+### Capa de negocio — ¿la hipótesis se sostiene?
+
+Se contrasta con el criterio del punto 1 y con lo que contestaron sobre su problema real.
+
+- **Contra el criterio:** la hipótesis queda refutada por M1 (1 de 3 llega solo a todos los destinos) y no confirmada por M2.
+- **Su problema real (pregunta 6 de la sesión):** antes, U1 llamó a un compañero, U2 preguntó en el pasillo y U3 preguntó. Con la aplicación, U1 dijo «Hoy no necesité a nadie.» y U2 «Hoy no hizo falta.», y ninguno de los dos pidió ayuda en las tres tareas; U3 dijo «Hoy también terminé preguntando una vez.» (T1, 18:06:15). Dos de tres resolvieron solos lo que antes resolvían preguntando.
+- **Qué harían la próxima vez (pregunta 7):** los tres dijeron que usarían la aplicación (U1: «La busco en la aplicación antes de salir.»; U2: «La aplicación, pero fijándome más en el piso.»; U3: «Usaría la aplicación y, si me pierdo adentro, preguntaría.»). Es lo que dijeron; lo que hicieron es lo que pesa: ocho de nueve tareas sin ayuda.
+- **Lluvia (T3):** los tres caminaron la ruta resguardada. Solo U2 lo explicó como cambio de hábito: «Yo siempre voy por lo más corto, pero hoy no, con esta lluvia no.» (U2, T3, 17:26:45), y en el TP2 había dicho preferir el camino más rápido. U1 («Era la que salía primero») y U3 («Porque era la que salía») siguieron la recomendada sin considerar la otra, así que en esos dos casos no hay evidencia de valor de la alternativa por clima, solo de que la recomendación por defecto no los molestó.
+- **Dónde está el problema:** el tramo que se sigue bien es el exterior (los tres siguieron la línea hasta el edificio sin pedir ayuda); el tramo que falla es el último, dentro del edificio, hasta la puerta del aula.
+
+Con tres usuarios no hay significancia estadística: esto es aprendizaje, no medición.
 
 ## 6. Pivotar o perseverar
 
-_Se decide con el resultado del punto 5._ Según el punto 1: si falla M1, el pivote es de necesidad del consumidor; si falla M2, de zoom-in; si se sostiene, se persevera y se define qué construir primero (por ejemplo el panel de administración de cierres, que el TP3 dejó afuera).
+**Decisión: pivotar, con un pivote de necesidad del consumidor.**
+
+**Fundamento.**
+
+- El criterio del punto 1, escrito antes de la prueba, dice que si falla M1 se pivota y que el tipo es de necesidad del consumidor. M1 falló (1 de 3).
+- Falló en el paso que el punto 1 describe como «obtiene la ruta correcta pero no la puede seguir»: los tres obtuvieron la ruta (35 a 70 segundos en T1) y las dificultades fueron después, dentro del edificio (U2, T1, 17:03:30; U3, T1, 18:03:40 a 18:06:15).
+- Lo que las personas pidieron al final no fue una ruta mejor por el campus, sino claridad sobre el piso (U2 y U3, preguntas finales). Eso sugiere que la necesidad no es «ver una ruta dibujada» (supuesto 2 del TP1), sino llegar a la puerta del aula, incluida la parte interior.
+
+**Nueva hipótesis.** Creemos que los ingresantes y estudiantes de primer año de la UNLaM llegan al edificio sin dificultad con una ruta en el mapa, y que el tiempo se les pierde al orientarse dentro del edificio (piso, pasillo y puerta del aula). Nuestra solución sería una guía de llegada que los lleve de la entrada del edificio hasta la puerta del aula, y que el cierre se muestre antes de empezar a caminar.
+
+**Lo que la evidencia no permite afirmar.**
+
+- Son tres usuarios.
+- M1 es sensible a dónde empieza el reloj. Los minutos totales se cuentan desde que se entrega el celular. Si se contaran desde que aparece la ruta, U2 en T1 sería 4:20 y U3 en T2 sería 4:30, y M1 daría 2 de 3. No se cambia el criterio porque se escribió antes de la prueba y un criterio ajustado después no mide nada; se deja dicho. Lo que no cambia con ninguna forma de medir: U3 pidió ayuda en T1.
+- Por eso la decisión no se apoya solo en el número de M1, sino en el patrón: dos de tres tuvieron dificultad en el mismo lugar (dentro del edificio) y lo nombraron al final.
+
+**Qué evidencia cambiaría la decisión.** Si en una segunda prueba, con la indicación de piso más visible, los usuarios llegan solos sin dificultad dentro del edificio, el problema era de interfaz y no de necesidad: se vuelve a perseverar con la ruta actual.
 
 ## 7. Brief de Producto — versión 5
 
@@ -130,16 +168,31 @@ Cada conclusión del punto 5 se acompaña de la observación de la sesión: qui�
 
 ## 9. El resultado que no esperábamos
 
-_Se redacta con la sesión._
+El resultado más alejado de lo previsto fue **por qué U2 y U3 llegaron hasta la cinta en T2**. El TP4 anticipaba que el cierre podía no verse en el mapa (hallazgo #4), y el criterio del punto 1 se preparó para un usuario que lo viera y eligiera su camino. Lo que se observó fue otra cosa: la ruta con el desvío estaba en pantalla y los dos empezaron a caminar antes de leerla.
+
+- U2 «empezó a caminar sin mirar el mapa en detalle» a las 17:14:30 y se detuvo a unos 3 m de la cinta a las 17:15:40. Explicó: «Primero fui por el camino más directo, que es el que yo conozco. Después vi que la aplicación daba la vuelta.»
+- U3 llegó a la cinta a las 18:19:50 y dijo: «No me fijé en lo rojo hasta que ya estaba ahí.»
+
+Con eso el problema no es que el cierre no se muestre ni que lo vean y lo ignoren: es que quien conoce el camino, o cree conocerlo, camina primero y mira después. U2 lo pidió con sus palabras: «Que me avisara más fuerte lo del cierre.»
+
+**Qué hicimos con eso.** Lo cargamos como hallazgo nuevo sobre cómo se usa el mapa, y cambia dos cosas en este informe: la lectura de M2 (punto 10) y la nueva hipótesis del punto 6, que incluye mostrar el cierre antes de empezar a caminar.
+
+También hubo un resultado a favor que no estaba previsto: U2 había dicho en el TP2 que prefería el camino más rápido y con lluvia fue por la resguardada (U2, T3, 17:26:45). Es un solo caso, pero indica que la recomendación por clima puede cambiar una preferencia declarada.
 
 ## 10. La métrica que podría estar mintiendo
 
-_Se redacta con la sesión._
+**M2, el seguimiento del desvío.**
+
+Mirado a simple vista, el resultado parece tranquilizador: en T2 nadie pasó por el tramo cerrado (los tres «No» en `registro.md`) y los tres terminaron caminando el desvío. Pero U2 y U3 se detuvieron frente a la cinta (U2, T2, 17:15:40; U3, T2, 18:19:50), una señal física que pusimos en el recorrido, no una decisión que les haya llevado la aplicación. U3 lo dijo: «No me fijé en lo rojo hasta que ya estaba ahí.» Si el cierre del campus no tuviera cinta, el mismo comportamiento los habría llevado al tramo cerrado.
+
+Lo que protege contra esa lectura es que el criterio exige caminar el desvío **sin acercarse** al cierre, lo que da 1 de 3 y no 3 de 3. Quien lea «nadie pasó por el tramo cerrado» sin esa condición se queda con una conclusión que la hipótesis no justifica.
+
+M1 tiene un problema distinto y menor: depende de dónde empieza el reloj (punto 6), y con otro punto de partida el resultado pasaría de 1 de 3 a 2 de 3.
 
 ## 11. Sobre el uso de IA en este trabajo
 
-**Se delegó:** la construcción del MVP, con Claude Code y el flujo de OpenSpec (un change por parte del alcance), y ayuda de redacción y de armado de los documentos de evidencia. Las decisiones estructurales que tomó la herramienta quedaron anotadas en `docs/prompts.md` y en los `design.md`.
+**Se delegó:** la construcción del MVP, con Claude Code y el flujo de OpenSpec (un change por parte del alcance), ayuda de redacción y de armado de los documentos de evidencia, y el borrador de los puntos 5, 6, 9 y 10, que Claude redactó a partir de las notas de las sesiones. Las decisiones estructurales que tomó la herramienta quedaron anotadas en `docs/prompts.md` y en los `design.md`.
 
-**No se delegó:** las métricas y el criterio de éxito (punto 1, escritos y commiteados antes de construir), el diseño de las tareas de la sesión, la observación, la interpretación de los resultados y la decisión de pivotar o perseverar. La IA no estuvo en la sala: todo lo que se concluya tiene que poder rastrearse hasta algo que pasó en la sesión.
+**No se delegó:** las métricas y el criterio de éxito (punto 1, escritos y commiteados antes de construir), el diseño de las tareas de la sesión y la observación: las notas, las horas y las frases son del equipo. La IA no estuvo en la sala; lo que se concluye acá se rastrea hasta algo que pasó en la sesión, y cada afirmación lleva su observación.
 
 El registro completo está en `docs/prompts.md`.
