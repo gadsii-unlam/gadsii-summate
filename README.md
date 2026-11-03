@@ -11,3 +11,10 @@ Segmento de la comunidad UNLaM: Ingresantes y estudiantes de primer año que tod
 **URL pública:** <https://donde-queda.donde-queda.workers.dev>
 
 El código está en [`src/`](src/); cómo levantarlo, los scripts y la estructura están en [`src/README.md`](src/README.md).
+
+## Documentación
+
+- [`docs/brief.md`](docs/brief.md): Brief de Producto, documento vivo con una versión por TP.
+- [`docs/entregas/`](docs/entregas/): informes entregados. El del TP5 es [`TP5-Summate.md`](docs/entregas/TP5-Summate.md); el PDF se genera con `bash docs/entregas/generar-pdf.sh`.
+- [`docs/evidencia/tp5/`](docs/evidencia/tp5/): evidencia de la prueba con usuarios del TP5 (guion, registro, fricciones y notas de cada sesión).
+- [`docs/prompts.md`](docs/prompts.md): registro del trabajo con IA.
