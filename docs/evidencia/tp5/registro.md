@@ -38,4 +38,4 @@ Valores de M2: caminó el desvío · no vio el cierre · vio el cierre pero no e
 | M2: caminaron el desvío en T2 sin acercarse al cierre | 1 / 3 (U1) | al menos 2 | No |
 | Dijeron haber visto el cierre y eligieron su camino | 0 / 3 | (refuta si ninguno camina el desvío y al menos 2 dicen esto) | No se cumple la refutación por M2 |
 
-Según el criterio escrito antes de la prueba, **M1 cumple la condición de refutación** (como máximo 1 de 3 llega solo a todos los destinos). La refutación por M2 no se cumple: U2 y U3 terminaron caminando el desvío, aunque después de acercarse a la cinta, y ninguno dijo haber visto el cierre y elegido su camino. La interpretación de estos números es del equipo (puntos 5, 6 y 10 del informe).
+Según el criterio escrito antes de la prueba, **M1 cumple la condición de refutación** (como máximo 1 de 3 llega solo a todos los destinos). La refutación por M2 no se cumple: U2 y U3 terminaron caminando el desvío, aunque después de acercarse a la cinta, y ninguno dijo haber visto el cierre y elegido su camino. El análisis de estos números está en los puntos 5, 6, 9 y 10 del informe.
