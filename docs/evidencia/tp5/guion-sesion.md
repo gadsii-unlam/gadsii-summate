@@ -2,7 +2,7 @@
 
 Prueba de _¿Dónde queda?_ (https://donde-queda.donde-queda.workers.dev) con U1, U2 y U3, los mismos usuarios del TP2. Una sesión individual por usuario, de unos 25 minutos, en el campus.
 
-## Tareas (situaciones que el moderador lee tal cual)
+## Tareas (situaciones que se leen tal cual)
 
 El orden es fijo (T1 → T2 → T3) para poder comparar entre usuarios. No se nombra ningún control de la aplicación.
 
@@ -24,7 +24,7 @@ Rutas de referencia calculadas con el motor del MVP (sirven para leer el umbral 
 **Reglas de la prueba:**
 
 - En T2 no se menciona el cierre: que el usuario lo descubra (o no) es lo que mide M2.
-- Si pregunta cómo se usa algo, el moderador responde «¿Cómo lo harías si no estuviéramos acá?».
+- Si pregunta cómo se usa algo, se responde «¿Cómo lo harías si no estuviéramos acá?».
 - Se da la tarea por terminada a los 10 minutos o si el usuario abandona, y se registra «No llegó».
 - Si el usuario ya conocía el aula de una tarea, se cambia el destino para él y se anota.
 
@@ -46,7 +46,7 @@ El día anterior se carga el cierre de T2 en `src/public/data/cierres.json`, se 
 }
 ```
 
-Antes de cada usuario: pestaña nueva con la aplicación, escenario seco y grabación de pantalla con audio. Entre T2 y T3, sin que el usuario vea, el moderador pasa el clima simulado a lluvia.
+Antes de cada usuario: pestaña nueva con la aplicación y escenario seco. Entre T2 y T3, sin que el usuario vea, se pasa el clima simulado a lluvia.
 
 ## Qué se observa
 
@@ -60,11 +60,12 @@ Dónde duda, dónde se equivoca, dónde pide ayuda y qué hace distinto de lo es
 
 ## Cómo se registra
 
-- **Moderador:** lee, entrega el celular y no ayuda. Si se queda callado: «¿Qué estás pensando?».
-- **Observador 1:** cronómetro; en cada tarea anota tres momentos (hora de entrega del celular, hora en que aparece la ruta en pantalla y hora de llegada a la puerta), de donde salen los minutos totales → [`registro.md`](registro.md).
-- **Observador 2:** sigue al usuario a distancia y anota por dónde camina, cada duda, error o pedido de ayuda, con la hora → [`fricciones.md`](fricciones.md). Lo que hizo y lo que dijo van separados.
-- **Grabación:** pantalla del celular con audio (pensar en voz alta). Archivos `TP5-U1-AAAA-MM-DD`, `TP5-U2-…`, `TP5-U3-…`.
-- Los registros se completan el mismo día, con la grabación al lado.
+El equipo observa y no ayuda. Se registra todo en notas, con la hora de un cronómetro:
+
+- Se lee cada situación, se entrega el celular y no se ayuda. Si el usuario se queda callado: «¿Qué estás pensando?».
+- En cada tarea se anotan tres momentos: hora de entrega del celular, hora en que aparece la ruta en pantalla y hora de llegada a la puerta. De ahí salen los minutos totales → [`registro.md`](registro.md).
+- Se sigue al usuario a distancia y se anota por dónde camina y cada duda, error o pedido de ayuda, con la hora → [`fricciones.md`](fricciones.md). Lo que hizo y lo que dijo van separados.
+- Las notas de cada sesión quedan en `sesion-U1.md`, `sesion-U2.md` y `sesion-U3.md`, y los registros se completan el mismo día.
 
 ## Qué se pregunta (se lee tal cual, sin ofrecer opciones ni ejemplos)
 

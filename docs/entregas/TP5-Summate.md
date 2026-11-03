@@ -1,7 +1,7 @@
 # TP5 — Construcción del MVP, prueba y aprendizaje
 
 **Equipo Summate** — Agasi Alejo, Huergo Estefanía, Naspleda Julián, Panigazzi Agustín, Rios Cristian.
-**Repositorio:** `gadsii-summate` (carpeta `src/` para el MVP, `docs/evidencia/tp5/` para la evidencia).
+**Repositorio:** <https://github.com/gadsii-unlam/gadsii-summate> (carpeta `src/` para el MVP, `docs/evidencia/tp5/` para la evidencia).
 **MVP funcionando:** <https://donde-queda.donde-queda.workers.dev>
 
 ## 1. Métricas y criterio de éxito
@@ -90,7 +90,7 @@ Elegimos recorridos que no son iguales en todos los casos: con el motor del MVP 
 
 **Qué se observa:** dónde duda, se equivoca, pide ayuda o hace algo distinto de lo esperado; en T2, si ve el cierre y si camina el desvío; en T3, qué ruta elige con lluvia; si le alcanza la indicación hasta la puerta del aula.
 
-**Cómo se registra:** un moderador que lee las situaciones y no ayuda; un observador con cronómetro que anota tres momentos por tarea (entrega del celular, aparición de la ruta en pantalla y llegada a la puerta); otro que sigue al usuario a distancia y anota por dónde camina y cada fricción con su hora; grabación de pantalla con audio.
+**Cómo se registra:** notas con la hora de un cronómetro. En cada tarea se anotan tres momentos (entrega del celular, aparición de la ruta en pantalla y llegada a la puerta), y se sigue al usuario a distancia anotando por dónde camina y cada fricción con su hora. El equipo lee las situaciones y no ayuda.
 
 **Qué se pregunta al final**, sin ofrecer opciones: cómo llegó, cómo decidió el camino, por qué fue por ese camino, si hubo un momento en que no supo qué hacer, qué esperaba que hiciera la aplicación, cómo resolvió la última vez que se perdió y cómo lo resolvería hoy, y qué haría la próxima vez.
 
@@ -98,9 +98,9 @@ Elegimos recorridos que no son iguales en todos los casos: con el motor del MVP 
 
 Participan U1, U2 y U3, los mismos del TP2. Se aplican las reglas del enunciado: el equipo observa y no ayuda, y se registra lo que el usuario hace, no solo lo que dice. La evidencia se versiona en `docs/evidencia/tp5/`:
 
+- [`sesion-U1.md`](../evidencia/tp5/sesion-U1.md), [`sesion-U2.md`](../evidencia/tp5/sesion-U2.md) y [`sesion-U3.md`](../evidencia/tp5/sesion-U3.md): notas de cada sesión, con horas y frases textuales.
 - [`registro.md`](../evidencia/tp5/registro.md): tiempos y resultado por usuario y tarea.
-- [`fricciones.md`](../evidencia/tp5/fricciones.md): cada duda, error o pedido de ayuda con su minuto, y la lista de problemas que el TP4 anticipó.
-- Grabaciones de pantalla `TP5-U1`, `TP5-U2` y `TP5-U3`.
+- [`fricciones.md`](../evidencia/tp5/fricciones.md): cada duda, error o pedido de ayuda con su hora, y la lista de problemas que el TP4 anticipó.
 
 ## 5. Las dos capas
 
@@ -126,7 +126,7 @@ Se actualiza `docs/brief.md` con el párrafo de cambios, lo aprendido, el estado
 
 ## 8. Anclaje
 
-Cada conclusión del punto 5 se acompaña de la observación de la sesión: quién, en qué momento y qué hizo. Forma: «conclusión — U_, T_, minuto _: qué hizo», con el minuto de la grabación.
+Cada conclusión del punto 5 se acompaña de la observación de la sesión: quién, en qué momento y qué hizo. Forma: «conclusión — U_, T_, hh:mm:ss: qué hizo», con la hora anotada en la sesión.
 
 ## 9. El resultado que no esperábamos
 
