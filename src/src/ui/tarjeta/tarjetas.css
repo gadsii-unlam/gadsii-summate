@@ -1,0 +1,171 @@
+.tarjeta {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  background: var(--color-superficie);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--elevacion-2);
+}
+
+/* ---- Barra "¿Desde dónde salís?" -------------------------------------------------------- */
+
+.barra {
+  padding: 0 var(--esp-1) 0 0;
+}
+
+.barra__campo {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: 48px;
+  padding: 0 var(--esp-4);
+  border-radius: var(--radio-tarjeta);
+  text-align: left;
+  color: var(--color-texto-secundario);
+}
+
+.barra__texto {
+  font-size: var(--texto-cuerpo);
+  color: var(--color-texto-secundario);
+}
+
+/* ---- Chips de referencias ---------------------------------------------------------------- */
+
+.chips {
+  display: flex;
+  gap: var(--esp-2);
+  list-style: none;
+  margin: var(--esp-3) calc(-1 * var(--margen-lateral)) 0;
+  padding: 4px var(--margen-lateral) 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  touch-action: pan-x;
+  overscroll-behavior: contain;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  position: relative;
+  flex: none;
+  height: 36px;
+  padding: 0 var(--esp-4);
+  border-radius: var(--radio-chip);
+  background: var(--color-superficie);
+  box-shadow: var(--elevacion-1);
+  font-size: var(--texto-secundario);
+  font-weight: var(--peso-titulo);
+  color: var(--color-texto);
+  white-space: nowrap;
+}
+
+/* Zona táctil de 44 px. */
+.chip::after {
+  content: '';
+  position: absolute;
+  inset: -4px 0;
+}
+
+.pantalla--escritorio .chips {
+  flex-wrap: wrap;
+  overflow: visible;
+  margin: var(--esp-3) 0 0;
+  padding: 0;
+}
+
+/* ---- Título de la ficha -------------------------------------------------------------------- */
+
+.tarjeta-titulo {
+  padding: 0 var(--esp-1);
+}
+
+.tarjeta-titulo__nombre {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0 var(--esp-2);
+  font-size: var(--texto-cuerpo);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Panel "Cómo llegar" -------------------------------------------------------------------- */
+
+.como-llegar {
+  align-items: stretch;
+  padding: var(--esp-2) var(--esp-1);
+  border-radius: var(--radio-hoja);
+}
+
+.como-llegar__volver {
+  align-self: flex-start;
+}
+
+.como-llegar__campos {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.como-llegar__linea {
+  position: absolute;
+  left: 21px;
+  top: 34px;
+  height: 18px;
+  border-left: 2px dotted var(--color-texto-secundario);
+}
+
+/* La cruz de borrar va adentro del campo: el destino ocupa el mismo ancho que el origen. */
+.campo-con-borrar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.campo-con-borrar .campo--con-borrar {
+  padding-right: 44px;
+}
+
+.campo-con-borrar > .boton-icono {
+  position: absolute;
+  top: 50%;
+  right: var(--esp-1);
+  transform: translateY(-50%);
+}
+
+.campo {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: var(--toque-min);
+  padding: 0 var(--esp-3);
+  border-radius: var(--esp-2);
+  background: var(--color-superficie-variante);
+  text-align: left;
+  font-size: var(--texto-cuerpo);
+}
+
+.campo__texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.campo--vacio .campo__texto {
+  color: var(--color-texto-secundario);
+}
+
+.como-llegar__acciones {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,102 @@
+.hoja {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--capa-hoja);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-superficie);
+  border-radius: var(--radio-hoja) var(--radio-hoja) 0 0;
+  box-shadow: var(--elevacion-3);
+  transition: transform var(--duracion-hoja) var(--curva-salida);
+  will-change: transform;
+  padding-left: var(--seguro-izquierda);
+  padding-right: var(--seguro-derecha);
+}
+
+.hoja--arrastrando {
+  transition: none;
+}
+
+/* De 600 a 1023 px: la hoja se limita a 560 px y queda pegada a la izquierda. */
+@media (min-width: 600px) {
+  .hoja:not(.hoja--panel) {
+    left: var(--margen-lateral);
+    right: auto;
+    width: min(560px, calc(100% - 2 * var(--margen-lateral)));
+  }
+}
+
+.hoja__manija {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--toque-min);
+  margin-bottom: calc(-1 * var(--esp-3));
+  touch-action: none;
+  border-radius: var(--radio-hoja) var(--radio-hoja) 0 0;
+}
+
+.hoja__manija:focus-visible {
+  outline-offset: -4px;
+}
+
+.hoja__barrita {
+  display: block;
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-borde);
+}
+
+.hoja__cabecera {
+  flex: none;
+  padding: 0 var(--margen-lateral);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.hoja__cuerpo {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 var(--margen-lateral) calc(var(--esp-4) + var(--seguro-abajo));
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+
+.hoja__cuerpo[data-scroll='si'] {
+  overflow-y: auto;
+}
+
+/* Envuelve el contenido para medir cuánto alto necesita (la altura media se ajusta a él). */
+.hoja__contenido {
+  display: flow-root;
+}
+
+/* Escritorio: panel lateral izquierdo de alto completo, sin manija ni alturas. */
+.hoja--panel {
+  top: 0;
+  right: auto;
+  width: 408px;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: var(--elevacion-2);
+  padding-top: var(--alto-tarjeta-panel, 96px);
+  transform: none;
+  transition: none;
+}
+
+.hoja--panel .hoja__cabecera {
+  touch-action: auto;
+  user-select: auto;
+  -webkit-user-select: auto;
+}
+
+.hoja--panel .hoja__cuerpo {
+  touch-action: auto;
+}

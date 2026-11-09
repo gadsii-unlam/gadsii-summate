@@ -1,0 +1,180 @@
+/* Avisos de conexión, versión nueva e instalación (tolerar-senal-irregular). */
+
+.aviso-conexion {
+  position: fixed;
+  z-index: var(--capa-avisos);
+  left: calc(var(--seguro-izquierda) + var(--margen-lateral));
+  right: calc(var(--seguro-derecha) + var(--margen-lateral));
+  bottom: var(--aviso-abajo, calc(var(--seguro-abajo) + var(--esp-4)));
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: 52px;
+  padding: var(--esp-1) var(--esp-2) var(--esp-1) var(--esp-4);
+  border-radius: var(--esp-2);
+  background: var(--color-texto);
+  color: var(--color-superficie);
+  box-shadow: var(--elevacion-2);
+  transition: bottom var(--duracion-hoja) var(--curva-salida);
+}
+
+.aviso-conexion__texto {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.aviso-conexion__titulo {
+  font-size: var(--texto-secundario);
+  font-weight: var(--peso-titulo);
+}
+
+.aviso-conexion__detalle {
+  font-size: var(--texto-leyenda);
+  opacity: 0.85;
+}
+
+.aviso-conexion__accion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: var(--toque-min);
+  padding: 0 var(--esp-3);
+  border-radius: var(--radio-boton);
+  color: var(--color-primario-sobre-oscuro);
+  font-size: var(--texto-secundario);
+  font-weight: var(--peso-titulo);
+}
+
+.aviso-conexion__accion:disabled {
+  opacity: 0.7;
+}
+
+.aviso-conexion__indicador {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentcolor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: aviso-girar 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aviso-conexion__indicador {
+    animation: none;
+  }
+}
+
+@keyframes aviso-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.aviso-cierres {
+  margin: 0;
+  font-size: var(--texto-leyenda);
+  color: var(--color-texto-secundario);
+}
+
+.aviso-ruta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+  margin: 0;
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--esp-2);
+  background: var(--color-superficie-variante);
+}
+
+.aviso-ruta__texto {
+  flex: 1;
+  margin: 0;
+  font-size: var(--texto-secundario);
+  color: var(--color-texto);
+}
+
+.aviso-version {
+  position: fixed;
+  z-index: var(--capa-avisos);
+  left: calc(var(--seguro-izquierda) + var(--margen-lateral));
+  right: calc(var(--seguro-derecha) + var(--margen-lateral));
+  bottom: calc(var(--seguro-abajo) + var(--esp-4));
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--esp-2);
+  background: var(--color-superficie);
+  box-shadow: var(--elevacion-2);
+}
+
+.aviso-version__texto {
+  margin: 0;
+  font-size: var(--texto-secundario);
+  color: var(--color-texto);
+}
+
+.aviso-version__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--esp-2);
+}
+
+.instalar__titulo {
+  margin: 0 0 var(--esp-2);
+  font-size: var(--texto-titulo-seccion);
+  font-weight: var(--peso-titulo);
+}
+
+.instalar__pasos {
+  margin: 0;
+  padding-left: var(--esp-5);
+  font-size: var(--texto-secundario);
+  line-height: 1.5;
+}
+
+/* Pila de avisos de la app: arriba de la hoja, crece hacia arriba sin pasar la tarjeta. */
+.pila-avisos {
+  position: fixed;
+  z-index: var(--capa-avisos);
+  left: calc(var(--seguro-izquierda) + var(--margen-lateral));
+  right: calc(var(--seguro-derecha) + var(--margen-lateral));
+  bottom: var(--pila-abajo, calc(var(--seguro-abajo) + var(--esp-4)));
+  max-height: var(--pila-maximo, none);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  overflow: hidden;
+  pointer-events: none;
+  transition: bottom var(--duracion-hoja) var(--curva-salida);
+}
+
+.pila-avisos:empty {
+  display: none;
+}
+
+.pila-avisos > * {
+  pointer-events: auto;
+  box-shadow: var(--elevacion-2);
+}
+
+.pila-avisos[data-escritorio] {
+  left: calc(408px + var(--margen-lateral));
+  right: auto;
+  width: 360px;
+}
+
+.pila-avisos > .aviso-version,
+.aviso-conexion--en-pila {
+  position: static;
+}
+
+.pila-avisos > .aviso-cierres {
+  align-self: flex-start;
+  padding: var(--esp-1) var(--esp-3);
+  border-radius: var(--radio-chip);
+  background: var(--color-superficie);
+}

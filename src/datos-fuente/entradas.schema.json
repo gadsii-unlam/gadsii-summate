@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "entradas.schema.json",
+  "title": "Nombre visible de cada entrada de edificio, cargado a mano por el equipo",
+  "description": "Clave: id de un nodo entrada-* de edificio (no central). Valor: cómo se nombra en las indicaciones, en minúscula y sin artículo (\"entrada oeste\" → \"Entrá a Salud por la entrada oeste\"). Una entrada que no se confirmó en el campus se quita del archivo: sin nombre, las indicaciones no la mencionan.",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" }
+  },
+  "patternProperties": {
+    "^entrada-[a-z0-9-]+$": { "type": "string", "minLength": 1, "pattern": "^\\S(.*\\S)?$" }
+  },
+  "additionalProperties": false
+}

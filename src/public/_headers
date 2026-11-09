@@ -1,0 +1,61 @@
+# Cabeceras de los assets estáticos de Cloudflare (https://developers.cloudflare.com/workers/static-assets/headers/).
+# Ojo: si una ruta coincide con varias reglas, Cloudflare combina los valores del mismo header,
+# así que las reglas de Cache-Control no deben solaparse (lo revisa scripts/pwa/headers.test.ts).
+# Para agregar una ruta nueva bajo /data/, sumala con su propia regla: no hay comodín en /data/.
+
+# Siempre se revisa la versión publicada: la página, el service worker y el manifiesto
+# (tolerar-senal-irregular, decisión 9).
+/
+  Cache-Control: no-cache
+
+/index.html
+  Cache-Control: no-cache
+
+/sw.js
+  Cache-Control: no-cache
+
+/registerSW.js
+  Cache-Control: no-cache
+
+/manifest.webmanifest
+  Cache-Control: no-cache
+
+# Runtime de Workbox: lleva hash en el nombre.
+/workbox-*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Assets con hash de Vite: nunca cambian para una misma URL.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Datos del campus sin hash en el nombre: se revalidan siempre (el service worker los guarda con
+# revisión, así que sin red salen del precache).
+/data/grafo.json
+  Cache-Control: no-cache
+
+/data/lugares.json
+  Cache-Control: no-cache
+
+/data/plano.json
+  Cache-Control: no-cache
+
+/data/mapa-base.svg
+  Cache-Control: no-cache
+
+/data/mapa-base.webp
+  Cache-Control: no-cache
+
+# Cierres: siempre se pide la versión publicada (el service worker guarda la última copia).
+/data/cierres.json
+  Cache-Control: no-cache
+
+# Íconos de la app instalable.
+/icons/*
+  Cache-Control: public, max-age=86400
+
+/favicon.svg
+  Cache-Control: public, max-age=86400
+
+# Clima simulado: siempre de la red (un clima cacheado ocultaría un error).
+/api/clima/*
+  Cache-Control: no-store
