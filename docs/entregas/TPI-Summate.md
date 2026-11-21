@@ -1,6 +1,6 @@
 # TPI — Trabajo Práctico Integrador — Equipo Summate
 
-> **BORRADOR para revisar en equipo.** Las marcas **[A CONFIRMAR POR EL EQUIPO.]** señalan puntos que dependen de lo que recuerde o decida el equipo. Al cerrar el texto se borra esta nota y se genera `TPI-Summate.docx` y `TPI-Summate.pdf` con el formato de las entregas anteriores.
+> **BORRADOR para revisar en equipo.** Al cerrar el texto se borra esta nota y se genera `TPI-Summate.docx` y `TPI-Summate.pdf` con el formato de las entregas anteriores.
 
 **Repositorio:** <https://github.com/gadsii-unlam/gadsii-summate>
 **Producto funcionando:** <https://donde-queda.donde-queda.workers.dev>
@@ -58,13 +58,13 @@ Pasamos de «mostrar una ruta» a «guiar hasta la puerta del aula y mostrar el 
 - Exclusión de tramos cerrados y alternativa «resguardada» con lluvia.
 - PWA que sigue mostrando la ruta cargada si se corta la señal.
 
-Está publicado en Cloudflare Workers. Se comprobó en la URL pública que responde, que el grafo publicado tiene 660 nodos y 690 aristas en dos pisos, que `cierres.json` está vacío, que los cuatro archivos del clima simulado (`seco`, `lluvia`, `lento` y `error`) están en `/api/clima/` y que el código publicado trae los textos «Sin acceso ahora», «Buscando el camino…», «Sin conexión» y «Reintentar». Además se recorrió a mano el MVP publicado en Chrome (21/11/2026):
+Está publicado en Cloudflare Workers. Se comprobó en la URL pública que responde, que el grafo publicado tiene 660 nodos y 690 aristas, que `cierres.json` está vacío, que los cuatro archivos del clima simulado (`seco`, `lluvia`, `lento` y `error`) están en `/api/clima/` y que el código publicado trae los textos «Sin acceso ahora», «Buscando el camino…», «Sin conexión» y «Reintentar». Además se recorrió a mano el MVP publicado en Chrome (21/11/2026):
 
 - **Ayuda de primer uso:** al abrir aparece «Para empezar» con el botón «Entendido».
-- **Ruta sin botón de cálculo:** Entrada Florencio Varela → Aula 255 se calcula sola al elegir el destino (5 min, 335 m, 155 m al aire libre), y «Iniciar» acerca el mapa al origen.
-- **Lluvia simulada:** con el panel de prueba (`?panel=prueba`, Clima simulado → Lluvia) Buffet → Aula 108 pasa a «Llueve · te recomendamos la ruta más resguardada»: 4 min y 120 m al aire libre contra 3 min y 160 m de la más rápida, que sigue disponible.
+- **Ruta sin botón de cálculo:** Entrada Florencio Varela → Aula 255 se calcula sola al elegir el destino, y «Iniciar» acerca el mapa al origen.
+- **Lluvia simulada:** con el panel de prueba (`?panel=prueba`, Clima simulado → Lluvia) Buffet → Aula 108 pasa a «Llueve · te recomendamos la ruta más resguardada», y la más rápida sigue disponible.
 
-El MVP no trae indicación de piso: solo las flechas de entrada en el plano. Es lo que el TP5 detectó como mejora y lo que el pivote propone construir, no algo que haya que corregir en el MVP. En esa sesión no se probó la vista de celular ni «Sin conexión». **[A CONFIRMAR POR EL EQUIPO.]**
+El MVP no da indicaciones paso a paso y no contempla edificios de más de un piso. El camino se sigue en el mapa, y las entradas de los edificios están marcadas con flechas. La indicación de piso es justamente lo que el TP5 detectó que faltaba y lo que el pivote propone construir. En esa sesión no se probaron la vista de celular ni «Sin conexión».
 
 **Qué quedó simulado.**
 
@@ -113,7 +113,7 @@ Cinco decisiones, una por eje (quién, qué, cómo se usa, con qué y cómo se m
 - **El reloj arranca en la entrega del celular.** Con otro punto de partida (desde que aparece la ruta), M1 pasa de 1 de 3 a 2 de 3. La decisión de pivotar se apoyó en el patrón (dos de tres con dificultad en el mismo lugar), no en el número.
 - **Los usuarios ya conocían parte del campus.** Eran tres de los cinco encuestados del TP2, que iban de una a cuatro veces por semana, y la prueba fue a fines de octubre. U2 conocía el Aula 108 y hubo que cambiarle la tarea a la 112, y en T2 dijo «Primero fui por el camino más directo, que es el que yo conozco», justo lo que lo llevó a la cinta. El segmento sigue siendo el correcto (ingresantes y primer año), pero probamos con quienes ya llevaban un cuatrimestre.
 
-Hoy mediríamos la llegada a la puerta con un tiempo proporcional a la distancia y sumaríamos a ingresantes en sus primeras semanas. **[A CONFIRMAR POR EL EQUIPO.]**
+Hoy mediríamos la llegada a la puerta con un tiempo proporcional a la distancia y sumaríamos a ingresantes en sus primeras semanas.
 
 ### 4. Qué falta
 
@@ -125,7 +125,7 @@ Si el producto saliera a producción en el ámbito de la UNLaM:
 - La API meteorológica real, que reemplaza al servicio simulado. En el código, `src/clima/servicio-simulado.ts` es lo único que habría que cambiar.
 - La sincronización de cierres entre servidor y PWA por versión del dato (ETag).
 - Las funciones 2 y 3, que nunca se construyeron.
-- La guía de llegada dentro del edificio del pivote (piso, pasillo y puerta del aula), que hoy no existe: el MVP solo marca las entradas con flechas.
+- La guía de llegada dentro del edificio del pivote (piso, pasillo y puerta del aula), que hoy no existe: el MVP solo marca las entradas con flechas. Como punto de partida, en el repositorio quedó el generador de indicaciones que se sacó del MVP (`src/src/rutas/indicaciones.ts`). La interfaz no lo usa.
 
 **¿Qué riesgo del TP6 habría que resolver primero?** El subsistema de cierres. Hoy es un archivo editado a mano y un deploy, y con señal irregular la app puede mostrar una copia vieja sin avisar. Además, en el TP5 dos de tres usuarios no miraron el cierre hasta llegar a la cinta, aunque el desvío estaba en pantalla. Antes del backend, el aviso del cierre tiene que verse antes de empezar a caminar.
 
@@ -134,7 +134,7 @@ Si el producto saliera a producción en el ámbito de la UNLaM:
 - **Documentación:** ya existen `src/README.md`, la guía `src/docs/cierres.md` y los `design.md` de OpenSpec. Faltaría un manual para quien carga cierres sin tocar código.
 - **Accesos:** la cuenta de Cloudflare, el repositorio, y una fuente institucional de datos del plano, que hoy es un SVG propio del equipo.
 - **Capacitación:** para el rol que cargue los cierres.
-- **Presupuesto:** hoy el hosting estático es gratuito. Un backend con base y administradores agregaría un costo que no estimamos. **[A CONFIRMAR POR EL EQUIPO.]**
+- **Presupuesto:** las funciones del MVP no necesitan backend, y el hosting estático es gratuito. La versión final sí lo necesita, para el panel de cierres y la API de clima, pero el costo seguiría siendo muy bajo. Con el volumen de un campus, el plan gratuito de Cloudflare Workers y D1 alcanza (5 GB y 100.000 escrituras por día). Si hiciera falta superarlo, el plan pago cuesta US$ 5 por mes. Open-Meteo es gratuito para uso no comercial hasta 10.000 consultas por día. Con una consulta cacheada cada 15 minutos, se harían unas 100 por día. Es una estimación sobre precios publicados (noviembre de 2026), no un presupuesto relevado con la UNLaM.
 
 **Deuda técnica.**
 
@@ -163,7 +163,7 @@ Las respuestas se apoyan en `docs/prompts.md` (la línea indica la fila de la ta
 - **La arquitectura sin backend y la concentración de la composición en `App.tsx`.** La IA las decidió (o salieron de su forma de ir sumando cambios) y no las discutimos. En el TP6 nos dimos cuenta de que no las habíamos elegido.
 - **El diagrama de la gran visión del TP6 (línea 30).** Quedaban dentro del recuadro del MVP el servicio más cercano y los horarios, que nunca se construyeron.
 
-**¿Cuál fue el descarte más importante?** El origen precargado como atajo automático. Lo propuso la IA en el diseño de la alternativa B y se descartó con evidencia: Bananza lo marcó en el TP4 (hallazgos 1 y 2) y el TP2 mostraba que los ingresantes no conocen los nombres del campus. El brief v4 lo reemplazó por una sugerencia que hay que confirmar en el mismo panel y referencias reconocibles (biblioteca, comedor). En la prueba del TP5, U1 confirmó el origen sin cambiarlo (T1, 17:02:25). **[A CONFIRMAR POR EL EQUIPO.]**
+**¿Cuál fue el descarte más importante?** Las indicaciones paso a paso y los edificios de más de un piso. Claude Code los construyó dentro del MVP (cambio `mostrar-ruta-e-indicaciones`, con pasos como «doblar», «entrar al edificio» o «subir al piso»). El equipo los sacó antes de la prueba para no sumarle complejidad al MVP, y quedó solo la ruta dibujada con las flechas de entrada. Fue un descarte por alcance, no por evidencia, y la prueba del TP5 mostró su costo. Los dos usuarios que fallaron lo hicieron justo adentro del edificio: U2 subió sin leer el piso y U3 pidió «que me dijera más claro en qué piso». Lo que sacamos para simplificar es lo que hoy propone construir el pivote. El código quedó en el repositorio (`src/src/rutas/indicaciones.ts`), pero la interfaz no lo usa.
 
 **¿Qué haríamos distinto si empezáramos mañana con las mismas herramientas?**
 
@@ -183,7 +183,7 @@ Las respuestas se apoyan en `docs/prompts.md` (la línea indica la fila de la ta
 | Registro de prompts completo | Sí, con entradas hasta el TP6 y la de las correcciones. | Entrada del TPI. |
 | Evidencia del TP2 y del TP5 | Sí, en `docs/evidencia/tp2/` y `docs/evidencia/tp5/`. | — |
 
-**Las líneas base y los tags.** El TP7 no se hizo (la cátedra lo dejó de lado por tiempos), así que nunca se definió una convención de tags. Se propone la de la clase de Gestión de Configuración, con tags anotados y versionado semántico, en el mismo orden de entregas. **[A CONFIRMAR POR EL EQUIPO.]**
+**Las líneas base y los tags.** El TP7 no se hizo (la cátedra lo dejó de lado por tiempos), así que nunca se definió una convención de tags. Se propone la de la clase de Gestión de Configuración, con tags anotados y versionado semántico, en el mismo orden de entregas.
 
 | Línea base | Hito | Commit candidato | Tag |
 | --- | --- | --- | --- |
