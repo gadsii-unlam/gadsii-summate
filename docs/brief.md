@@ -251,3 +251,38 @@ Lo primero a construir sería esa guía de llegada y el aviso del cierre antes d
 | 5 | Cuando llueve, los usuarios prefieren una ruta interior aunque sea más larga. | **Sin comprobar con lluvia real** | Con lluvia imaginada y simulada, U2 cambió su preferencia declarada en el TP2; U1 y U3 siguieron la recomendada sin considerar la otra. |
 
 **Validación pendiente.** La prueba fue con tres usuarios, sin significancia estadística, y no incluyó a los otros dos del TP2. La lluvia fue imaginada por los usuarios y simulada en la aplicación, no real, y el cierre de T2 lo señalizó el equipo con una cinta. El umbral de 5 minutos depende de cuándo se empieza a contar. La nueva hipótesis todavía no se probó: falta una guía de llegada dentro del edificio y una prueba con usuarios que no conozcan el campus para ver si les alcanza.
+
+# Brief de Producto — versión 6
+
+**Qué cambió respecto de la versión 5 y por qué:** la versión 5 cerró el TP5 con una prueba de usuarios y la decisión de pivotar, pero describía el producto solo desde el uso: no decía cómo está construido ni qué tendría que cambiar para llegar a la visión completa del TP1. En el TP6 leímos el código del MVP, diagramamos su arquitectura real y la de la gran visión, y buscamos el componente que más probablemente falle al crecer. Esta versión agrega tres cosas: la arquitectura del MVP y de la visión, las restricciones técnicas del contexto, y el componente de mayor riesgo, que coincide con el problema que la prueba del TP5 ya había mostrado. No cambia el segmento, el problema ni la hipótesis de valor del pivote, y las versiones anteriores se mantienen como están. (El enunciado del TP6 la llama versión 5; nuestra numeración ya había llegado a la 5 en el TP5, por eso esta es la 6.)
+
+## Arquitectura del MVP
+
+El MVP es una aplicación web de una sola página (SPA) hecha con React, TypeScript y Vite, instalable como PWA (una web que se instala como app y puede funcionar sin conexión) y **sin backend**. La ruta se calcula en el teléfono con A\* sobre un grafo del campus que se descarga como JSON. Los datos del campus, los cierres y el clima simulado son archivos estáticos publicados en Cloudflare Workers con cada deploy, y lo único que se guarda es en el dispositivo. Dos decisiones estructurales las tomó la herramienta o nadie, y no el equipo: no tener backend y concentrar la composición de la aplicación en `App.tsx`. Está construido el motor de rutas, la interfaz y la exclusión de tramos cerrados; está simulado el clima y la carga de cierres es manual, como se definió en el TP3. El detalle y el diagrama están en el [informe del TP6](entregas/TP6-Summate.pdf).
+
+## La gran visión en términos de arquitectura
+
+El producto completo del TP1 pide dos clientes (el Navegante, que ya existe, y un panel de administración), un backend con autenticación, una base de datos persistente y una API meteorológica real. El MVP cubre la función 1 completa (mapa y ruta más corta) y las funciones 4 y 5 en versión manual o simulada; las funciones 2 y 3 (horarios de atención y servicio más cercano) no existen todavía.
+
+**El salto arquitectónico más grande** es pasar de archivos publicados a mano a un backend con base persistente donde un administrador cargue los datos, sin perder que la ruta se calcule en el dispositivo y siga a la vista con señal irregular. Las tecnologías nuevas que agregaría la visión son:
+
+- **Cloudflare Workers + D1 (SQLite)** para cierres con vigencia, horarios y administradores, elegidas por continuidad con lo ya desplegado.
+- **Una API meteorológica real** (por ejemplo Open-Meteo) en lugar del clima simulado.
+- **Sincronización de cierres** entre el servidor y la PWA mediante versiones del dato (ETag de HTTP), sin depender de la sincronización en segundo plano.
+
+## Restricciones técnicas del contexto
+
+- **Señal irregular.** Los cinco encuestados del TP2 declararon datos móviles de señal irregular. Por eso la ruta se calcula en el teléfono y la app tiene que seguir funcionando con los últimos datos descargados cuando se corta la conexión; en la prueba del TP5, U3 perdió la señal unos 20 segundos y la ruta ya cargada siguió a la vista.
+- **Dispositivos mixtos.** En la prueba hubo un iPhone y dos Android, así que ninguna función puede depender de capacidades que no estén en todos los navegadores.
+- **Sin ubicación ni sensores propios.** El TP1 fijó que el clima se obtiene de un servicio externo, sin GPS del usuario ni sensores propios.
+- **Plano propio del campus.** El mapa y el grafo se generan a partir de un plano SVG que mantiene el equipo; no hay una fuente institucional de datos.
+- **Infraestructura de la UNLaM sin relevar.** Ningún TP preguntó por sistemas institucionales, políticas de acceso a datos ni quién mantendría el producto. Lo tratamos como un supuesto a validar antes de pensar en una versión con administradores.
+- **Un solo mantenedor por ahora.** Los cierres los carga el equipo editando un archivo y publicando; con la visión tendría que hacerlo alguien que no toca el código.
+
+## El componente más riesgoso
+
+Es el **subsistema de cierres**. En la prueba del TP5, dos de tres usuarios no percibieron el cierre hasta llegar a la cinta, aunque el desvío estaba calculado en pantalla. Con la visión pasa a ser el dato que más cambia y el que más daña si está desactualizado, y hoy depende de un archivo editado a mano, un deploy y una copia guardada que con señal irregular puede estar vieja. Esto refuerza el pivote del TP5: antes de construir el backend, el aviso del cierre tiene que verse antes de empezar a caminar.
+
+## Lo que no cambia
+
+La hipótesis de valor del pivote del TP5 (llegar a la puerta del aula, no solo al edificio) sigue siendo la que hay que probar, y esta versión no agrega evidencia nueva sobre ella. El estado de los supuestos de la versión 5 se mantiene.

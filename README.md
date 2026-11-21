@@ -15,6 +15,7 @@ El código está en [`src/`](src/); cómo levantarlo, los scripts y la estructur
 ## Documentación
 
 - [`docs/brief.md`](docs/brief.md): Brief de Producto, documento vivo con una versión por TP.
-- [`docs/entregas/`](docs/entregas/): informes entregados de cada TP, en `.docx` y `.pdf` (por ejemplo, [`TP5-Summate.pdf`](docs/entregas/TP5-Summate.pdf)). El PDF se genera a partir del `.docx`.
+- [`docs/entregas/`](docs/entregas/): informes entregados de cada TP, en `.docx` y `.pdf` (por ejemplo, [`TP6-Summate.pdf`](docs/entregas/TP6-Summate.pdf)). El PDF se genera a partir del `.docx`.
+- [`docs/arquitectura/`](docs/arquitectura/): TP6, diagramas (SVG y PNG) de la arquitectura real del MVP y de la gran visión.
 - [`docs/evidencia/tp5/`](docs/evidencia/tp5/): evidencia de la prueba con usuarios del TP5 (guion, registro, fricciones y notas de cada sesión).
 - [`docs/prompts.md`](docs/prompts.md): registro del trabajo con IA.
