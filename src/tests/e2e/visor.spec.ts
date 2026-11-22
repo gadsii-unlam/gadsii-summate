@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { abrir, caja, comoUsuarioConocido, esperarMapaQuieto } from './ayudas.ts'
+import { abrir, caja, comoUsuarioConocido, esperarMapaQuieto, franjaMapa } from './ayudas.ts'
 
 test.beforeEach(async ({ page }) => {
   await comoUsuarioConocido(page)
@@ -16,10 +16,11 @@ test('el plano ocupa todo el viewport de 390 × 844 con el fondo de la vereda y 
   )
   await expect(page.locator('.leaflet-control-attribution')).toHaveCount(0)
   await expect(page.locator('.leaflet-control-zoom')).toHaveCount(0)
-  // La tarjeta, los botones y la hoja quedan encima del plano.
-  for (const sel of ['.tarjeta-superior', '.botones-flotantes', '.hoja']) {
+  // La tarjeta y los botones quedan encima del plano; en celular no hay hoja inferior.
+  for (const sel of ['.tarjeta-superior', '.botones-flotantes']) {
     await expect(page.locator(sel)).toBeVisible()
   }
+  await expect(page.locator('.hoja')).toHaveCount(0)
   const anchos = await page.evaluate(() => [
     document.documentElement.scrollWidth,
     window.innerWidth,
@@ -88,15 +89,16 @@ test('si falla el SVG, el plano sigue visible con la imagen única', async ({ pa
     .toBe(true)
 })
 
-test('el encuadre inicial muestra la zona de edificios entre la tarjeta y la hoja colapsada', async ({
-  page,
-}) => {
+test('el encuadre inicial ocupa el ancho y deja el plano pegado abajo', async ({ page }) => {
   await abrir(page)
-  const z = Number(await page.locator('.mapa').getAttribute('data-zoom'))
-  const tarjeta = await caja(page, '.tarjeta-superior')
-  const hoja = await caja(page, '.hoja')
-  const franja = hoja.y - (tarjeta.y + tarjeta.height)
-  // La caja de edificios (960 × 1440 px del plano) entra entera en la franja visible.
-  expect(1440 * 2 ** z).toBeLessThanOrEqual(franja)
-  expect(960 * 2 ** z).toBeLessThanOrEqual(390)
+  const f = await franjaMapa(page)
+  const plano = await page.locator('img.mapa__plano').evaluate((img) => {
+    const r = img.getBoundingClientRect()
+    return { left: r.left, right: r.right, bottom: r.bottom }
+  })
+  // A lo ancho entra desde el borde izquierdo del plano (Pte. Perón): el plano empieza en el
+  // borde de la pantalla y no queda espacio vacío abajo.
+  expect(Math.abs(plano.left)).toBeLessThanOrEqual(2)
+  expect(plano.right).toBeGreaterThanOrEqual(f.ancho - 2)
+  expect(Math.abs(plano.bottom - page.viewportSize()!.height)).toBeLessThanOrEqual(2)
 })

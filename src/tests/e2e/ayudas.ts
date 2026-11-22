@@ -2,7 +2,7 @@
 import { expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
 
-/** Usuario que ya cerró la indicación de primer uso y tiene un reciente (la hoja abre colapsada). */
+/** Usuario que ya cerró la indicación de primer uso y tiene un destino reciente (Teatro). */
 export async function comoUsuarioConocido(page: Page) {
   await page.addInitScript(() => {
     if (sessionStorage.getItem('dq-e2e-preparado')) return
@@ -127,4 +127,49 @@ export async function caja(page: Page, selector: string) {
   const c = await page.locator(selector).first().boundingBox()
   if (!c) throw new Error(`sin caja: ${selector}`)
   return c
+}
+
+// ---- Flujo "Cómo llegar" (la vista de inicio; en celular no hay hoja inferior) -------------
+
+/** Elige el destino desde su campo: abre la búsqueda, escribe y toca la opción. */
+export async function elegirDestino(page: Page, texto: string, opcion: RegExp) {
+  await page.getByRole('button', { name: /^Destino:/ }).tap()
+  await page.getByRole('combobox').fill(texto)
+  await page.getByRole('option', { name: opcion }).first().tap()
+}
+
+/**
+ * Elige el origen desde su campo. En celular, si todavía no hay destino, la misma búsqueda pasa
+ * a pedir el destino.
+ */
+export async function elegirOrigen(page: Page, texto: string, opcion: RegExp) {
+  await page.getByRole('button', { name: /^Punto de partida:/ }).tap()
+  await page.getByRole('combobox').fill(texto)
+  await page.getByRole('option', { name: opcion }).first().tap()
+}
+
+/** Elige destino y después origen: con los dos, la app pide la ruta. */
+export async function elegirRecorrido(
+  page: Page,
+  destino: [string, RegExp],
+  origen: [string, RegExp],
+) {
+  await elegirDestino(page, ...destino)
+  await elegirOrigen(page, ...origen)
+}
+
+/** "Cancelar" (abajo en celular, en el panel en PC): borra origen y destino. */
+export function botonCancelar(page: Page) {
+  return page.getByRole('button', { name: 'Cancelar', exact: true })
+}
+
+/**
+ * Franja del mapa que no tapa nada: debajo de la tarjeta superior y encima de los botones
+ * flotantes (en celular ya no hay hoja inferior; el mapa reserva abajo el alto de los botones).
+ */
+export async function franjaMapa(page: Page) {
+  const tarjeta = await caja(page, '.tarjeta-superior')
+  const botones = await caja(page, '.botones-flotantes')
+  const vp = page.viewportSize()!
+  return { arriba: tarjeta.y + tarjeta.height, abajo: botones.y, ancho: vp.width }
 }

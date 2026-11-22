@@ -14,27 +14,25 @@ async function guardado(page: Page) {
   })
 }
 
-const chip = (page: Page, nombre: RegExp) =>
-  page.getByRole('list', { name: 'Opciones de ruta' }).getByRole('button', { name: nombre })
+const mapa = (page: Page) => page.locator('.mapa')
 
 test.beforeEach(async ({ page }) => {
   await comoUsuarioConocido(page)
 })
 
-test('cada paso del recorrido deja en localStorage lo esperado, y "Finalizar viaje" lo borra', async ({
+test('cada paso del recorrido deja en localStorage lo esperado, y "Cancelar" lo borra', async ({
   page,
 }) => {
   await abrir(page, '/?clima=lluvia')
   expect(await guardado(page)).toBeNull()
 
   // Elegir el destino (sin ruta todavía).
-  await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
+  await page.getByRole('button', { name: /^Destino:/ }).tap()
   await page.getByRole('combobox').fill('Salud')
   await page
     .getByRole('option', { name: /^Dpto\. de Cs\. de la Salud/ })
     .first()
     .tap()
-  await page.getByRole('button', { name: /^Cómo llegar$/ }).tap()
   await expect
     .poll(() => guardado(page))
     .toMatchObject({
@@ -67,13 +65,11 @@ test('cada paso del recorrido deja en localStorage lo esperado, y "Finalizar via
   expect(typeof conRuta?.versionDatos).toBe('string')
   expect(Date.parse(String(conRuta?.guardadoEn))).not.toBeNaN()
 
-  // Cambiar de alternativa.
-  await chip(page, /^Más rápida/).tap()
-  await expect.poll(async () => (await guardado(page))?.alternativaMostrada).toBe('mas-corta')
+  // La alternativa (la más rápida) queda en gris en el mapa.
+  await expect(mapa(page)).toHaveAttribute('data-ruta-alternativa', /.+/)
 
-  // "Finalizar viaje" lo borra.
-  await page.getByRole('button', { name: 'Iniciar', exact: true }).tap()
-  await page.getByRole('button', { name: 'Finalizar viaje' }).tap()
+  // "Cancelar" lo borra.
+  await page.getByRole('button', { name: 'Cancelar', exact: true }).tap()
   await expect.poll(() => guardado(page)).toBeNull()
 })
 

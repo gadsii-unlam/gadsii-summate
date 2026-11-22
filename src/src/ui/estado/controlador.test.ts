@@ -53,32 +53,59 @@ describe('ControladorPantalla + history', () => {
     expect(window.location.hash).toBe('#buscar')
   })
 
-  it('Atrás desde la ruta vuelve a la ficha sin pedir otra ruta', async () => {
-    crear()
-    c.despachar({ tipo: 'abrir-ficha', lugarId: 'humanidades-121' })
-    c.despachar({ tipo: 'abrir-como-llegar' })
-    c.despachar({ tipo: 'abrir-busqueda', campo: 'origen' })
+  /** Elige en la búsqueda del panel y espera a que el historial vuelva al panel. */
+  async function elegirEnBusqueda(campo: 'origen' | 'destino', lugarId: string) {
+    c.despachar({ tipo: 'abrir-busqueda', campo })
     const volvio = esperarPopstate()
-    c.despachar({ tipo: 'elegir-resultado', lugarId: 'servicios-biblioteca' })
+    c.despachar({ tipo: 'elegir-resultado', lugarId })
     await volvio
+  }
+
+  it('arranca en "Cómo llegar", sin hash y sin entradas extra en el historial', () => {
+    crear()
+    expect(c.obtener().pantalla.vista).toEqual({ tipo: 'como-llegar' })
+    expect(window.history.state).toMatchObject({ profundidad: 0 })
+    expect(window.location.hash).toBe('')
+  })
+
+  it('elegir destino y origen en la búsqueda vuelve al panel y pide la ruta una vez', async () => {
+    crear()
+    await elegirEnBusqueda('destino', 'humanidades-121')
+    expect(c.obtener().pantalla.vista).toEqual({ tipo: 'como-llegar' })
+    expect(pedidos).toHaveLength(0)
+    await elegirEnBusqueda('origen', 'servicios-biblioteca')
     expect(c.obtener().pantalla.vista).toEqual({ tipo: 'como-llegar' })
     expect(pedidos.map((p) => [p.origen, p.destino])).toEqual([
       ['servicios-biblioteca', 'humanidades-121'],
     ])
     expect(c.obtener().fase).toBe('ruta')
+  })
 
-    await atras()
-    expect(c.obtener().pantalla.vista).toEqual({ tipo: 'ficha', lugarId: 'humanidades-121' })
-    expect(pedidos).toHaveLength(1)
-    expect(pedidos[0]?.signal.aborted).toBe(true)
-    // La selección no se deshace.
+  it('en celular, elegir el origen sin destino pasa a buscar el destino en la misma entrada', () => {
+    crear()
+    c.despachar({ tipo: 'abrir-busqueda', campo: 'origen' })
+    const largo = window.history.length
+    c.despachar({ tipo: 'elegir-resultado', lugarId: 'servicios-biblioteca' })
+    expect(c.obtener().pantalla.vista).toEqual({
+      tipo: 'buscando',
+      campo: 'destino',
+      desde: 'como-llegar',
+    })
+    expect(window.history.length).toBe(largo)
+    expect(window.history.state).toMatchObject({ profundidad: 1 })
+  })
+
+  it('en PC, elegir el origen sin destino vuelve al panel (lo que falta va en la barra lateral)', async () => {
+    crear()
+    c.usarEscritorio(true)
+    await elegirEnBusqueda('origen', 'servicios-biblioteca')
+    expect(c.obtener().pantalla.vista).toEqual({ tipo: 'como-llegar' })
     expect(c.obtener().pantalla.seleccion.origen).toBe('servicios-biblioteca')
   })
 
   it('abrir y cerrar la búsqueda sin elegir no repite el pedido; cambiar el origen sí', async () => {
     crear()
-    c.despachar({ tipo: 'abrir-ficha', lugarId: 'humanidades-121' })
-    c.despachar({ tipo: 'abrir-como-llegar' })
+    c.despachar({ tipo: 'elegir-destino', lugarId: 'humanidades-121' })
     c.despachar({ tipo: 'elegir-origen', lugarId: 'servicios-biblioteca' })
     expect(pedidos).toHaveLength(1)
 
@@ -95,8 +122,7 @@ describe('ControladorPantalla + history', () => {
 
   it('borrar el destino cancela el pedido y no pide nada', () => {
     crear()
-    c.despachar({ tipo: 'abrir-ficha', lugarId: 'humanidades-121' })
-    c.despachar({ tipo: 'abrir-como-llegar' })
+    c.despachar({ tipo: 'elegir-destino', lugarId: 'humanidades-121' })
     c.despachar({ tipo: 'elegir-origen', lugarId: 'servicios-biblioteca' })
     c.despachar({ tipo: 'borrar-destino' })
     expect(pedidos).toHaveLength(1)
@@ -106,10 +132,20 @@ describe('ControladorPantalla + history', () => {
     expect(pedidos).toHaveLength(1)
   })
 
+  it('Cancelar borra origen y destino y cancela el pedido', () => {
+    crear()
+    c.despachar({ tipo: 'elegir-destino', lugarId: 'humanidades-121' })
+    c.despachar({ tipo: 'elegir-origen', lugarId: 'servicios-biblioteca' })
+    c.despachar({ tipo: 'limpiar' })
+    expect(c.obtener().pantalla.seleccion).toMatchObject({ origen: null, destino: null })
+    expect(c.obtener().pantalla.vista).toEqual({ tipo: 'como-llegar' })
+    expect(pedidos[0]?.signal.aborted).toBe(true)
+    expect(c.obtener().pedido).toBeNull()
+  })
+
   it('guarda el último origen al pedir una ruta y lo ofrece como sugerencia la próxima vez', () => {
     crear()
-    c.despachar({ tipo: 'abrir-ficha', lugarId: 'humanidades-121' })
-    c.despachar({ tipo: 'abrir-como-llegar' })
+    c.despachar({ tipo: 'elegir-destino', lugarId: 'humanidades-121' })
     c.despachar({ tipo: 'elegir-origen', lugarId: 'servicios-teatro' })
     expect(almacen.leer(CLAVES.ultimoOrigen, (v): v is string => typeof v === 'string')).toBe(
       'servicios-teatro',
@@ -122,17 +158,16 @@ describe('ControladorPantalla + history', () => {
     })
   })
 
-  it('✕ vuelve al inicio con history.go(-profundidad)', async () => {
+  it('✕ vuelve al panel con history.go(-profundidad)', async () => {
     crear()
     c.despachar({ tipo: 'abrir-busqueda', campo: 'destino' })
-    c.despachar({ tipo: 'elegir-resultado', lugarId: 'humanidades-121' })
-    c.despachar({ tipo: 'abrir-como-llegar' })
+    c.despachar({ tipo: 'abrir-ayuda' })
     const go = vi.spyOn(window.history, 'go')
     const p = esperarPopstate()
     c.cerrar()
     await p
-    expect(go).toHaveBeenCalledWith(-3)
-    expect(c.obtener().pantalla.vista).toEqual({ tipo: 'inicio' })
+    expect(go).toHaveBeenCalledWith(-2)
+    expect(c.obtener().pantalla.vista).toEqual({ tipo: 'como-llegar' })
     go.mockRestore()
   })
 
@@ -140,71 +175,99 @@ describe('ControladorPantalla + history', () => {
     crear()
     c.despachar({ tipo: 'abrir-busqueda', campo: 'destino' })
     c.despachar({ tipo: 'escribir', consulta: '121' })
-    c.despachar({ tipo: 'elegir-resultado', lugarId: 'humanidades-121' })
+    c.despachar({ tipo: 'abrir-ayuda' })
     const back = vi.spyOn(window.history, 'back')
     const p = esperarPopstate()
     c.volver()
     expect(back).toHaveBeenCalledTimes(1)
-    expect(c.obtener().pantalla.vista.tipo).toBe('ficha')
+    expect(c.obtener().pantalla.vista.tipo).toBe('ayuda')
     await p
     expect(c.obtener().pantalla.vista.tipo).toBe('buscando')
     expect(c.obtener().pantalla.consulta).toBe('121')
     back.mockRestore()
   })
 
-  it('volver a la primera búsqueda después de buscar el origen conserva lo escrito', async () => {
+  it('volver en el panel no hace nada', () => {
     crear()
-    c.despachar({ tipo: 'abrir-busqueda', campo: 'destino' })
-    c.despachar({ tipo: 'escribir', consulta: '121' })
-    c.despachar({ tipo: 'elegir-resultado', lugarId: 'humanidades-121' })
-    c.despachar({ tipo: 'abrir-como-llegar' })
-    c.despachar({ tipo: 'abrir-busqueda', campo: 'origen' })
-    const p = esperarPopstate()
-    c.despachar({ tipo: 'elegir-resultado', lugarId: 'servicios-biblioteca' })
-    await p
-    await atras() // ficha
-    await atras() // búsqueda
-    expect(c.obtener().pantalla.vista.tipo).toBe('buscando')
-    expect(c.obtener().pantalla.consulta).toBe('121')
+    const back = vi.spyOn(window.history, 'back')
+    c.volver()
+    expect(back).not.toHaveBeenCalled()
+    back.mockRestore()
   })
 
-  it('carga en frío con un hash: inicio + la vista pedida, y Atrás muestra el inicio', async () => {
-    crear('#lugar/puerta-humanidades-121')
-    expect(c.obtener().pantalla.vista).toEqual({ tipo: 'ficha', lugarId: 'humanidades-121' })
+  it('carga en frío con un hash: el panel + la vista pedida, y Atrás muestra el panel', async () => {
+    crear('#buscar')
+    expect(c.obtener().pantalla.vista).toEqual({
+      tipo: 'buscando',
+      campo: 'destino',
+      desde: 'como-llegar',
+    })
     expect(window.history.state).toMatchObject({ profundidad: 1 })
     await atras()
-    expect(c.obtener().pantalla.vista).toEqual({ tipo: 'inicio' })
+    expect(c.obtener().pantalla.vista).toEqual({ tipo: 'como-llegar' })
     expect(window.location.hash).toBe('')
   })
 
-  it('un hash desconocido cae en el inicio', () => {
-    crear('#lo-que-sea')
-    expect(c.obtener().pantalla.vista).toEqual({ tipo: 'inicio' })
-    expect(window.location.hash).toBe('')
-  })
+  it.each(['#lo-que-sea', '#lugar/puerta-humanidades-121'])(
+    'un hash desconocido o un enlace viejo a una ficha (%s) caen en el panel',
+    (hash) => {
+      crear(hash)
+      expect(c.obtener().pantalla.vista).toEqual({ tipo: 'como-llegar' })
+      expect(window.location.hash).toBe('')
+    },
+  )
 
   it('conectar dos veces (modo estricto) no duplica entradas', () => {
-    crear('#lugar/humanidades-121')
+    crear('#buscar')
     const largo = window.history.length
     desconectar()
     desconectar = c.conectar()
     expect(window.history.length).toBe(largo)
   })
 
-  it('los recientes se guardan al abrir una ficha y al elegir destino, no al elegir origen', async () => {
+  it('los recientes de destino y de origen se guardan por separado', async () => {
     crear()
-    c.despachar({ tipo: 'abrir-ficha', lugarId: 'humanidades-121' })
-    c.despachar({ tipo: 'abrir-como-llegar' })
+    // Celular: elegir el origen pasa a buscar el destino en la misma entrada.
     c.despachar({ tipo: 'abrir-busqueda', campo: 'origen' })
-    let p = esperarPopstate()
     c.despachar({ tipo: 'elegir-resultado', lugarId: 'servicios-biblioteca' })
-    await p
-    expect(c.obtener().recientes).toEqual(['humanidades-121'])
-    c.despachar({ tipo: 'abrir-busqueda', campo: 'destino' })
-    p = esperarPopstate()
+    const p = esperarPopstate()
     c.despachar({ tipo: 'elegir-resultado', lugarId: 'aula-302' })
     await p
-    expect(c.obtener().recientes).toEqual(['aula-302', 'humanidades-121'])
+    expect(c.obtener().recientes).toEqual(['aula-302'])
+    expect(c.obtener().recientesOrigen).toEqual(['servicios-biblioteca'])
+    // Desde la lista del panel (PC) también cuentan.
+    c.despachar({ tipo: 'elegir-destino', lugarId: 'humanidades-121' })
+    c.despachar({ tipo: 'elegir-origen', lugarId: 'servicios-teatro' })
+    expect(c.obtener().recientes).toEqual(['humanidades-121', 'aula-302'])
+    expect(c.obtener().recientesOrigen).toEqual(['servicios-teatro', 'servicios-biblioteca'])
+    desconectar()
+    crear()
+    expect(c.obtener().recientes).toEqual(['humanidades-121', 'aula-302'])
+    expect(c.obtener().recientesOrigen).toEqual(['servicios-teatro', 'servicios-biblioteca'])
+  })
+
+  it('quitar un reciente lo saca de su lista y del almacenamiento', () => {
+    crear()
+    c.despachar({ tipo: 'elegir-destino', lugarId: 'humanidades-121' })
+    c.despachar({ tipo: 'elegir-origen', lugarId: 'servicios-teatro' })
+    c.quitarReciente('destino', 'humanidades-121')
+    expect(c.obtener().recientes).toEqual([])
+    expect(c.obtener().recientesOrigen).toEqual(['servicios-teatro'])
+    c.quitarReciente('origen', 'servicios-teatro')
+    expect(c.obtener().recientesOrigen).toEqual([])
+    desconectar()
+    crear()
+    expect(c.obtener().recientes).toEqual([])
+    expect(c.obtener().recientesOrigen).toEqual([])
+  })
+
+  it('PC: el campo activo y su texto se reinician al cambiar la selección', () => {
+    crear()
+    c.elegirCampoPanel('destino')
+    c.escribirPanel('121')
+    expect(c.obtener()).toMatchObject({ campoPanel: 'destino', consultaPanel: '121' })
+    c.despachar({ tipo: 'elegir-destino', lugarId: 'humanidades-121' })
+    expect(c.obtener()).toMatchObject({ campoPanel: null, consultaPanel: '' })
   })
 
   it('cerrar la indicación de primer uso se recuerda', () => {
@@ -246,7 +309,8 @@ describe('ControladorPantalla + history', () => {
     })
     desconectar = c.conectar()
     expect(c.obtener().pantalla.vista).toEqual({ tipo: 'como-llegar' })
-    expect(window.location.hash).toBe('#como-llegar')
+    // "Cómo llegar" es la vista de base: no suma una entrada ni un hash.
+    expect(window.location.hash).toBe('')
     expect(pedidos.map((p) => [p.origen, p.destino])).toEqual([
       ['servicios-biblioteca', 'humanidades-121'],
     ])

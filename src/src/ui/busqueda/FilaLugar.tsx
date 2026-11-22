@@ -81,3 +81,12 @@ export function BotonLugar({ lugar, tipo, sinAcceso, onElegir }: PropsBotonLugar
     </li>
   )
 }
+
+/** Igual que `BotonLugar`, sin el `<li>` (para sumar otros controles en la misma fila). */
+export function BotonLugarSinLi({ lugar, tipo, sinAcceso, onElegir }: PropsBotonLugar) {
+  return (
+    <button type="button" className="fila" onClick={() => onElegir(lugar)}>
+      <ContenidoFila lugar={lugar} tipo={tipo} sinAcceso={sinAcceso} />
+    </button>
+  )
+}

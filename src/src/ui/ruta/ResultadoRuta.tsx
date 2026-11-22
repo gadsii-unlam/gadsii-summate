@@ -12,11 +12,9 @@ import { useEffect, useMemo, useState } from 'react'
 import type { EstadoOrquestador, PlanDeRuta } from '../../clima/index.ts'
 import type { Lugar } from '../../datos/index.ts'
 import { textoAnuncioRuta, type Criterio, type RutaEncontrada } from '../../rutas/index.ts'
-import ChipsAlternativas from './ChipsAlternativas.tsx'
 import EsperaRuta from './EsperaRuta.tsx'
 import { modeloResultado, type ModeloResultado } from './modelo.ts'
-import TarjetaResumen from './TarjetaResumen.tsx'
-import { EVENTO_FINALIZAR_VIAJE, TEXTOS_RUTA } from './textos.ts'
+import { EVENTO_FINALIZAR_VIAJE } from './textos.ts'
 import { useEsperaVisible } from './useEspera.ts'
 import './ruta.css'
 
@@ -65,8 +63,6 @@ export default function ResultadoRuta({
   estado,
   elegida: elegidaExterna = null,
   alCambiarSeleccion,
-  alElegir,
-  alIniciar,
   alFinalizar,
   avisoDe,
   esperaMs,
@@ -78,11 +74,9 @@ export default function ResultadoRuta({
   // Estado propio, que se reinicia con cada plan nuevo (patrón "estado derivado de props").
   const [planBase, setPlanBase] = useState(plan)
   const [elegidaPropia, setElegidaPropia] = useState<Criterio | null>(null)
-  const [iniciado, setIniciado] = useState(false)
   if (planBase !== plan) {
     setPlanBase(plan)
     setElegidaPropia(null)
-    setIniciado(false)
   }
 
   const criterio = elegidaExterna ?? elegidaPropia ?? listo?.opciones[0]?.criterio ?? null
@@ -107,6 +101,20 @@ export default function ResultadoRuta({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [claveSeleccion])
 
+  // El viaje se inicia solo en cuanto hay una ruta lista (sin botón "Iniciar") y se finaliza
+  // al desmontarse (cancelar) o al cambiar de plan.
+  const listaParaIniciar = !!listo && !!rutaVista && !esperaVisible
+  useEffect(() => {
+    // No se llama a `alIniciar`: acercaría el mapa a la partida y el zoom tiene que mostrar la
+    // ruta completa.
+    if (!listaParaIniciar) return
+    return () => {
+      window.dispatchEvent(new CustomEvent(EVENTO_FINALIZAR_VIAJE))
+      alFinalizar?.()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listaParaIniciar, plan])
+
   if (esperaVisible) return <EsperaRuta origen={origen.nombre} destino={destino.nombre} />
   if (!listo || !rutaVista || !criterio) {
     return <div className="ruta-resultado" data-testid="ruta-resultado-vacio" hidden />
@@ -119,22 +127,6 @@ export default function ResultadoRuta({
     </p>
   )
 
-  const elegir = (c: Criterio) => {
-    if (c === criterio) return
-    setElegidaPropia(c)
-    alElegir?.(c)
-  }
-
-  const iniciar = () => {
-    setIniciado(true)
-    alIniciar?.()
-  }
-
-  const finalizar = () => {
-    window.dispatchEvent(new CustomEvent(EVENTO_FINALIZAR_VIAJE))
-    alFinalizar?.()
-  }
-
   return (
     <div className="ruta-resultado" data-testid="ruta-resultado">
       {anuncio}
@@ -143,21 +135,6 @@ export default function ResultadoRuta({
           {aviso}
         </p>
       )}
-      <TarjetaResumen ruta={rutaVista} llueve={listo.llueve} nota={listo.nota} />
-      {!iniciado && (
-        <ChipsAlternativas opciones={listo.opciones} elegida={criterio} alElegir={elegir} />
-      )}
-      <div className="ruta-resultado__acciones">
-        {iniciado ? (
-          <button type="button" className="boton boton--secundario" onClick={finalizar}>
-            {TEXTOS_RUTA.finalizar}
-          </button>
-        ) : (
-          <button type="button" className="boton boton--primario" onClick={iniciar}>
-            {TEXTOS_RUTA.iniciar}
-          </button>
-        )}
-      </div>
     </div>
   )
 }

@@ -5,7 +5,10 @@ import {
   caja,
   comoUsuarioConocido,
   dobleToque,
+  elegirDestino,
+  elegirRecorrido,
   esperarMapaQuieto,
+  franjaMapa,
   estadoMapa,
   pellizcar,
 } from './ayudas.ts'
@@ -76,7 +79,7 @@ test.describe('mapa', () => {
     expect(planoVisible).toBe(true)
   })
 
-  test('recentrar vuelve al encuadre inicial en el inicio y al lugar en la ficha', async ({
+  test('recentrar vuelve al encuadre inicial en el panel vacío y al destino elegido', async ({
     page,
   }) => {
     const inicial = await estadoMapa(page)
@@ -90,85 +93,60 @@ test.describe('mapa', () => {
     expect(Math.abs(vuelta.x - inicial.x)).toBeLessThan(5)
     expect(Math.abs(vuelta.y - inicial.y)).toBeLessThan(5)
 
-    await page.getByRole('button', { name: 'Teatro', exact: true }).tap()
+    await elegirDestino(page, 'teatro', /^Teatro/)
     await esperarMapaQuieto(page)
-    await arrastrar(page, { x: 100, y: 150 }, { x: 350, y: 400 }, 10)
+    await arrastrar(page, { x: 100, y: 250 }, { x: 350, y: 500 }, 10)
     await esperarMapaQuieto(page)
     await page.getByRole('button', { name: 'Recentrar el mapa' }).tap()
     await esperarMapaQuieto(page)
     const pin = await caja(page, '.mapa__pin')
-    const tarjeta = await caja(page, '.tarjeta-superior')
-    const hoja = await caja(page, '.hoja')
-    expect(pin.y).toBeGreaterThan(tarjeta.y + tarjeta.height)
-    expect(pin.y + pin.height).toBeLessThan(hoja.y)
+    const f = await franjaMapa(page)
+    expect(pin.y).toBeGreaterThan(f.arriba)
+    expect(pin.y + pin.height).toBeLessThan(f.abajo)
   })
 
-  test('el pin de un lugar lejano queda por encima de la hoja y desaparece al cerrar la ficha', async ({
+  test('el pin de un destino lejano queda en la franja visible y desaparece al borrarlo', async ({
     page,
   }) => {
     // Acercar sobre el sur del campus: la Entrada La Paz (arriba de todo) queda fuera de la vista.
     await pellizcar(page, { x: 195, y: 600 }, 60, 300)
     await esperarMapaQuieto(page)
-    await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
-    await page.getByRole('combobox').fill('la paz')
-    await page.getByRole('option', { name: /^Entrada La Paz/ }).tap()
+    await elegirDestino(page, 'la paz', /^Entrada La Paz/)
     await esperarMapaQuieto(page)
     const pin = await caja(page, '.mapa__pin')
-    const tarjeta = await caja(page, '.tarjeta-superior')
-    const hoja = await caja(page, '.hoja')
-    expect(pin.y).toBeGreaterThan(tarjeta.y + tarjeta.height)
-    expect(pin.y + pin.height).toBeLessThan(hoja.y)
+    const f = await franjaMapa(page)
+    expect(pin.y).toBeGreaterThan(f.arriba)
+    expect(pin.y + pin.height).toBeLessThan(f.abajo)
     await expect(page.locator('.mapa__pin')).toHaveAttribute('aria-hidden', 'true')
 
-    await page.getByRole('button', { name: 'Cerrar', exact: true }).tap()
-    await expect(page.getByRole('button', { name: /^¿Desde dónde salís\?/ })).toBeVisible()
+    await page.getByRole('button', { name: 'Borrar destino' }).tap()
+    await expect(page.getByRole('button', { name: 'Destino: ¿A dónde vas?' })).toBeVisible()
     await expect(page.locator('.mapa__pin')).toHaveCount(0)
   })
 })
 
-test.describe('hoja inferior', () => {
-  async function arribaDeLaHoja(page: import('@playwright/test').Page) {
-    await page.waitForTimeout(400)
-    return (await caja(page, '.hoja')).y
+test.describe('sin hoja inferior', () => {
+  // En celular no hay ninguna pantalla con la parte de abajo deslizable: arrastrar desde el
+  // borde de abajo mueve el mapa y no levanta ningún panel.
+  for (const conRuta of [false, true]) {
+    test(`arrastrar hacia arriba desde abajo solo mueve el mapa (${conRuta ? 'con ruta' : 'panel vacío'})`, async ({
+      page,
+    }) => {
+      if (conRuta) {
+        await elegirRecorrido(page, ['teatro', /^Teatro/], ['biblio', /^Biblioteca/])
+        await expect(page.locator('.mapa')).toHaveAttribute('data-ruta-nodos', /puerta-|acceso-/)
+        await esperarMapaQuieto(page)
+      }
+      await expect(page.locator('.hoja')).toHaveCount(0)
+      const antes = await estadoMapa(page)
+      // A la izquierda: lejos de los botones flotantes y de "Cancelar".
+      await arrastrar(page, { x: 40, y: 820 }, { x: 40, y: 420 }, 20, 20)
+      await esperarMapaQuieto(page)
+      const despues = await estadoMapa(page)
+      expect(Math.abs(despues.y - antes.y)).toBeGreaterThan(50)
+      await expect(page.locator('.hoja')).toHaveCount(0)
+      const r = await page.evaluate(() => [window.scrollY, document.scrollingElement?.scrollTop])
+      expect(r).toEqual([0, 0])
+    })
   }
-
-  test('arrastrar la manija un poco más de la mitad hacia la media y soltar ancla en media', async ({
-    page,
-  }) => {
-    const hoja = page.locator('.hoja')
-    await expect(hoja).toHaveAttribute('data-altura', 'colapsada')
-    const manija = await caja(page, '.hoja__manija')
-    // Colapsada 96 px, media 422 px: la mitad está a 163 px; se arrastra 200 px despacio.
-    const y = manija.y + manija.height / 2
-    await arrastrar(page, { x: 195, y }, { x: 195, y: y - 200 }, 25, 30)
-    await expect(hoja).toHaveAttribute('data-altura', 'media')
-    expect(await arribaDeLaHoja(page)).toBeCloseTo(844 - 422, -1)
-  })
-
-  test('un deslizamiento rápido desde la media ancla en la expandida aunque el recorrido sea corto', async ({
-    page,
-  }) => {
-    const hoja = page.locator('.hoja')
-    await page.getByRole('button', { name: 'Cambiar altura del panel' }).press('Enter')
-    await expect(hoja).toHaveAttribute('data-altura', 'media')
-    await page.waitForTimeout(400)
-    const manija = await caja(page, '.hoja__manija')
-    const y = manija.y + manija.height / 2
-    await arrastrar(page, { x: 195, y }, { x: 195, y: y - 70 }, 4, 8)
-    await expect(hoja).toHaveAttribute('data-altura', 'expandida')
-  })
-
-  test('expandida con la lista arriba de todo, arrastrar hacia abajo baja la hoja a media', async ({
-    page,
-  }) => {
-    const hoja = page.locator('.hoja')
-    const manija = page.getByRole('button', { name: 'Cambiar altura del panel' })
-    await manija.press('Enter')
-    await manija.press('Enter')
-    await expect(hoja).toHaveAttribute('data-altura', 'expandida')
-    await page.waitForTimeout(400)
-    const cuerpo = await caja(page, '.hoja__cuerpo')
-    await arrastrar(page, { x: 195, y: cuerpo.y + 60 }, { x: 195, y: cuerpo.y + 300 }, 20, 30)
-    await expect(hoja).toHaveAttribute('data-altura', 'media')
-  })
 })

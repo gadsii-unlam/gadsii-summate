@@ -6,6 +6,7 @@
 
 export const CLAVES = {
   recientes: 'dq:recientes:v1',
+  recientesOrigen: 'dq:recientes-origen:v1',
   ultimoOrigen: 'dq:ultimo-origen:v1',
   primerUsoCerrado: 'dq:primer-uso-cerrado:v1',
 } as const

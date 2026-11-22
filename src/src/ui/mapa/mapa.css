@@ -32,6 +32,37 @@
   filter: drop-shadow(0 1px 2px rgb(60 64 67 / 0.4));
 }
 
+.mapa .leaflet-control-zoom.leaflet-bar {
+  /* Una sola pieza con la misma estética que los botones circulares: superficie, sombra y
+     extremos redondeados (píldora vertical). */
+  border: 0;
+  border-radius: calc(var(--boton-circular) / 2);
+  overflow: hidden;
+  background: var(--color-superficie);
+  box-shadow: var(--elevacion-2);
+  /* Sin el margen propio de Leaflet: la posición la da el contenedor, alineado con los botones
+     circulares (misma columna y mismo espacio entre piezas). */
+  margin: 0;
+}
+
+.mapa .leaflet-control-zoom.leaflet-bar a {
+  width: var(--boton-circular);
+  height: var(--boton-circular);
+  line-height: var(--boton-circular);
+  border: 0;
+  border-radius: 0;
+  background: var(--color-superficie);
+  color: var(--color-texto-secundario);
+}
+
+.mapa .leaflet-control-zoom.leaflet-bar a + a {
+  border-top: 1px solid var(--color-superficie-variante);
+}
+
+.mapa .leaflet-control-zoom.leaflet-bar a:active {
+  background: var(--color-superficie-variante);
+}
+
 .mapa .leaflet-control-zoom a {
   width: var(--toque-min);
   height: var(--toque-min);
@@ -41,5 +72,5 @@
 }
 
 .mapa .leaflet-bottom.leaflet-right {
-  margin: 0 var(--esp-2) var(--esp-4) 0;
+  margin: 0 var(--esp-3) var(--esp-4) 0;
 }

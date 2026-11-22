@@ -66,7 +66,7 @@ async function hayEnEspera(page: import('@playwright/test').Page) {
   return page.evaluate(async () => !!(await navigator.serviceWorker.getRegistration())?.waiting)
 }
 
-test('versión nueva con una ruta en pantalla: no aparece ni recarga; después de "Finalizar viaje", sí', async ({
+test('versión nueva con una ruta en pantalla: no aparece ni recarga; después de "Cancelar", sí', async ({
   page,
 }) => {
   const base = buildBase()
@@ -87,9 +87,7 @@ test('versión nueva con una ruta en pantalla: no aparece ni recarga; después d
   await expect(page.getByText('Hay una versión nueva')).toHaveCount(0)
   expect(await nodosRuta(page)).toEqual(antes)
 
-  await page.getByRole('button', { name: 'Iniciar', exact: true }).tap()
-
-  await page.getByRole('button', { name: 'Finalizar viaje' }).tap()
+  await page.getByRole('button', { name: 'Cancelar', exact: true }).tap()
   await expect(page.getByText('Hay una versión nueva')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Actualizar' })).toBeVisible()
 })
@@ -103,13 +101,12 @@ test('"Actualizar" con un destino elegido y sin ruta: recarga con la versión nu
   await page.goto(`${servidor.url}/?clima=seco`)
   await esperarServiceWorker(page)
   const destino = page.getByRole('button', { name: /^Destino: Dpto\. de Cs\. de la Salud/ })
-  await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
+  await page.getByRole('button', { name: /^Destino:/ }).tap()
   await page.getByRole('combobox').fill('Salud')
   await page
     .getByRole('option', { name: /^Dpto\. de Cs\. de la Salud/ })
     .first()
     .tap()
-  await page.getByRole('button', { name: /^Cómo llegar$/ }).tap()
   await expect(destino).toBeVisible()
   await expect(page.getByTestId('contenido-ruta')).toHaveCount(0)
 
@@ -156,5 +153,5 @@ test('plan de salida: el build con selfDestroying desregistra el service worker 
     )
     .toEqual({ registros: 0, caches: 0 })
   // La app sigue funcionando con red.
-  await expect(page.getByRole('button', { name: /^¿Desde dónde salís\?/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Destino: ¿A dónde vas?' })).toBeVisible()
 })

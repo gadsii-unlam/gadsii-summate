@@ -50,6 +50,12 @@ export interface Instantanea {
   fase: FaseComoLlegar
   /** Ids de los destinos recientes, del más nuevo al más viejo (solo los que existen). */
   recientes: string[]
+  /** Ids de los orígenes recientes, del más nuevo al más viejo. */
+  recientesOrigen: string[]
+  /** PC: campo cuyas opciones muestra la barra lateral (`null`: el que falta). */
+  campoPanel: 'origen' | 'destino' | null
+  /** PC: texto escrito en el campo activo de la tarjeta. */
+  consultaPanel: string
   primerUsoCerrado: boolean
   /** Pedido de ruta vigente (el que se mandó por última vez y no se canceló). */
   pedido: { origen: string; destino: string } | null
@@ -93,6 +99,7 @@ export class ControladorPantalla {
   private readonly ventana: Window
   private instantanea: Instantanea
   private recientes: Reciente[]
+  private recientesOrigen: Reciente[]
   private readonly oyentes = new Set<() => void>()
   private profundidad = 0
   private historialIniciado = false
@@ -122,11 +129,15 @@ export class ControladorPantalla {
       almacen.leer(CLAVES.recientes, esListaRecientes) ?? [],
       existeLugar,
     )
+    this.recientesOrigen = recientesConocidos(
+      almacen.leer(CLAVES.recientesOrigen, esListaRecientes) ?? [],
+      existeLugar,
+    )
     this.vistaPedida = vistaDeHash(this.ventana.location.hash, existeLugar)
     if (
       opciones.abrirComoLlegar &&
       inicial.seleccion.destino &&
-      (this.vistaPedida.tipo === 'inicio' || this.ventana.location.hash === '#como-llegar')
+      (this.vistaPedida.tipo === INICIO.tipo || this.ventana.location.hash === '#como-llegar')
     ) {
       this.vistaPedida = { tipo: 'como-llegar' }
     }
@@ -136,6 +147,9 @@ export class ControladorPantalla {
       pantalla: inicial,
       fase: faseComoLlegar(inicial.seleccion),
       recientes: this.recientes.map((r) => r.id),
+      recientesOrigen: this.recientesOrigen.map((r) => r.id),
+      campoPanel: null,
+      consultaPanel: '',
       primerUsoCerrado: almacen.leer(CLAVES.primerUsoCerrado, esBooleano) === true,
       pedido: null,
     }
@@ -173,7 +187,7 @@ export class ControladorPantalla {
       this.historialIniciado = true
       const url = this.ventana.location.pathname + this.ventana.location.search
       this.reemplazar(INICIO, 0, url)
-      if (this.vistaPedida.tipo !== 'inicio') this.empujar(this.vistaPedida)
+      if (this.vistaPedida.tipo !== INICIO.tipo) this.empujar(this.vistaPedida)
       // Con un recorrido restaurado la vista ya es "Cómo llegar": se pide la ruta.
       this.revisarPedido()
     }
@@ -219,7 +233,7 @@ export class ControladorPantalla {
 
   /** `←` de la interfaz, `Esc`: siempre por el historial. */
   volver = () => {
-    if (this.instantanea.pantalla.vista.tipo === 'inicio') return
+    if (this.instantanea.pantalla.vista.tipo === INICIO.tipo) return
     if (this.profundidad > 0) {
       this.ventana.history.back()
     } else {
@@ -270,36 +284,47 @@ export class ControladorPantalla {
         recientes = agregarReciente(recientes, evento.lugarId, ahora)
       }
     }
+    // Elegir desde la lista de la barra lateral (PC) también cuenta como reciente.
+    if (evento.tipo === 'elegir-destino' && siguiente !== previo) {
+      recientes = agregarReciente(recientes, evento.lugarId, ahora)
+    }
+    let recientesOrigen = this.recientesOrigen
+    if (
+      (evento.tipo === 'elegir-resultado' &&
+        previo.vista.tipo === 'buscando' &&
+        previo.vista.campo === 'origen') ||
+      (evento.tipo === 'elegir-origen' && siguiente !== previo)
+    ) {
+      recientesOrigen = agregarReciente(recientesOrigen, evento.lugarId, ahora)
+      this.recientesOrigen = recientesOrigen
+      this.opciones.almacen.escribir(CLAVES.recientesOrigen, recientesOrigen)
+    }
     if (recientes !== this.recientes) {
       this.recientes = recientes
       this.opciones.almacen.escribir(CLAVES.recientes, recientes)
     }
 
-    this.publicar({ pantalla: siguiente, recientes: recientes.map((r) => r.id) })
+    this.publicar({
+      pantalla: siguiente,
+      // Al cambiar la selección, la barra lateral vuelve a mostrar lo que falta.
+      ...(siguiente.seleccion !== previo.seleccion ? { campoPanel: null, consultaPanel: '' } : {}),
+      recientes: recientes.map((r) => r.id),
+      recientesOrigen: recientesOrigen.map((r) => r.id),
+    })
 
-    // Elegir en la búsqueda abierta desde el panel vuelve al panel por el historial. Si se
-    // eligió el origen y todavía falta el destino, la misma entrada pasa a buscar el destino.
+    // Elegir en la búsqueda abierta desde el panel vuelve al panel por el historial. En celular,
+    // si se eligió el origen y todavía falta el destino, la misma entrada pasa a buscar el
+    // destino; en PC lo que falta se elige desde la barra lateral.
     if (
       evento.tipo === 'elegir-resultado' &&
       previo.vista.tipo === 'buscando' &&
       previo.vista.desde === 'como-llegar'
     ) {
-      if (previo.vista.campo === 'origen' && !siguiente.seleccion.destino) {
+      if (!this.escritorio && previo.vista.campo === 'origen' && !siguiente.seleccion.destino) {
         this.pasarABuscarDestino()
       } else {
         this.volver()
       }
-    }
-
-    // Origen elegido desde la hoja del panel: si falta el destino, se abre su búsqueda.
-    if (
-      (evento.tipo === 'elegir-origen' || evento.tipo === 'confirmar-sugerencia') &&
-      siguiente.vista.tipo === 'como-llegar' &&
-      siguiente.seleccion.origen &&
-      !siguiente.seleccion.destino
-    ) {
-      this.despachar({ tipo: 'abrir-busqueda', campo: 'destino' })
-      return
     }
 
     this.revisarPedido()
@@ -322,9 +347,42 @@ export class ControladorPantalla {
     this.publicar({ pantalla: { ...this.instantanea.pantalla, vista, consulta: '' } })
   }
 
+  private escritorio = false
+  /** La disposición actual (PC o celular). */
+  usarEscritorio(escritorio: boolean) {
+    this.escritorio = escritorio
+  }
+
+  /** PC: qué campo muestra sus opciones en la barra lateral (`null`: el que falta). */
+  elegirCampoPanel = (campo: 'origen' | 'destino' | null) => {
+    if (this.instantanea.campoPanel === campo) return
+    this.publicar({ campoPanel: campo, consultaPanel: '' })
+  }
+
+  /** PC: texto escrito en el campo activo. */
+  escribirPanel = (texto: string) => {
+    if (this.instantanea.consultaPanel === texto) return
+    this.publicar({ consultaPanel: texto })
+  }
+
   /** Cambia la implementación de `solicitarRuta` sin recrear el controlador. */
   usarSolicitarRuta(solicitar: SolicitarRuta) {
     this.solicitar = solicitar
+  }
+
+  /** Saca un lugar de los recientes de destino o de origen. */
+  quitarReciente = (lista: 'destino' | 'origen', id: string) => {
+    if (lista === 'origen') {
+      this.recientesOrigen = this.recientesOrigen.filter((r) => r.id !== id)
+      this.opciones.almacen.escribir(CLAVES.recientesOrigen, this.recientesOrigen)
+    } else {
+      this.recientes = this.recientes.filter((r) => r.id !== id)
+      this.opciones.almacen.escribir(CLAVES.recientes, this.recientes)
+    }
+    this.publicar({
+      recientes: this.recientes.map((r) => r.id),
+      recientesOrigen: this.recientesOrigen.map((r) => r.id),
+    })
   }
 
   cerrarPrimerUso = () => {

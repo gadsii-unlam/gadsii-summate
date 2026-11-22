@@ -8,6 +8,9 @@ export interface ValorPantalla extends Instantanea {
   volver: () => void
   cerrar: () => void
   cerrarPrimerUso: () => void
+  elegirCampoPanel: (campo: 'origen' | 'destino' | null) => void
+  escribirPanel: (texto: string) => void
+  quitarReciente: (lista: 'destino' | 'origen', id: string) => void
   controlador: ControladorPantalla
 }
 

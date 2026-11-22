@@ -20,40 +20,17 @@ function estado(vista: Vista, seleccion: Partial<Seleccion> = {}, consulta = '')
   }
 }
 
-const FICHA: Vista = { tipo: 'ficha', lugarId: 'humanidades-121' }
 const COMO: Vista = { tipo: 'como-llegar' }
-const BUSCAR_DESDE_INICIO: Vista = { tipo: 'buscando', campo: 'destino', desde: 'inicio' }
 const BUSCAR_ORIGEN: Vista = { tipo: 'buscando', campo: 'origen', desde: 'como-llegar' }
 const BUSCAR_DESTINO: Vista = { tipo: 'buscando', campo: 'destino', desde: 'como-llegar' }
 
 describe('reductor: tabla de transiciones (D5)', () => {
+  it('la vista inicial es "Cómo llegar"', () => {
+    expect(INICIO).toEqual(COMO)
+    expect(estadoInicial().vista).toEqual(COMO)
+  })
+
   const filas: Array<[string, EstadoPantalla, EventoPantalla, Vista]> = [
-    [
-      'inicio + tocar la barra',
-      estado(INICIO),
-      { tipo: 'abrir-busqueda', campo: 'destino' },
-      BUSCAR_DESDE_INICIO,
-    ],
-    [
-      'inicio + chip Entradas',
-      estado(INICIO),
-      { tipo: 'abrir-busqueda', campo: 'destino', filtro: 'entradas' },
-      { ...BUSCAR_DESDE_INICIO, filtro: 'entradas' },
-    ],
-    [
-      'inicio + chip o reciente',
-      estado(INICIO),
-      { tipo: 'abrir-ficha', lugarId: 'humanidades-121' },
-      FICHA,
-    ],
-    ['inicio + botón de direcciones', estado(INICIO), { tipo: 'abrir-como-llegar' }, COMO],
-    [
-      'buscando:destino (desde inicio) + elegir',
-      estado(BUSCAR_DESDE_INICIO),
-      { tipo: 'elegir-resultado', lugarId: 'humanidades-121' },
-      FICHA,
-    ],
-    ['ficha + Cómo llegar', estado(FICHA), { tipo: 'abrir-como-llegar' }, COMO],
     [
       'como-llegar + tocar origen',
       estado(COMO),
@@ -78,40 +55,44 @@ describe('reductor: tabla de transiciones (D5)', () => {
       { tipo: 'intercambiar' },
       COMO,
     ],
-    ['cualquiera + ayuda', estado(FICHA), { tipo: 'abrir-ayuda' }, { tipo: 'ayuda', sobre: FICHA }],
-    ['popstate restaura la vista', estado(COMO), { tipo: 'restaurar', vista: FICHA }, FICHA],
+    ['cualquiera + ayuda', estado(COMO), { tipo: 'abrir-ayuda' }, { tipo: 'ayuda', sobre: COMO }],
+    [
+      'popstate restaura la vista',
+      estado(COMO),
+      { tipo: 'restaurar', vista: BUSCAR_DESTINO },
+      BUSCAR_DESTINO,
+    ],
+    // Entradas del historial guardadas con las vistas que ya no existen.
+    [
+      'popstate con el inicio viejo cae en Cómo llegar',
+      estado(BUSCAR_DESTINO),
+      { tipo: 'restaurar', vista: { tipo: 'inicio' } },
+      COMO,
+    ],
+    [
+      'popstate con una ficha vieja cae en Cómo llegar',
+      estado(BUSCAR_DESTINO),
+      { tipo: 'restaurar', vista: { tipo: 'ficha', lugarId: 'humanidades-121' } },
+      COMO,
+    ],
   ]
 
   it.each(filas)('%s', (_, desde, evento, hacia) => {
     expect(reducir(desde, evento).vista).toEqual(hacia)
   })
 
-  it('ficha + Cómo llegar pone el lugar como destino', () => {
-    expect(reducir(estado(FICHA), { tipo: 'abrir-como-llegar' }).seleccion.destino).toBe(
-      'humanidades-121',
-    )
-  })
-
-  it('el botón de direcciones conserva la selección previa', () => {
-    const s = reducir(estado(INICIO, { origen: 'a', destino: 'b' }), { tipo: 'abrir-como-llegar' })
-    expect(s.seleccion).toMatchObject({ origen: 'a', destino: 'b' })
-  })
-
   it('abrir la búsqueda limpia la consulta; volver con popstate la conserva', () => {
-    const conTexto = estado(INICIO, {}, 'viejo')
+    const conTexto = estado(COMO, {}, 'viejo')
     expect(reducir(conTexto, { tipo: 'abrir-busqueda', campo: 'destino' }).consulta).toBe('')
-    const enFicha = estado(FICHA, {}, '121')
-    expect(reducir(enFicha, { tipo: 'restaurar', vista: BUSCAR_DESDE_INICIO }).consulta).toBe('121')
+    const enPanel = estado(COMO, {}, '121')
+    expect(reducir(enPanel, { tipo: 'restaurar', vista: BUSCAR_DESTINO }).consulta).toBe('121')
   })
 })
 
 describe('reductor: eventos inválidos se ignoran', () => {
   const casos: Array<[string, EstadoPantalla, EventoPantalla]> = [
     ['abrir la ficha desde el panel', estado(COMO), { tipo: 'abrir-ficha', lugarId: 'x' }],
-    ['elegir resultado sin búsqueda', estado(INICIO), { tipo: 'elegir-resultado', lugarId: 'x' }],
-    ['buscar origen desde el inicio', estado(INICIO), { tipo: 'abrir-busqueda', campo: 'origen' }],
-    ['buscar desde la ficha', estado(FICHA), { tipo: 'abrir-busqueda', campo: 'destino' }],
-    ['intercambiar en el inicio', estado(INICIO, { origen: 'a' }), { tipo: 'intercambiar' }],
+    ['elegir resultado sin búsqueda', estado(COMO), { tipo: 'elegir-resultado', lugarId: 'x' }],
     ['intercambiar sin nada', estado(COMO), { tipo: 'intercambiar' }],
     ['confirmar sin sugerencia', estado(COMO), { tipo: 'confirmar-sugerencia' }],
     [
@@ -120,10 +101,16 @@ describe('reductor: eventos inválidos se ignoran', () => {
       { tipo: 'confirmar-sugerencia' },
     ],
     ['borrar destino vacío', estado(COMO), { tipo: 'borrar-destino' }],
-    ['escribir fuera de la búsqueda', estado(INICIO), { tipo: 'escribir', consulta: 'x' }],
+    ['cancelar sin origen ni destino', estado(COMO), { tipo: 'limpiar' }],
+    ['escribir fuera de la búsqueda', estado(COMO), { tipo: 'escribir', consulta: 'x' }],
     ['ayuda sobre ayuda', estado({ tipo: 'ayuda', sobre: INICIO }), { tipo: 'abrir-ayuda' }],
-    ['Cómo llegar desde la búsqueda', estado(BUSCAR_DESDE_INICIO), { tipo: 'abrir-como-llegar' }],
-    ['elegir origen fuera del panel', estado(FICHA), { tipo: 'elegir-origen', lugarId: 'x' }],
+    ['Cómo llegar desde el panel', estado(COMO), { tipo: 'abrir-como-llegar' }],
+    ['Cómo llegar desde la búsqueda', estado(BUSCAR_DESTINO), { tipo: 'abrir-como-llegar' }],
+    [
+      'elegir origen fuera del panel',
+      estado({ tipo: 'ayuda', sobre: COMO }),
+      { tipo: 'elegir-origen', lugarId: 'x' },
+    ],
   ]
   it.each(casos)('%s', (_, desde, evento) => {
     expect(reducir(desde, evento)).toBe(desde)
@@ -145,8 +132,6 @@ describe('fase derivada', () => {
     expect(enComoLlegar(COMO)).toBe(true)
     expect(enComoLlegar(BUSCAR_ORIGEN)).toBe(true)
     expect(enComoLlegar({ tipo: 'ayuda', sobre: COMO })).toBe(true)
-    expect(enComoLlegar(FICHA)).toBe(false)
-    expect(enComoLlegar(BUSCAR_DESDE_INICIO)).toBe(false)
   })
 })
 
@@ -197,6 +182,15 @@ describe('reglas de selección (seleccion-de-recorrido)', () => {
     expect(faseComoLlegar(s.seleccion)).toBe('eligiendo')
   })
 
+  it('Cancelar borra el origen y el destino y deja la fase en eligiendo', () => {
+    const s = reducir(estado(COMO, { origen: 'biblioteca', destino: 'aula-121' }), {
+      tipo: 'limpiar',
+    })
+    expect(s.seleccion).toMatchObject({ origen: null, destino: null })
+    expect(s.vista).toEqual(COMO)
+    expect(faseComoLlegar(s.seleccion)).toBe('eligiendo')
+  })
+
   it('origen igual al destino no es fase ruta', () => {
     const s = reducir(estado(BUSCAR_ORIGEN, { destino: 'biblioteca' }), {
       tipo: 'elegir-resultado',
@@ -226,35 +220,30 @@ describe('hash y serialización', () => {
   const existe = (id: string) => id === 'humanidades-121'
 
   it('cada vista tiene su hash', () => {
-    expect(hashDeVista(INICIO)).toBe('')
-    expect(hashDeVista(BUSCAR_DESDE_INICIO)).toBe('#buscar')
+    expect(hashDeVista(INICIO)).toBe('#como-llegar')
+    expect(hashDeVista(BUSCAR_DESTINO)).toBe('#buscar')
     expect(hashDeVista(BUSCAR_ORIGEN)).toBe('#buscar-origen')
-    expect(hashDeVista(FICHA)).toBe('#lugar/humanidades-121')
-    expect(hashDeVista(COMO)).toBe('#como-llegar')
     expect(hashDeVista({ tipo: 'ayuda', sobre: COMO })).toBe('#ayuda')
   })
 
-  it('carga en frío: lugar por id o por id de puerta; lo desconocido cae en el inicio', () => {
-    expect(vistaDeHash('#lugar/humanidades-121', existe)).toEqual(FICHA)
-    expect(vistaDeHash('#lugar/puerta-humanidades-121', existe)).toEqual(FICHA)
-    // Lugares cuya puerta es un acceso (`acceso-buffet` → `buffet`).
-    expect(vistaDeHash('#lugar/acceso-buffet', (id) => id === 'buffet')).toEqual({
-      tipo: 'ficha',
-      lugarId: 'buffet',
-    })
+  it('carga en frío: #buscar abre la búsqueda del destino; todo lo demás cae en Cómo llegar', () => {
+    expect(vistaDeHash('#buscar', existe)).toEqual(BUSCAR_DESTINO)
+    expect(vistaDeHash('#ayuda', existe)).toEqual({ tipo: 'ayuda', sobre: COMO })
+    // Los enlaces viejos a una ficha (por id de lugar o de puerta) ya no abren la ficha.
+    expect(vistaDeHash('#lugar/humanidades-121', existe)).toEqual(INICIO)
+    expect(vistaDeHash('#lugar/puerta-humanidades-121', existe)).toEqual(INICIO)
     expect(vistaDeHash('#lugar/no-existe', existe)).toEqual(INICIO)
     expect(vistaDeHash('#como-llegar', existe)).toEqual(INICIO)
     expect(vistaDeHash('#cualquier-cosa', existe)).toEqual(INICIO)
     expect(vistaDeHash('#lugar/%E0%A4%A', existe)).toEqual(INICIO)
     expect(vistaDeHash('', existe)).toEqual(INICIO)
-    expect(vistaDeHash('#buscar', existe)).toEqual(BUSCAR_DESDE_INICIO)
   })
 
   it('el estado se serializa a JSON y se reconstruye equivalente', () => {
     const estados: EstadoPantalla[] = [
       estadoInicial('entrada-central-principal'),
       estado({ tipo: 'ayuda', sobre: BUSCAR_ORIGEN }, { origen: 'a', destino: 'b' }, 'lab'),
-      estado({ ...BUSCAR_DESDE_INICIO, filtro: 'entradas' }),
+      estado(BUSCAR_DESTINO, { destino: 'b' }, '121'),
     ]
     for (const e of estados) {
       const copia = JSON.parse(JSON.stringify(e)) as EstadoPantalla

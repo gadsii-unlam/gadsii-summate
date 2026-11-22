@@ -10,6 +10,7 @@ import {
   IconoPin,
   IconoVolver,
 } from '../iconos/Iconos.tsx'
+import { useVistaPantalla } from '../estado/vistaPantalla.ts'
 import { TEXTOS } from '../textos.ts'
 import './tarjetas.css'
 
@@ -81,10 +82,25 @@ export function TarjetaTitulo({ lugar }: { lugar: Lugar }) {
 }
 
 export function TarjetaComoLlegar() {
-  const { pantalla, despachar, volver } = usePantalla()
+  const { pantalla, despachar, elegirCampoPanel, escribirPanel, campoPanel, consultaPanel } =
+    usePantalla()
   const anunciar = useAnunciar()
   const origen = useLugar(pantalla.seleccion.origen)
   const destino = useLugar(pantalla.seleccion.destino)
+
+  const escritorio = useVistaPantalla()?.escritorio ?? false
+  // En PC las opciones del campo aparecen en la barra lateral; en celular se abre la búsqueda.
+  const tocarCampo = (campo: 'origen' | 'destino') =>
+    escritorio
+      ? (elegirCampoPanel(campo),
+        window.setTimeout(() =>
+          document.querySelector<HTMLInputElement>(`input[data-foco="campo-${campo}"]`)?.focus(),
+        ))
+      : despachar({ tipo: 'abrir-busqueda', campo })
+
+  // PC: el campo tocado (o, si no, el que falta) se vuelve un cuadro de texto.
+  const faltante = !origen ? 'origen' : !destino ? 'destino' : null
+  const activo = escritorio ? (campoPanel ?? faltante) : null
 
   const intercambiar = () => {
     despachar({ tipo: 'intercambiar' })
@@ -93,26 +109,35 @@ export function TarjetaComoLlegar() {
 
   return (
     <div className="tarjeta como-llegar">
-      <button
-        type="button"
-        className="boton-icono como-llegar__volver"
-        aria-label={TEXTOS.volver}
-        onClick={volver}
-      >
-        <IconoVolver />
-      </button>
       <div className="como-llegar__campos">
         <div className="campo-con-borrar">
-          <button
-            type="button"
-            className={`campo${origen ? ' campo--con-borrar' : ' campo--vacio'}`}
-            aria-label={TEXTOS.campoOrigen(origen?.nombre ?? null)}
-            data-foco="campo-origen"
-            onClick={() => despachar({ tipo: 'abrir-busqueda', campo: 'origen' })}
-          >
-            <IconoOrigen tamano={20} />
-            <span className="campo__texto">{origen?.nombre ?? TEXTOS.origenVacio}</span>
-          </button>
+          {activo === 'origen' ? (
+            <label className="campo campo--escribiendo">
+              <IconoOrigen tamano={20} />
+              <input
+                className="campo__input"
+                data-foco="campo-origen"
+                placeholder={origen?.nombre ?? TEXTOS.origenVacio}
+                aria-label={TEXTOS.campoOrigen(origen?.nombre ?? null)}
+                value={consultaPanel}
+                onChange={(e) => escribirPanel(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') elegirCampoPanel(null)
+                }}
+              />
+            </label>
+          ) : (
+            <button
+              type="button"
+              className={`campo${origen ? ' campo--con-borrar' : ' campo--vacio'}`}
+              aria-label={TEXTOS.campoOrigen(origen?.nombre ?? null)}
+              data-foco="campo-origen"
+              onClick={() => tocarCampo('origen')}
+            >
+              <IconoOrigen tamano={20} />
+              <span className="campo__texto">{origen?.nombre ?? TEXTOS.origenVacio}</span>
+            </button>
+          )}
           {origen && (
             <button
               type="button"
@@ -126,24 +151,39 @@ export function TarjetaComoLlegar() {
         </div>
         <span className="como-llegar__linea" aria-hidden="true" />
         <div className="campo-con-borrar">
-          <button
-            type="button"
-            className={`campo${destino ? ' campo--con-borrar' : ' campo--vacio'}`}
-            aria-label={TEXTOS.campoDestino(destino?.nombre ?? null)}
-            data-foco="campo-destino"
-            onClick={() => despachar({ tipo: 'abrir-busqueda', campo: 'destino' })}
-          >
-            <IconoPin tamano={20} />
-            <span className="campo__texto">{destino?.nombre ?? TEXTOS.destinoVacio}</span>
-          </button>
+          {activo === 'destino' ? (
+            <label className="campo campo--escribiendo">
+              <IconoPin tamano={20} />
+              <input
+                className="campo__input"
+                data-foco="campo-destino"
+                placeholder={destino?.nombre ?? TEXTOS.destinoVacio}
+                aria-label={TEXTOS.campoDestino(destino?.nombre ?? null)}
+                value={consultaPanel}
+                onChange={(e) => escribirPanel(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') elegirCampoPanel(null)
+                }}
+              />
+            </label>
+          ) : (
+            <button
+              type="button"
+              className={`campo${destino ? ' campo--con-borrar' : ' campo--vacio'}`}
+              aria-label={TEXTOS.campoDestino(destino?.nombre ?? null)}
+              data-foco="campo-destino"
+              onClick={() => tocarCampo('destino')}
+            >
+              <IconoPin tamano={20} />
+              <span className="campo__texto">{destino?.nombre ?? TEXTOS.destinoVacio}</span>
+            </button>
+          )}
           {destino && (
             <button
               type="button"
               className="boton-icono boton-icono--chico"
               aria-label={TEXTOS.borrarDestino}
-              onClick={() => {
-                despachar({ tipo: 'borrar-destino' })
-              }}
+              onClick={() => despachar({ tipo: 'borrar-destino' })}
             >
               <IconoCerrar tamano={20} />
             </button>

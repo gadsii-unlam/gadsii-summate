@@ -35,7 +35,7 @@ const DEMORA_ANUNCIO = 500
 type VistaBuscando = Extract<Vista, { tipo: 'buscando' }>
 
 export default function Busqueda({ vista }: { vista: VistaBuscando }) {
-  const { pantalla, recientes, despachar, volver } = usePantalla()
+  const { pantalla, recientes, recientesOrigen, despachar, volver, quitarReciente } = usePantalla()
   const catalogo = useCatalogo()
   const { estadoAcceso } = useIntegraciones()
   const id = useId()
@@ -81,14 +81,16 @@ export default function Busqueda({ vista }: { vista: VistaBuscando }) {
     }
     if (vista.filtro === 'entradas') return [entradas]
     if (esOrigen) {
-      const sugerencia = pantalla.seleccion.sugerenciaOrigen
-      const lugarSugerido = sugerencia ? catalogo.porId.get(sugerencia) : undefined
+      // Origen: recientes de origen, entradas al campus y lugares de referencia.
+      const origenesRecientes = recientesOrigen
+        .map((r) => catalogo.porId.get(r))
+        .filter((l): l is Lugar => !!l)
       return [
-        ...(lugarSugerido
+        ...(origenesRecientes.length
           ? [
               {
-                titulo: null,
-                opciones: [{ clave: 'sug', lugar: lugarSugerido, tipo: 'sugerencia' as const }],
+                titulo: TEXTOS.recientes,
+                opciones: comoOpciones(origenesRecientes, 'reciente', 'rec'),
               },
             ]
           : []),
@@ -110,15 +112,7 @@ export default function Busqueda({ vista }: { vista: VistaBuscando }) {
         : []),
       { ...deReferencia, opciones: [...deReferencia.opciones, ...entradas.opciones] },
     ]
-  }, [
-    textoLimpio,
-    resultados,
-    vista.filtro,
-    esOrigen,
-    pantalla.seleccion.sugerenciaOrigen,
-    recientes,
-    catalogo,
-  ])
+  }, [textoLimpio, resultados, vista.filtro, esOrigen, recientesOrigen, recientes, catalogo])
 
   const opciones = useMemo(() => grupos.flatMap((g) => g.opciones), [grupos])
   const sinResultados = !!textoLimpio && resultados.length === 0
@@ -176,6 +170,11 @@ export default function Busqueda({ vista }: { vista: VistaBuscando }) {
         e.preventDefault()
         elegir(lugar)
       }
+    } else if (e.key === 'Delete' && activa >= 0 && opciones[activa]?.tipo === 'reciente') {
+      // La cruz de un reciente no es un control propio (no puede ir dentro de una opción):
+      // con el teclado se quita con Supr sobre la opción activa.
+      e.preventDefault()
+      quitarReciente(esOrigen ? 'origen' : 'destino', opciones[activa].lugar.id)
     } else if (e.key === 'Escape') {
       e.preventDefault()
       volver()
@@ -234,7 +233,6 @@ export default function Busqueda({ vista }: { vista: VistaBuscando }) {
       </div>
 
       <div className="busqueda__contenido">
-        {esOrigen && <h2 className="busqueda__titulo">{TEXTOS.tituloOrigen}</h2>}
         {!consulta && <p className="ayuda-breve busqueda__ejemplo">{TEXTOS.ejemploBusqueda}</p>}
         {sinResultados && (
           <div className="busqueda__vacio">
@@ -259,6 +257,7 @@ export default function Busqueda({ vista }: { vista: VistaBuscando }) {
                   role="option"
                   tabIndex={-1}
                   aria-selected={i === activa}
+                  aria-keyshortcuts={o.tipo === 'reciente' ? 'Delete' : undefined}
                   aria-describedby={`${idOp}-d${sinAcceso ? ` ${idOp}-e` : ''}`}
                   className={`fila${i === activa ? ' fila--activa' : ''}`}
                   onClick={() => elegir(o.lugar)}
@@ -271,6 +270,21 @@ export default function Busqueda({ vista }: { vista: VistaBuscando }) {
                     idEstado={`${idOp}-e`}
                     {...(o.resaltado ? { resaltado: o.resaltado } : {})}
                   />
+                  {o.tipo === 'reciente' && (
+                    // No es un botón: un control interactivo no puede ir dentro de una opción
+                    // (`nested-interactive`). Con el teclado se quita con Supr (ver `alTecla`).
+                    <span
+                      className="boton-icono boton-icono--chico fila__quitar"
+                      aria-hidden="true"
+                      title={TEXTOS.quitarReciente(o.lugar.nombre)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        quitarReciente(esOrigen ? 'origen' : 'destino', o.lugar.id)
+                      }}
+                    >
+                      <IconoCerrar tamano={20} />
+                    </span>
+                  )}
                 </div>
               )
             })

@@ -107,7 +107,7 @@ describe('ContenidoRutaApp: cierres', () => {
     expect(screen.getByTestId('ruta-desvio')).toHaveTextContent(
       'Evitamos un tramo cerrado: Obra en la entrada oeste del pasillo 400/500',
     )
-    expect(screen.getByTestId('ruta-resumen')).toBeInTheDocument()
+    expect(screen.getByTestId('ruta-resultado')).toBeInTheDocument()
   })
 
   it('sin cierres vigentes no hay aviso de desvío', () => {
@@ -144,29 +144,27 @@ describe('ContenidoRutaApp: mapa y hoja', () => {
     expect(e.seleccion?.alternativa?.criterio).toBe('mas-corta')
     expect(e.encuadre?.objetivo).toBe('ruta')
 
-    // Tocar la línea gris (desde el mapa) equivale al chip.
+    // Tocar la línea gris (desde el mapa) cambia la ruta elegida.
     act(() => vista.elegir(e.plan!, 'mas-corta'))
-    expect(screen.getByRole('button', { name: /Más rápida/ })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
     expect(vista.estado().seleccion?.criterio).toBe('mas-corta')
+    expect(screen.getByRole('status')).toHaveTextContent('Ruta encontrada: 2 min, 125 m')
 
     expect(screen.queryByRole('button', { name: 'Indicaciones' })).toBeNull()
   })
 
-  it('"Finalizar viaje" limpia la ruta del mapa y vuelve al inicio', async () => {
-    const { vista, pantalla, usuario } = escenario(
+  it('sin botones de viaje: al desmontarse (Cancelar) limpia la ruta del mapa sin navegar', () => {
+    const { vista, pantalla, unmount } = escenario(
       'direccion-alumnos',
       'dpto-cs-salud',
       [],
       CLIMA.seco,
     )
     expect(vista.estado().seleccion).not.toBeNull()
-    await usuario.click(screen.getByRole('button', { name: 'Iniciar' }))
-    expect(vista.estado().encuadre?.objetivo).toBe('inicio')
-    await usuario.click(screen.getByRole('button', { name: 'Finalizar viaje' }))
+    expect(screen.queryByRole('button', { name: 'Iniciar' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Finalizar viaje' })).toBeNull()
+    unmount()
     expect(vista.estado().seleccion).toBeNull()
-    expect(pantalla.cerrar).toHaveBeenCalledTimes(1)
+    // Navegar acá se sumaba al `volver` del controlador y sacaba al usuario de la app.
+    expect(pantalla.cerrar).not.toHaveBeenCalled()
   })
 })

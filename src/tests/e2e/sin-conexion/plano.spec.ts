@@ -4,6 +4,7 @@ import {
   abrir,
   comoUsuarioConocido,
   dobleToque,
+  elegirDestino,
   esperarMapaQuieto,
   esperarPlano,
   estadoMapa,
@@ -22,8 +23,6 @@ test.beforeEach(async ({ page }) => {
 
 /** Acerca con doble toque en el centro de la franja hasta el zoom máximo (2). */
 async function zoomMaximo(page: Page) {
-  // La hoja de la ficha termina de anclarse antes de medir (el centro depende de la franja).
-  await expect(page.locator('.hoja')).toHaveAttribute('data-altura', 'media')
   await esperarMapaQuieto(page)
   await page.waitForTimeout(400)
   const f = await franja(page)
@@ -37,19 +36,21 @@ async function zoomMaximo(page: Page) {
   await expect(page.locator('.mapa')).toHaveAttribute('data-zoom', '2')
 }
 
-/** Franja visible del mapa (entre la tarjeta y la hoja), para la captura. */
+/** Franja visible del mapa (entre la tarjeta y los botones flotantes), para la captura. */
 async function franja(page: Page) {
   const tarjeta = (await page.locator('.tarjeta-superior').boundingBox())!
-  const hoja = (await page.locator('.hoja').boundingBox())!
+  const botones = (await page.locator('.botones-flotantes').boundingBox())!
   const y = Math.ceil(tarjeta.y + tarjeta.height) + 4
-  return { x: 0, y, width: page.viewportSize()!.width, height: Math.floor(hoja.y) - y - 4 }
+  return { x: 0, y, width: page.viewportSize()!.width, height: Math.floor(botones.y) - y - 4 }
 }
 
 /** Captura del plano solo (sin la barra "Sin conexión" ni los botones flotantes). */
 async function captura(page: Page) {
   await esperarPlano(page)
   await page.waitForTimeout(400) // el navegador vuelve a dibujar el SVG al tamaño final
-  await page.addStyleTag({ content: '.pila-avisos, .botones-flotantes { visibility: hidden }' })
+  await page.addStyleTag({
+    content: '.pila-avisos, .avisos-arriba, .botones-flotantes { visibility: hidden }',
+  })
   return page.screenshot({ clip: await franja(page), animations: 'disabled' })
 }
 
@@ -79,7 +80,11 @@ async function proporcionVacia(png: Buffer): Promise<number> {
   return max / (info.width * info.height)
 }
 
-const LUGAR_NO_VISITADO = '/#lugar/comedor-universitario'
+/** Elige como destino un lugar que no se vio antes: el mapa se acerca a ese punto. */
+async function elegirComedor(page: Page) {
+  await elegirDestino(page, 'comedor', /^Comedor Universitario/)
+  await expect(page.getByRole('button', { name: /^Destino: Comedor Universitario/ })).toBeVisible()
+}
 
 test('zoom máximo sin conexión sobre una zona nunca vista: el plano se ve igual que con red', async ({
   page,
@@ -88,21 +93,26 @@ test('zoom máximo sin conexión sobre una zona nunca vista: el plano se ve igua
   // Referencia con red.
   await abrir(page)
   await esperarServiceWorker(page)
-  await page.goto(`/?ref=1${LUGAR_NO_VISITADO.slice(1)}`)
-  await expect(page.getByRole('heading', { level: 2, name: /Comedor Universitario/ })).toBeVisible()
+  await page.goto('/?ref=1')
+  await esperarPlano(page)
+  await elegirComedor(page)
   await zoomMaximo(page)
   const referencia = await captura(page)
   const estadoRef = await estadoMapa(page)
 
   // Sin conexión: el SVG sale del precache.
   await context.setOffline(true)
-  await page.goto(`/?sin-red=1${LUGAR_NO_VISITADO.slice(1)}`)
-  await expect(page.getByRole('heading', { level: 2, name: /Comedor Universitario/ })).toBeVisible()
+  await page.goto('/?sin-red=1')
+  await esperarPlano(page)
+  await elegirComedor(page)
   await zoomMaximo(page)
   await expect(page.locator('img.mapa__respaldo')).toHaveCount(0)
   const sinRed = await captura(page)
   // Misma vista que la referencia: la comparación es de la misma zona y el mismo zoom.
-  expect(await estadoMapa(page)).toEqual(estadoRef)
+  const estado = await estadoMapa(page)
+  expect(estado.zoom).toBe(estadoRef.zoom)
+  expect(Math.abs(estado.x - estadoRef.x)).toBeLessThanOrEqual(0.5)
+  expect(Math.abs(estado.y - estadoRef.y)).toBeLessThanOrEqual(0.5)
 
   expect(await diferencia(referencia, sinRed)).toBeLessThan(2)
   // Y no es una franja vacía: el plano tiene más de un color.

@@ -15,20 +15,11 @@ export interface CatalogoUI {
   indice: IndiceLugares
   /** Las entradas al campus, con la principal primero. */
   entradas: Lugar[]
-  /** Referencias reconocibles que no son entradas (Biblioteca, Buffet…), en el orden de D6. */
+  /** Referencias reconocibles que no son entradas (Biblioteca, Buffet…), en orden alfabético. */
   referencias: Lugar[]
   /** Posición de la puerta principal (o el centro de la caja mientras no cargó el grafo). */
   ubicar: (lugar: Lugar) => Punto
 }
-
-const ORDEN_REFERENCIAS = [
-  'biblioteca',
-  'buffet',
-  'salon-americas',
-  'teatro',
-  'gimnasio',
-  'rectorado',
-]
 
 const ORDEN_ENTRADAS = ['entrada-campus-florencio-varela']
 
@@ -55,7 +46,7 @@ export function crearCatalogoUI(
     entradas: lugares.filter((l) => l.categoria === 'entrada').sort(ordenarPor(ORDEN_ENTRADAS)),
     referencias: lugares
       .filter((l) => l.referencia && l.categoria !== 'entrada')
-      .sort(ordenarPor(ORDEN_REFERENCIAS)),
+      .sort(compararNombres),
     ubicar(lugar) {
       const puerta = lugar.puertas[0]
       const p = puerta ? posiciones.get(puerta) : undefined

@@ -4,7 +4,7 @@
  * sugerencia de instalación y recorrido no recuperado). No tapa la tarjeta de arriba ni la hoja.
  */
 import type { CSSProperties } from 'react'
-import { useSyncExternalStore } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import type { EstadoConexion, MonitorConexion } from '../../conexion/index.ts'
 import type { PropsAvisos } from '../integraciones.ts'
 import { AvisoCambiosRuta, AvisoRutaActualizada } from './AvisoCambiosRuta.tsx'
@@ -36,9 +36,12 @@ export default function AvisosApp({
   const valor = useValorConexion()
   const conexion = useEstadoMonitor(valor?.monitor ?? null)
   const coordinado = useEstadoCoordinador(valor?.coordinador ?? null)
+  const sinConexion = conexion === 'sin-conexion'
+  // En celular la barra se puede cerrar; vuelve a aparecer en el próximo corte de conexión.
+  const [barraCerrada, setBarraCerrada] = useState(false)
+  if (!sinConexion && barraCerrada) setBarraCerrada(false)
   if (!valor) return null
 
-  const sinConexion = conexion === 'sin-conexion'
   const { coordinador, version, sugerenciaInstalacion, instalacion, hayRutaEnPantalla } = valor
   // La pila crece hacia arriba desde el borde de la hoja; nunca por encima de la tarjeta.
   const estilo = {
@@ -46,43 +49,54 @@ export default function AvisosApp({
     '--pila-maximo': `${Math.max(0, altoVentana - altoHoja - bordeTarjeta - 2 * SEPARACION_BARRA)}px`,
   } as CSSProperties
 
+  const barra = (
+    <BarraSinConexion
+      visible={sinConexion && !(barraCerrada && !escritorio)}
+      reintentando={coordinado.reintentando}
+      onReintentar={() => void coordinador.reintentar()}
+      origenCierres={coordinado.origenCierres}
+      onCerrar={escritorio ? undefined : () => setBarraCerrada(true)}
+    />
+  )
+
   return (
-    <div className="pila-avisos" data-escritorio={escritorio || undefined} style={estilo}>
-      {valor.mensajeRecorrido && (
-        <p className="aviso-ruta aviso-ruta__texto" role="status">
-          {valor.mensajeRecorrido}
-        </p>
+    <>
+      {/* Celular: va en la columna de avisos de arriba de la pantalla (debajo de la tarjeta). */}
+      {!escritorio && sinConexion && !barraCerrada && (
+        <div className="aviso-conexion-arriba">{barra}</div>
       )}
-      <SugerenciaInstalacion
-        visible={sugerenciaInstalacion.visible && !hayRutaEnPantalla}
-        onInstalar={() => {
-          sugerenciaInstalacion.cerrar()
-          void instalacion.instalar()
-        }}
-        onCerrar={sugerenciaInstalacion.cerrar}
-      />
-      <AvisoVersionNueva
-        hayVersionNueva={version.hayVersionNueva}
-        recorridoEnPantalla={hayRutaEnPantalla}
-        onActualizar={version.actualizar}
-        onMasTarde={version.postergar}
-      />
-      {hayRutaEnPantalla && coordinado.cambio && (
-        <AvisoCambiosRuta
-          cambio={coordinado.cambio}
-          onVerRuta={() => coordinador.verRutaActualizada()}
+      <div className="pila-avisos" data-escritorio={escritorio || undefined} style={estilo}>
+        {valor.mensajeRecorrido && (
+          <p className="aviso-ruta aviso-ruta__texto" role="status">
+            {valor.mensajeRecorrido}
+          </p>
+        )}
+        <SugerenciaInstalacion
+          visible={sugerenciaInstalacion.visible && !hayRutaEnPantalla}
+          onInstalar={() => {
+            sugerenciaInstalacion.cerrar()
+            void instalacion.instalar()
+          }}
+          onCerrar={sugerenciaInstalacion.cerrar}
         />
-      )}
-      <AvisoRutaActualizada visible={hayRutaEnPantalla && coordinado.rutaActualizada} />
-      {!sinConexion && hayRutaEnPantalla && (
-        <AvisoCierresSinActualizar origen={coordinado.origenCierres} />
-      )}
-      <BarraSinConexion
-        visible={sinConexion}
-        reintentando={coordinado.reintentando}
-        onReintentar={() => void coordinador.reintentar()}
-        origenCierres={coordinado.origenCierres}
-      />
-    </div>
+        <AvisoVersionNueva
+          hayVersionNueva={version.hayVersionNueva}
+          recorridoEnPantalla={hayRutaEnPantalla}
+          onActualizar={version.actualizar}
+          onMasTarde={version.postergar}
+        />
+        {hayRutaEnPantalla && coordinado.cambio && (
+          <AvisoCambiosRuta
+            cambio={coordinado.cambio}
+            onVerRuta={() => coordinador.verRutaActualizada()}
+          />
+        )}
+        <AvisoRutaActualizada visible={hayRutaEnPantalla && coordinado.rutaActualizada} />
+        {!sinConexion && hayRutaEnPantalla && (
+          <AvisoCierresSinActualizar origen={coordinado.origenCierres} />
+        )}
+        {escritorio && barra}
+      </div>
+    </>
   )
 }

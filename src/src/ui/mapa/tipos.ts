@@ -20,7 +20,8 @@ export interface PropsMapa {
   plano: PlanoBase
   encuadre: Encuadre
   /** Pin rojo del lugar seleccionado (puerta principal), o `null`. */
-  marcador: { x: number; y: number } | null
+  /** `tipo: 'origen'` dibuja el punto azul del origen en lugar del pin del destino. */
+  marcador: { x: number; y: number; tipo?: 'origen' | 'destino' } | null
   margenes: Margenes
   /** Cambia cada vez que se toca el botón de recentrar. */
   recentrar: number

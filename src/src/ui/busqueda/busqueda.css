@@ -14,6 +14,20 @@
   padding-right: var(--seguro-derecha);
 }
 
+/* Con el teclado abierto, iOS achica el alto de la búsqueda pero el teclado (y la barra translúcida
+   que va encima) dejan ver lo que hay detrás. Este relleno sigue el fondo hacia abajo para que
+   detrás del teclado haya superficie lisa y no el mapa. */
+.busqueda::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: var(--color-superficie);
+  pointer-events: none;
+}
+
 .pantalla--escritorio .busqueda {
   right: auto;
   width: 408px;
@@ -48,7 +62,26 @@
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0 var(--margen-lateral) calc(var(--esp-4) + var(--seguro-abajo));
+  /* El relleno de abajo mide al menos lo que el fundido: al llegar al final, lo que se desvanece es
+     espacio vacío y la última opción se ve entera. */
+  padding: 0 var(--margen-lateral) calc(var(--esp-4) + var(--seguro-abajo) + 48px);
+  /* Fundido al borde de abajo, con curva suave (un fundido lineal deja ver dónde empieza): avisa que hay más opciones scrolleando (sobre todo con el teclado). */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 calc(100% - 48px),
+    rgb(0 0 0 / 0.85) calc(100% - 36px),
+    rgb(0 0 0 / 0.5) calc(100% - 22px),
+    rgb(0 0 0 / 0.15) calc(100% - 8px),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(100% - 48px),
+    rgb(0 0 0 / 0.85) calc(100% - 36px),
+    rgb(0 0 0 / 0.5) calc(100% - 22px),
+    rgb(0 0 0 / 0.15) calc(100% - 8px),
+    transparent
+  );
 }
 
 .busqueda__titulo {
@@ -76,4 +109,20 @@
   margin: 0;
   font-size: var(--texto-cuerpo);
   font-weight: var(--peso-titulo);
+}
+
+/* Cruz para quitar un reciente, a la derecha de la fila. */
+.fila__quitar {
+  margin-left: auto;
+  flex: none;
+}
+
+/* Fila de la barra lateral con la cruz de quitar al lado. */
+.fila-con-quitar {
+  display: flex;
+  align-items: center;
+}
+.fila-con-quitar > .fila {
+  flex: 1 1 auto;
+  min-width: 0;
 }

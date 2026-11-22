@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import axe from 'axe-core'
 import { describe, expect, it } from 'vitest'
+import { CLAVES, crearAlmacenEnMemoria } from '../estado/almacen.ts'
 import { TEXTOS } from '../textos.ts'
 import { renderizarPantalla } from '../test/renderizar.tsx'
 
@@ -13,9 +14,11 @@ async function violaciones(contexto: Element) {
 }
 
 describe('búsqueda: accesibilidad con axe', () => {
-  it('sin violaciones con la lista vacía, con resultados y sin resultados', async () => {
-    const { usuario } = renderizarPantalla()
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.barraNombre }))
+  it('sin violaciones con la lista vacía (con recientes y su cruz), con resultados y sin resultados', async () => {
+    const almacen = crearAlmacenEnMemoria()
+    almacen.escribir(CLAVES.recientes, [{ id: 'humanidades-121', cuando: 1 }])
+    const { usuario } = renderizarPantalla({ almacen })
+    await usuario.click(screen.getByRole('button', { name: TEXTOS.campoDestino(null) }))
     const dialogo = screen.getByRole('dialog')
     expect(await violaciones(dialogo)).toEqual([])
     await usuario.type(screen.getByRole('combobox'), '12')
@@ -26,7 +29,7 @@ describe('búsqueda: accesibilidad con axe', () => {
     expect(await violaciones(dialogo)).toEqual([])
   })
 
-  it('la pantalla de inicio no tiene violaciones', async () => {
+  it('la pantalla de inicio ("Cómo llegar") no tiene violaciones', async () => {
     const { container } = renderizarPantalla()
     expect(await violaciones(container)).toEqual([])
   })

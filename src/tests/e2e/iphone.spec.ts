@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/test'
-import { abrir, caja, comoUsuarioConocido } from './ayudas.ts'
+import { abrir, botonCancelar, caja, comoUsuarioConocido, elegirRecorrido } from './ayudas.ts'
 
 // Solo WebKit. La emulación no da áreas seguras reales: se simulan las de un iPhone 14
 // (47 px arriba, 34 px abajo) sobrescribiendo las variables que valen `env(safe-area-inset-*)`.
 const ARRIBA = 47
 const ABAJO = 34
 
-test('la tarjeta superior y la hoja no quedan bajo la muesca ni la barra de inicio', async ({
+test('la tarjeta superior, los botones y "Cancelar" no quedan bajo la muesca ni la barra de inicio', async ({
   page,
 }) => {
   await comoUsuarioConocido(page)
@@ -23,24 +23,26 @@ test('la tarjeta superior y la hoja no quedan bajo la muesca ni la barra de inic
   await abrir(page)
   const tarjeta = await caja(page, '.tarjeta-superior')
   expect(tarjeta.y).toBeGreaterThanOrEqual(ARRIBA)
-  // La hoja colapsada mide 96 px + el área segura de abajo.
-  const hoja = await caja(page, '.hoja')
-  expect(844 - hoja.y).toBeGreaterThanOrEqual(96 + ABAJO - 1)
-  const fila = await caja(page, '.hoja__cabecera .fila')
-  expect(fila.y).toBeLessThan(844 - ABAJO)
+  // Sin hoja inferior: los botones flotan por encima de la barra de inicio.
+  await expect(page.locator('.hoja')).toHaveCount(0)
   const botones = await caja(page, '.botones-flotantes')
-  expect(botones.y + botones.height).toBeLessThanOrEqual(hoja.y)
-  await page.screenshot({ path: 'test-results/capturas/iphone-areas-seguras.png' })
+  expect(botones.y + botones.height).toBeLessThanOrEqual(844 - ABAJO)
 
-  await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
+  await page.getByRole('button', { name: /^Destino:/ }).tap()
   const barra = await caja(page, '.busqueda__barra')
   expect(barra.y).toBeGreaterThanOrEqual(ARRIBA)
+  await page.goBack()
+
+  await elegirRecorrido(page, ['teatro', /^Teatro/], ['biblio', /^Biblioteca/])
+  const cancelar = (await botonCancelar(page).boundingBox())!
+  expect(cancelar.y + cancelar.height).toBeLessThanOrEqual(844 - ABAJO)
+  await page.screenshot({ path: 'test-results/capturas/iphone-areas-seguras.png' })
 })
 
 test('los campos de texto miden 16 px (Safari no hace zoom al enfocarlos)', async ({ page }) => {
   await comoUsuarioConocido(page)
   await abrir(page)
-  await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
+  await page.getByRole('button', { name: /^Destino:/ }).tap()
   expect(await page.getByRole('combobox').evaluate((el) => getComputedStyle(el).fontSize)).toBe(
     '16px',
   )

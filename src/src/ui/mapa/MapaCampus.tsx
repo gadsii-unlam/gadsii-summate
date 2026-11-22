@@ -31,6 +31,13 @@ const ICONO_PIN = L.divIcon({
   iconAnchor: [18, 42],
 })
 
+const ICONO_ORIGEN = L.divIcon({
+  className: 'mapa__pin',
+  html: `<svg aria-hidden="true" width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="${COLORES_MARCADORES.origen}" stroke="${COLORES_MARCADORES.origenBorde}" stroke-width="3"/></svg>`,
+  iconSize: [22, 22],
+  iconAnchor: [11, 11],
+})
+
 function opcionesPadding(m: Margenes): L.FitBoundsOptions {
   return {
     paddingTopLeft: [m.izquierda + ESPACIO, m.arriba + ESPACIO],
@@ -98,7 +105,7 @@ function CapaPlano({ plano }: { plano: PlanoBase }) {
 }
 
 /** Zoom mínimo, encuadres, recentrar y seguimiento del lugar elegido. */
-function Controlador({ plano, encuadre, marcador, margenes, recentrar }: PropsMapa) {
+function Controlador({ plano, encuadre, marcador, margenes, recentrar, escritorio }: PropsMapa) {
   const mapa = useMap()
   const interactuo = useRef(false)
   const ultimo = useRef({ encuadre, margenes })
@@ -200,7 +207,24 @@ function Controlador({ plano, encuadre, marcador, margenes, recentrar }: PropsMa
       // El campus se encuadra contra la hoja colapsada: así ningún edificio queda tapado aunque
       // la hoja abra más alta (indicación de primer uso).
       const margen = e.tipo === 'campus' ? { ...m, abajo: Math.min(m.abajo, m.abajoColapsada) } : m
-      mapa.fitBounds(aLatLngBounds(caja), { ...opcionesPadding(margen), animate: animar })
+      // En escritorio (y para la ruta) se encuadra la caja tal cual.
+      if (e.tipo === 'ruta' || escritorio) {
+        mapa.fitBounds(aLatLngBounds(caja), { ...opcionesPadding(margen), animate: animar })
+        return
+      }
+      // Campus: a lo ancho entra desde el borde izquierdo del plano (Pte. Perón) hasta el borde
+      // derecho del encuadre inicial, así se ven todas las aulas; el plano va pegado abajo.
+      const tamano = mapa.getSize()
+      const x1 = 0
+      const ancho0 =
+        mapa.project(aLatLng({ x: caja.x2, y: 0 }), 0).x -
+        mapa.project(aLatLng({ x: x1, y: 0 }), 0).x
+      const anchoLibre = tamano.x - m.izquierda - m.derecha
+      const zoom = Math.min(Math.log2(anchoLibre / ancho0), mapa.getMaxZoom())
+      const centroX = mapa.project(aLatLng({ x: (x1 + caja.x2) / 2, y: 0 }), zoom).x
+      const bordeInferior = mapa.project(aLatLng({ x: 0, y: plano.alto }), zoom).y
+      const centro = L.point(centroX + (m.derecha - m.izquierda) / 2, bordeInferior - tamano.y / 2)
+      mapa.setView(mapa.unproject(centro, zoom), zoom, { animate: animar })
     }
   }
 
@@ -212,6 +236,27 @@ function Controlador({ plano, encuadre, marcador, margenes, recentrar }: PropsMa
     encuadrar({ tipo: 'campus' }, { arriba, abajo, izquierda, derecha, abajoColapsada }, false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapa, arriba, izquierda, derecha, abajoColapsada])
+
+  // Cambio de objetivo (un punto, la ruta completa o el campus): se encuadra con zoom.
+  const claveEncuadre =
+    encuadre.tipo === 'lugar'
+      ? `lugar:${encuadre.x},${encuadre.y}`
+      : encuadre.tipo === 'ruta'
+        ? `ruta:${encuadre.caja.x1},${encuadre.caja.y1},${encuadre.caja.x2},${encuadre.caja.y2}`
+        : 'campus'
+  const primeraClave = useRef(claveEncuadre)
+  useEffect(() => {
+    if (claveEncuadre === primeraClave.current) return
+    primeraClave.current = ''
+    const e = ultimo.current.encuadre
+    const animar = true
+    if (e.tipo === 'lugar') {
+      centrarEnFranja(mapa, e, ZOOM_LUGAR, ultimo.current.margenes, animar)
+    } else {
+      encuadrar(e, ultimo.current.margenes, animar)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [claveEncuadre])
 
   // Botón de recentrar.
   const primerRecentrar = useRef(recentrar)
@@ -283,7 +328,7 @@ export default function MapaCampus(props: PropsMapa) {
         {marcador && (
           <Marker
             position={aLatLng(marcador)}
-            icon={ICONO_PIN}
+            icon={marcador.tipo === 'origen' ? ICONO_ORIGEN : ICONO_PIN}
             interactive={false}
             keyboard={false}
             eventHandlers={{
