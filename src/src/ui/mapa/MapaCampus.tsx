@@ -137,10 +137,21 @@ function Controlador({ plano, encuadre, marcador, margenes, recentrar, escritori
       el.dataset.zoomMinimo = String(mapa.getMinZoom())
       el.dataset.centro = `${c.lng.toFixed(1)},${c.lat.toFixed(1)}`
     }
+    // La animación de zoom es una transición CSS: el centro y el zoom recién cambian al final.
+    // `data-moviendo` cubre ese hueco (de movestart/zoomanim hasta moveend).
+    const empieza = () => (el.dataset.moviendo = '1')
+    const termina = () => {
+      el.dataset.moviendo = '0'
+      publicar()
+    }
     publicar()
-    mapa.on('move zoom moveend zoomend', publicar)
+    mapa.on('move zoom zoomend', publicar)
+    mapa.on('movestart zoomstart zoomanim', empieza)
+    mapa.on('moveend', termina)
     return () => {
-      mapa.off('move zoom moveend zoomend', publicar)
+      mapa.off('move zoom zoomend', publicar)
+      mapa.off('movestart zoomstart zoomanim', empieza)
+      mapa.off('moveend', termina)
     }
   }, [mapa])
 
@@ -201,6 +212,14 @@ function Controlador({ plano, encuadre, marcador, margenes, recentrar, escritori
   }, [mapa])
 
   const encuadrar = (e: Encuadre, m: Margenes, animar: boolean) => {
+    // Con una animación de zoom en curso (p. ej. la del lugar elegido), Leaflet aplica su centro
+    // al terminar y pisa cualquier paneo empezado mientras tanto: se encuadra cuando termina.
+    if ((mapa as L.Map & { _animatingZoom?: boolean })._animatingZoom) {
+      mapa.once('zoomend', () =>
+        encuadrar(ultimo.current.encuadre, ultimo.current.margenes, animar),
+      )
+      return
+    }
     if (e.tipo === 'lugar') {
       centrarEnFranja(mapa, e, Math.max(mapa.getZoom(), ZOOM_LUGAR), m, animar)
     } else {

@@ -41,13 +41,17 @@ export async function estadoMapa(page: Page): Promise<EstadoMapa> {
   return { zoom: Number(d.zoom), zoomMinimo: Number(d.zoomMinimo), x: x ?? 0, y: y ?? 0 }
 }
 
-/** Espera a que el mapa deje de moverse (dos lecturas iguales seguidas). */
+/**
+ * Espera a que el mapa deje de moverse: sin animación en curso (`data-moviendo`) y dos lecturas
+ * iguales seguidas.
+ */
 export async function esperarMapaQuieto(page: Page) {
   let previo = ''
   for (let i = 0; i < 40; i++) {
     await page.waitForTimeout(150)
+    const moviendo = (await page.locator('.mapa').getAttribute('data-moviendo')) === '1'
     const actual = JSON.stringify(await estadoMapa(page))
-    if (actual === previo) return
+    if (!moviendo && actual === previo) return
     previo = actual
   }
 }
