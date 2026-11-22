@@ -128,14 +128,17 @@ test('corte con la ruta en pantalla: "Reintentar" sin red no borra nada y al vol
   await context.setOffline(true)
   await expect(barraSinConexion(page)).toContainText('Sin conexión')
   // A 390 × 844 la barra va arriba de la hoja: no tapa el panel "Cómo llegar" ni la tarjeta
-  // resumen de la ruta.
-  const barra = (await page.locator('.aviso-conexion').boundingBox())!
-  const panel = (await page.locator('.tarjeta-superior').boundingBox())!
-  const resumen = (await page.getByTestId('ruta-resumen').boundingBox())!
-  const hoja = (await page.locator('.hoja').boundingBox())!
-  expect(barra.y).toBeGreaterThanOrEqual(panel.y + panel.height)
-  expect(barra.y + barra.height).toBeLessThanOrEqual(hoja.y)
-  expect(barra.y + barra.height).toBeLessThanOrEqual(resumen.y)
+  // resumen de la ruta. Al cortarse la red la hoja se achica con una animación: se mide hasta que
+  // termina, porque a mitad de camino la hoja todavía está más arriba que la barra.
+  await expect(async () => {
+    const barra = (await page.locator('.aviso-conexion').boundingBox())!
+    const panel = (await page.locator('.tarjeta-superior').boundingBox())!
+    const resumen = (await page.getByTestId('ruta-resumen').boundingBox())!
+    const hoja = (await page.locator('.hoja').boundingBox())!
+    expect(barra.y).toBeGreaterThanOrEqual(panel.y + panel.height)
+    expect(barra.y + barra.height).toBeLessThanOrEqual(hoja.y)
+    expect(barra.y + barra.height).toBeLessThanOrEqual(resumen.y)
+  }).toPass({ timeout: 2000 })
   const reintentar = page.locator('.aviso-conexion').getByRole('button', { name: /Reintentar/ })
   await reintentar.tap()
   await expect(reintentar).toBeEnabled()
