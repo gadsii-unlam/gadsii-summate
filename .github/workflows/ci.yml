@@ -25,6 +25,9 @@ jobs:
           cache: npm
           cache-dependency-path: src/package-lock.json
       - run: npm ci
+      # Genera public/data/ (grafo.json, lugares.json, ...): no se versiona y los tests y el
+      # typecheck lo importan, así que tiene que existir antes de lint y typecheck.
+      - run: npm run datos:build
       - run: npm run lint
       - run: npm run format:check
       - run: npm run typecheck
@@ -79,3 +82,33 @@ jobs:
             src/playwright-report/
             src/test-results/
           retention-days: 14
+
+  # Publica en Cloudflare Workers (https://donde-queda.donde-queda.workers.dev) solo con un push a
+  # main y solo si pasaron la verificación y los E2E. Necesita los secrets CLOUDFLARE_API_TOKEN y
+  # CLOUDFLARE_ACCOUNT_ID en Settings → Secrets and variables → Actions.
+  deploy:
+    name: Deploy a Cloudflare Workers
+    needs: [verificar, e2e]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Nunca se cortan dos deploys a la mitad: se encolan.
+    concurrency:
+      group: deploy-produccion
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: src/.nvmrc
+          cache: npm
+          cache-dependency-path: src/package-lock.json
+      - run: npm ci
+      # Corre datos:build, typecheck y vite build; deja todo en dist/.
+      - run: npm run build
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: src
+          wranglerVersion: '4'
+          command: deploy
