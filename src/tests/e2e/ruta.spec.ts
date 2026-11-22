@@ -350,8 +350,8 @@ for (const [ancho, alto] of [
   }) => {
     await page.setViewportSize({ width: ancho, height: alto })
     await pedirRuta(page, '?clima=seco')
-    expect(await enFranja(page, 'puerta-direccion-alumnos')).toBe(true)
-    expect(await enFranja(page, 'puerta-dpto-cs-salud')).toBe(true)
+    await expect.poll(() => enFranja(page, 'puerta-direccion-alumnos')).toBe(true)
+    await expect.poll(() => enFranja(page, 'puerta-dpto-cs-salud')).toBe(true)
   })
 }
 
