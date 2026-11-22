@@ -97,6 +97,9 @@ async function pedirRuta(
   await elegirRecorrido(page, destino, origen)
   if (esperarRuta) {
     await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', /puerta-/)
+    // El encuadre de la ruta llega después de los nodos (espera a la geometría): sin esto, el
+    // mapa puede parecer quieto justo antes de saltar a la ruta.
+    await expect(mapa(page)).toHaveAttribute('data-encuadre', 'ruta')
     await esperarMapaQuieto(page)
   }
 }
@@ -350,8 +353,8 @@ for (const [ancho, alto] of [
   }) => {
     await page.setViewportSize({ width: ancho, height: alto })
     await pedirRuta(page, '?clima=seco')
-    await expect.poll(() => enFranja(page, 'puerta-direccion-alumnos')).toBe(true)
-    await expect.poll(() => enFranja(page, 'puerta-dpto-cs-salud')).toBe(true)
+    expect(await enFranja(page, 'puerta-direccion-alumnos')).toBe(true)
+    expect(await enFranja(page, 'puerta-dpto-cs-salud')).toBe(true)
   })
 }
 

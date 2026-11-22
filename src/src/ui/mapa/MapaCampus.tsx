@@ -127,7 +127,8 @@ function Controlador({ plano, encuadre, marcador, margenes, recentrar, escritori
     }
   }, [mapa, plano])
 
-  // Zoom y centro a la vista en el DOM (para las pruebas e2e y la depuración).
+  // Zoom y centro a la vista en el DOM (para las pruebas e2e y la depuración). Se publican
+  // también durante las animaciones: así `esperarMapaQuieto` no confunde un vuelo con quietud.
   useEffect(() => {
     const el = mapa.getContainer()
     const publicar = () => {
@@ -137,9 +138,9 @@ function Controlador({ plano, encuadre, marcador, margenes, recentrar, escritori
       el.dataset.centro = `${c.lng.toFixed(1)},${c.lat.toFixed(1)}`
     }
     publicar()
-    mapa.on('moveend zoomend', publicar)
+    mapa.on('move zoom moveend zoomend', publicar)
     return () => {
-      mapa.off('moveend zoomend', publicar)
+      mapa.off('move zoom moveend zoomend', publicar)
     }
   }, [mapa])
 
@@ -250,6 +251,8 @@ function Controlador({ plano, encuadre, marcador, margenes, recentrar, escritori
     primeraClave.current = ''
     const e = ultimo.current.encuadre
     const animar = true
+    // Para las pruebas e2e (como el zoom y el centro): qué encuadre se aplicó último.
+    mapa.getContainer().dataset.encuadre = e.tipo
     if (e.tipo === 'lugar') {
       centrarEnFranja(mapa, e, ZOOM_LUGAR, ultimo.current.margenes, animar)
     } else {
@@ -273,6 +276,9 @@ function Controlador({ plano, encuadre, marcador, margenes, recentrar, escritori
   useEffect(() => {
     if (mx === undefined || my === undefined) return
     const id = window.setTimeout(() => {
+      // Con una ruta, manda su encuadre: si este ajuste corre mientras el mapa vuela hacia la
+      // ruta, el pin todavía parece fuera de la franja y se perdería el encuadre (origen afuera).
+      if (ultimo.current.encuadre.tipo === 'ruta') return
       const m = ultimo.current.margenes
       if (!estaEnFranja(mapa, { x: mx, y: my }, m)) {
         // Fuera de la franja: se centra y, si hace falta, se acerca hasta poder leer el plano.
