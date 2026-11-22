@@ -28,7 +28,7 @@ import type { Seleccion, VistaBase } from './estado/pantalla.ts'
 import HojaInferior from './hoja/HojaInferior.tsx'
 import type { Altura } from './hoja/anclaje.ts'
 import { useAltoElemento, useAltoVentana, useAreasSeguras, useEsEscritorio } from './hooks.ts'
-import { IconoAyuda, IconoRecentrar } from './iconos/Iconos.tsx'
+import { IconoAyuda, IconoDirecciones, IconoRecentrar } from './iconos/Iconos.tsx'
 import {
   ContextoIntegraciones,
   accesoPorDefecto,
@@ -37,6 +37,7 @@ import {
 } from './integraciones.ts'
 import type { Integraciones } from './integraciones.ts'
 import type { Encuadre, Margenes, PropsMapa } from './mapa/tipos.ts'
+import type { Caja } from '../datos/index.ts'
 import { ContextoVistaPantalla } from './estado/vistaPantalla.ts'
 import type { VistaPantalla } from './estado/vistaPantalla.ts'
 import {
@@ -135,8 +136,10 @@ export default function Pantalla({
 
 /** Vista que se ve debajo de la búsqueda o de la ayuda. */
 function vistaDeFondo(base: VistaBase): VistaBase {
+  // Siempre "Cómo llegar": la barra de inicio y la ficha ya no se muestran.
+  if (base.tipo === 'inicio' || base.tipo === 'ficha') return INICIO
   if (base.tipo !== 'buscando') return base
-  return base.desde === 'inicio' ? INICIO : { tipo: 'como-llegar' }
+  return { tipo: 'como-llegar' }
 }
 
 function Disposicion({
@@ -152,7 +155,8 @@ function Disposicion({
 }) {
   const { pantalla, fase, volver, despachar } = usePantalla()
   const catalogo = useCatalogo()
-  const { CapasMapa, encuadreRuta, Avisos, ExtraAyuda, BotonInstalar } = useIntegraciones()
+  const { CapasMapa, encuadreRuta, Avisos, AvisoClima, ExtraAyuda, BotonInstalar } =
+    useIntegraciones()
   const altoVentana = useAltoVentana()
   const escritorio = useEsEscritorio()
   const { arriba, abajo: abajoSeguro } = useAreasSeguras()
@@ -160,7 +164,9 @@ function Disposicion({
 
   const tarjetaRef = useRef<HTMLDivElement>(null)
   const altoTarjeta = useAltoElemento(tarjetaRef)
-  const [hoja, setHoja] = useState<{ alto: number; altura: Altura }>({
+  const botonesRef = useRef<HTMLDivElement>(null)
+  const altoBotones = useAltoElemento(botonesRef)
+  const [, setHoja] = useState<{ alto: number; altura: Altura }>({
     alto: 0,
     altura: 'colapsada',
   })
@@ -171,6 +177,8 @@ function Disposicion({
     [],
   )
   const [recentrar, setRecentrar] = useState(0)
+  const { controlador } = usePantalla()
+  useEffect(() => controlador.usarEscritorio(escritorio), [controlador, escritorio])
 
   const vista = pantalla.vista
   const base = vistaBase(vista)
@@ -204,15 +212,37 @@ function Disposicion({
   const claveVista = fondo.tipo === 'ficha' ? `ficha:${fondo.lugarId}` : fondo.tipo
 
   // ---- Mapa: encuadre, marcador y márgenes ------------------------------------------------
+  const [ultimaCaja, setUltimaCaja] = useState<{ par: string; caja: Caja } | null>(null)
   let encuadre: Encuadre = { tipo: 'campus' }
-  let marcador: { x: number; y: number } | null = null
+  let marcador: PropsMapa['marcador'] = null
   if (lugarFicha) {
     marcador = catalogo.ubicar(lugarFicha)
-    encuadre = { tipo: 'lugar', ...marcador }
-  } else if (fondo.tipo === 'como-llegar' && destino) {
-    marcador = catalogo.ubicar(destino)
-    const caja = fase === 'ruta' && origen ? encuadreRuta(origen.id, destino.id) : null
-    encuadre = caja ? { tipo: 'ruta', caja } : { tipo: 'lugar', ...marcador }
+    encuadre = { tipo: 'lugar', x: marcador.x, y: marcador.y }
+  } else if (fondo.tipo === 'como-llegar' && (destino || origen)) {
+    // Con un solo punto, el zoom va a ese punto; con los dos, a la ruta completa.
+    marcador = destino ? catalogo.ubicar(destino) : { ...catalogo.ubicar(origen!), tipo: 'origen' }
+    let caja = fase === 'ruta' && origen && destino ? encuadreRuta(origen.id, destino.id) : null
+    // Mientras la ruta se recalcula (por ejemplo, al intercambiar), se encuadran los dos puntos
+    // para no saltar al destino.
+    const par = origen && destino ? [origen.id, destino.id].sort().join('|') : ''
+    const igual = (a: Caja, b: Caja) =>
+      a.x1 === b.x1 && a.y1 === b.y1 && a.x2 === b.x2 && a.y2 === b.y2
+    if (caja && (ultimaCaja?.par !== par || !igual(ultimaCaja.caja, caja))) {
+      setUltimaCaja({ par, caja })
+    } else if (!caja && fase === 'ruta' && ultimaCaja?.par === par) {
+      caja = ultimaCaja.caja
+    }
+    if (!caja && fase === 'ruta' && origen && destino) {
+      const a = catalogo.ubicar(origen)
+      const b = catalogo.ubicar(destino)
+      caja = {
+        x1: Math.min(a.x, b.x),
+        y1: Math.min(a.y, b.y),
+        x2: Math.max(a.x, b.x),
+        y2: Math.max(a.y, b.y),
+      }
+    }
+    encuadre = caja ? { tipo: 'ruta', caja } : { tipo: 'lugar', x: marcador.x, y: marcador.y }
     // Con una ruta dibujada, el pin de destino es el de la ruta (en la puerta que usa).
     if (caja) marcador = null
   }
@@ -223,12 +253,14 @@ function Disposicion({
           { arriba: 0, abajo: 0, izquierda: 0, derecha: 0, abajoColapsada: 0 }
         : {
             arriba: arriba + 8 + altoTarjeta,
-            abajo: hoja.alto,
+            // Los botones circulares flotan abajo a la derecha: se reserva su alto para que el
+            // encuadre (por ejemplo, el destino de una ruta) no quede tapado por ellos.
+            abajo: altoBotones > 0 ? abajoSeguro + 16 + altoBotones : 0,
             izquierda: 0,
             derecha: 0,
-            abajoColapsada: 96 + abajoSeguro,
+            abajoColapsada: 0,
           },
-    [escritorio, arriba, abajoSeguro, altoTarjeta, hoja.alto],
+    [escritorio, arriba, altoTarjeta, abajoSeguro, altoBotones],
   )
   const vistaPantalla = useMemo<VistaPantalla>(
     () => ({ margenes, escritorio, pedirAltura }),
@@ -267,8 +299,10 @@ function Disposicion({
     return () => window.removeEventListener('keydown', alTecla)
   }, [vista.tipo, volver])
 
-  const ocultarBotones = !escritorio && hoja.altura === 'expandida'
-  const estiloBotones = escritorio ? undefined : { bottom: `${hoja.alto + 16}px` }
+  // En celular no hay hoja inferior: solo una acción centrada abajo (si corresponde).
+  const enViaje = fondo.tipo === 'como-llegar' && fase === 'ruta'
+  const ocultarBotones = false
+  const estiloBotones = escritorio ? undefined : { bottom: `${abajoSeguro + 16}px` }
 
   return (
     <ContextoVistaPantalla.Provider value={vistaPantalla}>
@@ -296,7 +330,12 @@ function Disposicion({
             />
           </div>
 
-          <div className="botones-flotantes" style={estiloBotones} hidden={ocultarBotones}>
+          <div
+            ref={botonesRef}
+            className="botones-flotantes"
+            style={estiloBotones}
+            hidden={ocultarBotones}
+          >
             {BotonInstalar && !primerUso && <BotonInstalar />}
             <button
               type="button"
@@ -318,18 +357,48 @@ function Disposicion({
             </button>
           </div>
 
-          <HojaInferior
-            etiquetadaPor={ID_TITULO_HOJA}
-            cabecera={contenido.cabecera}
-            alturaInicial={alturaInicial}
-            claveVista={claveVista}
-            altoTarjeta={altoTarjeta}
-            escritorio={escritorio}
-            onCambioAlto={alCambioAlto}
-            pedidoAltura={pedidoAltura}
-          >
-            {contenido.cuerpo}
-          </HojaInferior>
+          {escritorio ? (
+            <HojaInferior
+              etiquetadaPor={ID_TITULO_HOJA}
+              cabecera={contenido.cabecera}
+              alturaInicial={alturaInicial}
+              claveVista={claveVista}
+              altoTarjeta={altoTarjeta}
+              escritorio={escritorio}
+              onCambioAlto={alCambioAlto}
+              pedidoAltura={pedidoAltura}
+            >
+              {contenido.cuerpo}
+            </HojaInferior>
+          ) : (
+            <>
+              {/* Montado pero oculto: dibuja la ruta en el mapa. */}
+              {fondo.tipo === 'como-llegar' && <div hidden>{contenido.cuerpo}</div>}
+              {(enViaje || lugarFicha) && (
+                <div className="accion-inferior" style={{ bottom: `${abajoSeguro + 16}px` }}>
+                  {enViaje ? (
+                    <button
+                      type="button"
+                      className="boton boton--primario"
+                      onClick={() => despachar({ tipo: 'limpiar' })}
+                    >
+                      {TEXTOS.cancelar}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="boton boton--primario"
+                      data-foco="como-llegar"
+                      onClick={() => despachar({ tipo: 'abrir-como-llegar' })}
+                    >
+                      <IconoDirecciones tamano={20} />
+                      {TEXTOS.comoLlegar}
+                    </button>
+                  )}
+                </div>
+              )}
+            </>
+          )}
 
           <div className="tarjeta-superior" ref={tarjetaRef} data-vista={fondo.tipo}>
             {fondo.tipo === 'ficha' && lugarFicha ? (
@@ -344,13 +413,39 @@ function Disposicion({
             )}
           </div>
 
-          {Avisos && (
-            <Avisos
-              altoVentana={altoVentana}
-              altoHoja={escritorio ? 0 : hoja.alto}
-              bordeTarjeta={arriba + 8 + altoTarjeta}
-              escritorio={escritorio}
-            />
+          {escritorio ? (
+            Avisos && (
+              <Avisos
+                altoVentana={altoVentana}
+                altoHoja={0}
+                bordeTarjeta={arriba + 8 + altoTarjeta}
+                escritorio
+              />
+            )
+          ) : (
+            /* Celular: debajo de la tarjeta, el aviso del clima (sin hoja, es la única forma de
+               ver la pregunta «¿Cómo querés ir?» cuando falla el clima) y la barra «Sin conexión». */
+            <div
+              className="avisos-arriba"
+              hidden={Boolean(buscando)}
+              style={{ top: `${arriba + 16 + altoTarjeta}px` }}
+            >
+              {enViaje && AvisoClima && origen && destino && (
+                <div className="avisos-arriba__clima">
+                  <AvisoClima origen={origen} destino={destino} />
+                </div>
+              )}
+              {Avisos && (
+                <Avisos
+                  altoVentana={altoVentana}
+                  // La pila de avisos crece desde abajo: arranca por encima de los botones
+                  // flotantes y de "Cancelar" (mismo `bottom`, 44 px de alto) para no quedar tapada.
+                  altoHoja={Math.max(margenes.abajo, abajoSeguro + 16 + 44)}
+                  bordeTarjeta={arriba + 8 + altoTarjeta}
+                  escritorio={false}
+                />
+              )}
+            </div>
           )}
         </main>
 

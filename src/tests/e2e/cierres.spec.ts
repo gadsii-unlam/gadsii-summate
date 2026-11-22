@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
-import { abrir, comoUsuarioConocido } from './ayudas.ts'
+import { abrir, comoUsuarioConocido, elegirDestino, elegirOrigen } from './ayudas.ts'
 
 // Cierres temporales (aplicar-cierres-temporales). Se sirve un archivo de cierres de prueba en
-// lugar de /data/cierres.json. El aviso de desvío y "Sin ruta disponible" los muestra la hoja de
-// `mostrar-ruta-e-indicaciones`.
+// lugar de /data/cierres.json. El aviso de desvío y "Sin ruta disponible" son de
+// `mostrar-ruta-e-indicaciones`; en celular quedan montados pero ocultos (no hay hoja inferior).
 
 test.use({ timezoneId: 'America/Argentina/Buenos_Aires' })
 
@@ -74,7 +74,7 @@ test('un cierre que todavía no empezó no se dibuja', async ({ page }) => {
   await expect(icono(page, OBRA)).toHaveCount(0)
 })
 
-test('Laboratorio de Química (1er piso) aparece como "Sin acceso ahora" en la búsqueda y en su ficha', async ({
+test('Laboratorio de Química (1er piso) aparece como "Sin acceso ahora" en la búsqueda y no tiene ruta', async ({
   page,
 }) => {
   await servirCierres(page)
@@ -82,7 +82,7 @@ test('Laboratorio de Química (1er piso) aparece como "Sin acceso ahora" en la b
   await expect(page.getByText(/^Fecha simulada/)).toHaveCount(0)
   await expect(icono(page, ESCALERA)).toHaveCount(1) // los cierres ya cargaron
 
-  await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
+  await page.getByRole('button', { name: /^Destino:/ }).tap()
   await page.getByRole('combobox').fill('Laboratorio')
   const opcion = page.getByRole('option', { name: /^Laboratorio de Química/ })
   await expect(opcion).toContainText('Sin acceso ahora')
@@ -92,35 +92,24 @@ test('Laboratorio de Química (1er piso) aparece como "Sin acceso ahora" en la b
   )
   await opcion.tap()
   await expect(
-    page.getByRole('heading', { level: 2, name: 'Laboratorio de Química' }),
+    page.getByRole('button', { name: 'Destino: Laboratorio de Química. Cambiar' }),
   ).toBeVisible()
-  await expect(page.locator('.estado-acceso')).toContainText('Sin acceso ahora')
 
-  // Pedir la ruta lleva a "Sin ruta disponible" con el motivo.
-  await page.getByRole('button', { name: /^Cómo llegar$/ }).tap()
-  await page.getByRole('button', { name: /^Punto de partida/ }).tap()
-  await page.getByRole('combobox').fill('121')
-  await page.getByRole('option', { name: /^Aula 121/ }).tap()
+  // Pedir la ruta lleva a "Sin ruta disponible" con el motivo, y no se dibuja nada.
+  await elegirOrigen(page, '121', /^Aula 121/)
   const sinRuta = page.getByTestId('ruta-sin-ruta')
   await expect(sinRuta).toContainText('Sin ruta disponible')
   await expect(sinRuta).toContainText(
     `Los accesos a Laboratorio de Química están cerrados: ${ESCALERA}.`,
   )
-  await expect(sinRuta.getByRole('button', { name: 'Elegir otro destino' })).toBeVisible()
-  await sinRuta.getByRole('button', { name: 'Volver al mapa' }).tap()
-  await expect(page.getByRole('button', { name: /^¿Desde dónde salís\?/ })).toBeVisible()
+  await expect(page.locator('.mapa')).not.toHaveAttribute('data-ruta-nodos', /.+/)
 })
 
 test('Enfermería → Aula 101 con la obra vigente muestra el aviso de desvío', async ({ page }) => {
   await servirCierres(page)
   await abrir(page, '/?ahora=2026-11-05T10:00-03:00&clima=seco')
-  await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
-  await page.getByRole('combobox').fill('101')
-  await page.getByRole('option', { name: /^Aula 101/ }).tap()
-  await page.getByRole('button', { name: /^Cómo llegar$/ }).tap()
-  await page.getByRole('button', { name: /^Punto de partida/ }).tap()
-  await page.getByRole('combobox').fill('Enfermería')
-  await page.getByRole('option', { name: /^Enfermería/ }).tap()
+  await elegirDestino(page, '101', /^Aula 101/)
+  await elegirOrigen(page, 'Enfermería', /^Enfermería/)
   await expect(page.getByTestId('ruta-desvio')).toHaveText(`Evitamos un tramo cerrado: ${OBRA}`)
   await expect(icono(page, OBRA)).toHaveCount(1)
   const nodos = await page.locator('.mapa').getAttribute('data-ruta-nodos')
@@ -132,7 +121,7 @@ test('sin cierres publicados (lista vacía) no hay tramos cerrados ni lugares si
 }) => {
   await servirCierres(page, { version: 1, cierres: [] })
   await abrir(page)
-  await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
+  await page.getByRole('button', { name: /^Destino:/ }).tap()
   await page.getByRole('combobox').fill('Química')
   await expect(page.getByRole('option', { name: /^Laboratorio de Química/ })).toBeVisible()
   await expect(page.getByRole('option', { name: /^Laboratorio de Química/ })).not.toContainText(
@@ -153,7 +142,7 @@ test('si falla la descarga se usa la copia incluida y la app sigue funcionando',
   await expect
     .poll(() => avisos.some((a) => a.includes('[cierres] no se pudo descargar')))
     .toBe(true)
-  await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
+  await page.getByRole('button', { name: /^Destino:/ }).tap()
   await expect(page.getByRole('combobox')).toBeFocused()
 })
 

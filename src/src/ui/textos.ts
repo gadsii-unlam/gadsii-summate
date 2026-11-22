@@ -67,6 +67,8 @@ export const TEXTOS = {
 
   // Ficha
   comoLlegar: 'Cómo llegar',
+  cancelar: 'Cancelar',
+  quitarReciente: (nombre: string) => `Quitar ${nombre} de recientes`,
   puertas: (n: number) => (n === 1 ? 'Tiene 1 puerta' : `Tiene ${n} puertas`),
 
   // Panel "Cómo llegar"

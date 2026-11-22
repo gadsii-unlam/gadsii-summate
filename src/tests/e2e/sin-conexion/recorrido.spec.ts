@@ -18,8 +18,10 @@ test.use({ serviceWorkers: 'allow', timezoneId: 'America/Argentina/Buenos_Aires'
 const PREGUNTA = 'No pudimos consultar el clima. ¿Cómo querés ir?'
 const destinoSalud = /^Destino: Dpto\. de Cs\. de la Salud/
 const origenAlumnos = /^Punto de partida: Dirección de Alumnos/
-const chip = (page: import('@playwright/test').Page, nombre: RegExp) =>
-  page.getByRole('list', { name: 'Opciones de ruta' }).getByRole('button', { name: nombre })
+const botonCancelar = (page: import('@playwright/test').Page) =>
+  page.getByRole('button', { name: 'Cancelar', exact: true })
+const reintentarBarra = (page: import('@playwright/test').Page) =>
+  page.locator('.aviso-conexion').getByRole('button', { name: /Reintentar/ })
 
 /** Sirve `/data/cierres.json` con estos cierres (también para el service worker). */
 async function servirCierres(context: BrowserContext, cierres: unknown[]) {
@@ -52,7 +54,7 @@ test('ruta nueva sin señal: avisa el clima, deja elegir el criterio y muestra "
   await esperarServiceWorker(page)
   await context.setOffline(true)
   await page.reload()
-  await expect(page.getByRole('button', { name: /^¿Desde dónde salís\?/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Destino: ¿A dónde vas?' })).toBeVisible()
 
   await pedirRuta(page)
   await expect(page.getByText(PREGUNTA)).toBeVisible()
@@ -65,7 +67,8 @@ test('ruta nueva sin señal: avisa el clima, deja elegir el criterio y muestra "
   expect(nodos[0]).toMatch(/^puerta-direccion-alumnos/)
   expect(nodos.at(-1)).toMatch(/^puerta-dpto-cs-salud/)
   await expect(page.getByRole('button', { name: destinoSalud })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Reintentar' }).first()).toBeVisible()
+  // En celular el "Reintentar" es el de la barra "Sin conexión" (el del clima no se muestra).
+  await expect(reintentarBarra(page)).toBeVisible()
 })
 
 test('lluvia consultada antes del corte: sin red no se usa y el clima queda desconocido', async ({
@@ -75,9 +78,8 @@ test('lluvia consultada antes del corte: sin red no se usa y el clima queda desc
   await abrir(page, '/?clima=lluvia')
   await esperarServiceWorker(page)
   await pedirRuta(page)
-  await expect(page.getByText('Llueve · te recomendamos la ruta más resguardada')).toBeVisible()
-  await page.getByRole('button', { name: 'Iniciar', exact: true }).tap()
-  await page.getByRole('button', { name: 'Finalizar viaje' }).tap()
+  await expect(page.getByText('Llueve · te recomendamos la ruta más resguardada')).toBeAttached()
+  await botonCancelar(page).tap()
 
   await context.setOffline(true)
   await pedirRuta(page)
@@ -100,7 +102,7 @@ test('cierre guardado respetado sin conexión, con "Cierres sin actualizar desde
   await esperarServiceWorker(page)
   // La primera carga (antes del control del service worker) no queda guardada: se recarga una vez.
   await page.reload()
-  await expect(page.getByRole('button', { name: /^¿Desde dónde salís\?/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Destino: ¿A dónde vas?' })).toBeVisible()
   await expect
     .poll(async () => (await contenidoCaches(page)).cierres ?? [])
     .toContain('/data/cierres.json')
@@ -127,19 +129,15 @@ test('corte con la ruta en pantalla: "Reintentar" sin red no borra nada y al vol
 
   await context.setOffline(true)
   await expect(barraSinConexion(page)).toContainText('Sin conexión')
-  // A 390 × 844 la barra va arriba de la hoja: no tapa el panel "Cómo llegar" ni la tarjeta
-  // resumen de la ruta. Al cortarse la red la hoja se achica con una animación: se mide hasta que
-  // termina, porque a mitad de camino la hoja todavía está más arriba que la barra.
+  // A 390 × 844 la barra va debajo de la tarjeta "Cómo llegar" y por encima de los botones.
   await expect(async () => {
     const barra = (await page.locator('.aviso-conexion').boundingBox())!
     const panel = (await page.locator('.tarjeta-superior').boundingBox())!
-    const resumen = (await page.getByTestId('ruta-resumen').boundingBox())!
-    const hoja = (await page.locator('.hoja').boundingBox())!
+    const botones = (await page.locator('.botones-flotantes').boundingBox())!
     expect(barra.y).toBeGreaterThanOrEqual(panel.y + panel.height)
-    expect(barra.y + barra.height).toBeLessThanOrEqual(hoja.y)
-    expect(barra.y + barra.height).toBeLessThanOrEqual(resumen.y)
+    expect(barra.y + barra.height).toBeLessThanOrEqual(botones.y)
   }).toPass({ timeout: 2000 })
-  const reintentar = page.locator('.aviso-conexion').getByRole('button', { name: /Reintentar/ })
+  const reintentar = reintentarBarra(page)
   await reintentar.tap()
   await expect(reintentar).toBeEnabled()
   expect(await nodosRuta(page)).toEqual(antes)
@@ -150,6 +148,22 @@ test('corte con la ruta en pantalla: "Reintentar" sin red no borra nada y al vol
   await context.setOffline(false)
   await expect(page.locator('.aviso-conexion')).toHaveCount(0)
   expect(await nodosRuta(page)).toEqual(antes)
+})
+
+test('en celular la cruz cierra la barra "Sin conexión" sin tocar la ruta', async ({
+  page,
+  context,
+}) => {
+  await abrir(page, '/?clima=seco')
+  await esperarServiceWorker(page)
+  await pedirRuta(page)
+  const antes = await nodosRuta(page)
+  await context.setOffline(true)
+  await expect(barraSinConexion(page)).toContainText('Sin conexión')
+  await page.getByRole('button', { name: 'Cerrar aviso de sin conexión' }).tap()
+  await expect(page.locator('.aviso-conexion')).toHaveCount(0)
+  expect(await nodosRuta(page)).toEqual(antes)
+  await context.setOffline(false)
 })
 
 test('"Reintentar" con un cierre nuevo en la ruta: la ruta lo evita y lo avisa', async ({
@@ -167,7 +181,10 @@ test('"Reintentar" con un cierre nuevo en la ruta: la ruta lo evita y lo avisa',
   await context.route('**/api/clima/**', (r) => r.abort('internetdisconnected'))
   await context.unroute('**/data/cierres.json')
   await context.route('**/data/cierres.json', (r) => r.abort('internetdisconnected'))
-  await page.locator('.aviso-clima, [data-testid="contenido-ruta"]').first().waitFor()
+  await page
+    .locator('.aviso-clima, [data-testid="contenido-ruta"]')
+    .first()
+    .waitFor({ state: 'attached' })
   // Pedir de nuevo el clima con la red caída: la barra aparece.
   await page.evaluate(() => window.dispatchEvent(new Event('offline')))
   await expect(barraSinConexion(page)).toContainText('Sin conexión')
@@ -175,10 +192,7 @@ test('"Reintentar" con un cierre nuevo en la ruta: la ruta lo evita y lo avisa',
   // Vuelve la red con un cierre nuevo en un tramo de la ruta mostrada.
   await context.unroute('**/api/clima/**')
   await servirCierres(context, [{ id: 'nuevo', motivo: 'Cierre nuevo', nodos: [cerrado] }])
-  await page
-    .locator('.aviso-conexion')
-    .getByRole('button', { name: /Reintentar/ })
-    .tap()
+  await reintentarBarra(page).tap()
   await expect(page.getByText('Actualizamos la ruta con los datos nuevos')).toBeVisible()
   await expect.poll(async () => (await nodosRuta(page)).includes(cerrado)).toBe(false)
   await expect(page.locator('.aviso-conexion')).toHaveCount(0)
@@ -216,8 +230,10 @@ test('recargar sin conexión restaura la misma ruta "Más resguardada"; a las 3 
   await abrir(page, '/?clima=lluvia')
   await esperarServiceWorker(page)
   await pedirRuta(page)
-  await expect(chip(page, /^Más resguardada/)).toHaveAttribute('aria-pressed', 'true')
   const antes = await nodosRuta(page)
+  // Con lluvia se muestra la resguardada: la más rápida queda como alternativa en gris.
+  const alternativa = await mapa(page).getAttribute('data-ruta-alternativa')
+  expect(alternativa).toBeTruthy()
 
   await context.setOffline(true)
   const respuestas = await respuestasDurante(
@@ -229,7 +245,7 @@ test('recargar sin conexión restaura la misma ruta "Más resguardada"; a las 3 
     },
   )
   for (const r of respuestas) expect(r.fromServiceWorker(), r.url()).toBe(true)
-  await expect(chip(page, /^Más resguardada/)).toHaveAttribute('aria-pressed', 'true')
+  await expect(mapa(page)).toHaveAttribute('data-ruta-alternativa', alternativa!)
   await expect(page.getByRole('button', { name: destinoSalud })).toBeVisible()
   await expect(page.getByRole('button', { name: origenAlumnos })).toBeVisible()
   await expect(page.getByText(PREGUNTA)).toHaveCount(0)
@@ -237,20 +253,19 @@ test('recargar sin conexión restaura la misma ruta "Más resguardada"; a las 3 
 
   await page.clock.fastForward('03:00:00')
   await page.goto('/')
-  await expect(page.getByRole('button', { name: /^¿Desde dónde salís\?/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Destino: ¿A dónde vas?' })).toBeVisible()
   await expect(mapa(page)).not.toHaveAttribute('data-ruta-nodos', /puerta-/)
   await expect(page.getByTestId('contenido-ruta')).toHaveCount(0)
 })
 
-test('"Finalizar viaje" y recargar: abre sin ruta', async ({ page }) => {
+test('"Cancelar" y recargar: abre sin ruta', async ({ page }) => {
   await abrir(page, '/?clima=seco')
   await esperarServiceWorker(page)
   await pedirRuta(page)
   await nodosRuta(page)
-  await page.getByRole('button', { name: 'Iniciar', exact: true }).tap()
-  await page.getByRole('button', { name: 'Finalizar viaje' }).tap()
+  await botonCancelar(page).tap()
   await page.reload()
-  await expect(page.getByRole('button', { name: /^¿Desde dónde salís\?/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Destino: ¿A dónde vas?' })).toBeVisible()
   await expect(page.getByTestId('contenido-ruta')).toHaveCount(0)
   expect(await page.evaluate(() => localStorage.getItem('dq:recorrido:v1'))).toBeNull()
 })
@@ -269,7 +284,7 @@ test('con el almacenamiento bloqueado la app calcula y muestra la ruta sin error
   const errores: string[] = []
   page.on('pageerror', (e) => errores.push(e.message))
   await page.goto('/?clima=seco')
-  await expect(page.getByRole('button', { name: /^¿Desde dónde salís\?/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Destino: ¿A dónde vas?' })).toBeVisible()
   await esperarMapaQuieto(page)
   await pedirRuta(page)
   await nodosRuta(page)

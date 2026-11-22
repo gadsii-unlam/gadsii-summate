@@ -63,10 +63,13 @@ export type EventoPantalla =
   | { tipo: 'intercambiar' }
   | { tipo: 'borrar-origen' }
   | { tipo: 'borrar-destino' }
+  /** "Cancelar": borra origen y destino. */
+  | { tipo: 'limpiar' }
   /** `popstate`: la única forma de volver a una vista anterior. */
   | { tipo: 'restaurar'; vista: Vista; consulta?: string }
 
-export const INICIO: VistaBase = { tipo: 'inicio' }
+/** La vista por defecto es "Cómo llegar": origen y destino siempre a la vista. */
+export const INICIO: VistaBase = { tipo: 'como-llegar' }
 
 export function estadoInicial(sugerenciaOrigen: string | null = null): EstadoPantalla {
   return {
@@ -113,6 +116,10 @@ export function reducir(estado: EstadoPantalla, evento: EventoPantalla): EstadoP
 
   switch (evento.tipo) {
     case 'restaurar':
+      // La vista "inicio" (barra "¿Desde dónde salís?") ya no existe: se cae en "Cómo llegar".
+      if (evento.vista.tipo === 'inicio' || evento.vista.tipo === 'ficha') {
+        evento = { ...evento, vista: INICIO }
+      }
       return evento.consulta !== undefined && evento.consulta !== estado.consulta
         ? { ...estado, vista: evento.vista, consulta: evento.consulta }
         : conVista(estado, evento.vista)
@@ -201,6 +208,11 @@ export function reducir(estado: EstadoPantalla, evento: EventoPantalla): EstadoP
         ? conSeleccion(estado, { origen: null })
         : estado
 
+    case 'limpiar':
+      return seleccion.origen || seleccion.destino
+        ? conSeleccion(estado, { origen: null, destino: null })
+        : estado
+
     case 'borrar-destino':
       return vista.tipo === 'como-llegar' && seleccion.destino
         ? conSeleccion(estado, { destino: null })
@@ -234,7 +246,7 @@ export function hashDeVista(vista: Vista): string {
  */
 export function vistaDeHash(hash: string, existeLugar: (id: string) => boolean): Vista {
   const limpio = hash.replace(/^#/, '')
-  if (limpio === 'buscar') return { tipo: 'buscando', campo: 'destino', desde: 'inicio' }
+  if (limpio === 'buscar') return { tipo: 'buscando', campo: 'destino', desde: 'como-llegar' }
   if (limpio === 'ayuda') return { tipo: 'ayuda', sobre: INICIO }
   const lugar = /^lugar\/(.+)$/.exec(limpio)?.[1]
   if (lugar) {
@@ -244,9 +256,9 @@ export function vistaDeHash(hash: string, existeLugar: (id: string) => boolean):
     } catch {
       return INICIO
     }
-    if (existeLugar(id)) return { tipo: 'ficha', lugarId: id }
+    if (existeLugar(id)) return INICIO
     const sinPuerta = id.replace(/^(puerta|acceso)-/, '')
-    if (existeLugar(sinPuerta)) return { tipo: 'ficha', lugarId: sinPuerta }
+    if (existeLugar(sinPuerta)) return INICIO
   }
   return INICIO
 }

@@ -21,6 +21,25 @@
 
 /* Escritorio: el mapa empieza donde termina el panel lateral (ANCHO_PANEL). Si quedara debajo,
    los límites del plano no dejarían llevar a la vista lo que tapa el panel al hacer zoom. */
+/* Celular: el mapa se funde con la zona de la barra de estado en vez de cortarse con una línea.
+   Arranca del mismo gris que pinta iOS ahí (el fondo de la página). Va sobre el mapa y debajo de
+   la tarjeta y los botones; no recibe toques. */
+.pantalla:not(.pantalla--escritorio)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  z-index: calc(var(--capa-botones) - 1);
+  background: linear-gradient(
+    to bottom,
+    var(--color-fondo-mapa),
+    color-mix(in srgb, var(--color-fondo-mapa) 0%, transparent)
+  );
+  pointer-events: none;
+}
+
 .pantalla--escritorio .pantalla__mapa {
   left: 408px;
 }
@@ -77,7 +96,8 @@
 }
 
 .pantalla--escritorio .botones-flotantes {
-  bottom: 120px;
+  /* Justo encima de los botones de zoom (dos de alto), con el mismo espacio entre piezas. */
+  bottom: calc(var(--esp-4) + 2 * var(--boton-circular) + var(--esp-3));
   right: var(--esp-3);
 }
 
@@ -319,4 +339,74 @@
   padding: var(--esp-5);
   text-align: center;
   color: var(--color-texto-secundario);
+}
+
+/* Acción única centrada abajo en celular ("Cómo llegar" en la ficha, "Cancelar" en un viaje). */
+.accion-inferior {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+}
+.accion-inferior .boton {
+  box-shadow: 0 2px 8px rgb(0 0 0 / 25%);
+  min-width: 160px;
+}
+
+/* ---- Avisos de arriba (celular) ------------------------------------------------------- */
+
+.avisos-arriba {
+  position: absolute;
+  z-index: var(--capa-avisos);
+  left: calc(var(--seguro-izquierda) + var(--margen-lateral));
+  right: calc(var(--seguro-derecha) + var(--margen-lateral));
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  pointer-events: none;
+}
+
+.avisos-arriba > :not(.pila-avisos) {
+  pointer-events: auto;
+}
+
+/* Solo se muestra el aviso cuando falló el clima (la pregunta de cómo ir). Con clima, la línea
+   «Llueve / No llueve» la cuenta la ruta. */
+.avisos-arriba__clima:not(:has(.aviso-clima--falla)) {
+  display: none;
+}
+
+.avisos-arriba__clima {
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--radio-tarjeta, 16px);
+  background: var(--color-superficie);
+  box-shadow: var(--elevacion-2);
+}
+
+.avisos-arriba__clima .aviso-clima {
+  margin: 0;
+}
+
+/* En celular, solo la pregunta y las dos opciones: sin tiempos ni metros, y sin «Reintentar»
+   (la barra «Sin conexión» ya lo ofrece). */
+.avisos-arriba__clima .aviso-clima__detalle,
+.avisos-arriba__clima .aviso-clima__reintentar {
+  display: none;
+}
+
+.avisos-arriba[hidden] {
+  display: none;
+}
+
+/* Textos centrados. Al elegir una opción la tarjeta se va y queda la ruta. */
+.avisos-arriba__clima {
+  text-align: center;
+}
+
+.avisos-arriba__clima .aviso-clima__opcion {
+  align-items: center;
+}
+
+.avisos-arriba__clima:has(.aviso-clima__opcion[aria-pressed='true']) {
+  display: none;
 }

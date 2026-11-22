@@ -95,7 +95,9 @@
     "salon-americas",
     "teatro",
     "gimnasio",
-    "rectorado"
+    "rectorado",
+    "comedor-universitario",
+    "direccion-alumnos"
   ],
   "sinSala": ["dpto-derecho"],
   "otrosPisos": [],

@@ -88,10 +88,10 @@ export default function ContenidoRutaApp({ origen, destino }: PropsContenidoRuta
         alElegir={(c) => plan && vista?.elegir(plan, c)}
         alCambiarSeleccion={(s) => vista?.mostrar(clave, plan, s)}
         alIniciar={() => vista?.iniciar()}
-        alFinalizar={() => {
-          vista?.limpiar()
-          cerrar()
-        }}
+        // El viaje termina al desmontarse el resultado (Cancelar o al cambiar origen o destino):
+        // solo se limpia el mapa. Navegar acá (`cerrar`) se sumaba al `volver` del controlador
+        // y el historial retrocedía de más, hasta salir de la app.
+        alFinalizar={() => vista?.limpiar()}
         avisoDe={(s) => desvios.get(s.criterio) ?? null}
       />
     )

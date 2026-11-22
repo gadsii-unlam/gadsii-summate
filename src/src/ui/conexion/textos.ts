@@ -2,6 +2,7 @@
 export const TEXTOS_CONEXION = {
   sinConexion: 'Sin conexión',
   reintentar: 'Reintentar',
+  cerrarSinConexion: 'Cerrar aviso de sin conexión',
   reintentando: 'Reintentando…',
   rutaActualizada: 'Actualizamos la ruta con los datos nuevos',
   hayCambios: 'Hay cambios en tu ruta',

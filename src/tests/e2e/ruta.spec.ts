@@ -3,12 +3,24 @@ import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { readFileSync } from 'node:fs'
 import sharp from 'sharp'
-import { abrir, arrastrar, caja, comoUsuarioConocido, esperarMapaQuieto } from './ayudas.ts'
+import {
+  abrir,
+  arrastrar,
+  botonCancelar,
+  caja,
+  comoUsuarioConocido,
+  elegirRecorrido,
+  esperarMapaQuieto,
+  franjaMapa,
+} from './ayudas.ts'
 
 // Ruta e indicaciones (mostrar-ruta-e-indicaciones). El ejemplo es Dirección de Alumnos (Edificio
 // Oeste) → Dpto. de Cs. de la Salud (Edificio Este): la más corta (2 min · 125 m, cruza la franja
 // entre edificios por el hall de Kinesiología) y la resguardada (5 min · 330 m, por los pasillos
 // norte; entra al Edificio Este por la entrada oeste del pasillo norte).
+//
+// En celular no hay hoja inferior: el resultado (y su anuncio para lectores de pantalla) queda
+// montado pero oculto, y la alternativa se elige tocando la línea gris en el mapa.
 //
 // El mapa publica en su DOM los nodos de la ruta, las partes
 // (bajo-techo/aire-libre), la alternativa y el paso resaltado (`data-ruta-*`), y las posiciones en
@@ -49,13 +61,7 @@ async function enPantalla(page: Page, id: string) {
   return { x: sa.x + (n.x - a.x) * s, y: sa.y + (n.y - a.y) * s }
 }
 
-/** Franja del mapa que no tapan la tarjeta superior ni la hoja. */
-async function franja(page: Page) {
-  const tarjeta = await caja(page, '.tarjeta-superior')
-  const hoja = await caja(page, '.hoja')
-  const vp = page.viewportSize()!
-  return { arriba: tarjeta.y + tarjeta.height, abajo: hoja.y, ancho: vp.width }
-}
+const franja = franjaMapa
 
 async function enFranja(page: Page, id: string) {
   const p = await enPantalla(page, id)
@@ -64,14 +70,20 @@ async function enFranja(page: Page, id: string) {
 }
 
 const mapa = (page: Page) => page.locator('.mapa')
-const tarjetaResumen = (page: Page) => page.getByTestId('ruta-resumen')
-const chip = (page: Page, nombre: RegExp) =>
-  page.getByRole('list', { name: 'Opciones de ruta' }).getByRole('button', { name: nombre })
+/** Anuncio del resumen ("Ruta encontrada: 2 min, 125 m, …"); en celular está oculto. */
+const resumen = (page: Page) => page.getByTestId('ruta-resultado').locator('[role="status"]')
 
-async function elegir(page: Page, texto: string, opcion: RegExp) {
-  await page.getByRole('combobox').fill(texto)
-  await page.getByRole('option', { name: opcion }).first().tap()
+/** Toca la línea gris de la alternativa sobre un nodo que solo está en ella. */
+async function tocarAlternativa(page: Page, nodo: string) {
+  await expect(mapa(page)).toHaveAttribute('data-ruta-alternativa', new RegExp(nodo))
+  await page.waitForTimeout(500)
+  await esperarMapaQuieto(page)
+  expect(await enFranja(page, nodo)).toBe(true)
+  const punto = await enPantalla(page, nodo)
+  await page.touchscreen.tap(punto.x, punto.y)
 }
+
+const CRUCE_FRANJA = 'cruce--ext-cruce-franjas-1773--ext-franja-entre-edificios-oeste'
 
 /** Pide la ruta de `origen` a `destino` y espera a que esté dibujada. */
 async function pedirRuta(
@@ -82,13 +94,12 @@ async function pedirRuta(
   { esperarRuta = true } = {},
 ) {
   await abrir(page, `/${busqueda}`)
-  await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
-  await elegir(page, ...destino)
-  await page.getByRole('button', { name: /^Cómo llegar$/ }).tap()
-  await page.getByRole('button', { name: /^Punto de partida/ }).tap()
-  await elegir(page, ...origen)
+  await elegirRecorrido(page, destino, origen)
   if (esperarRuta) {
     await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', /puerta-/)
+    // El encuadre de la ruta llega después de los nodos (espera a la geometría): sin esto, el
+    // mapa puede parecer quieto justo antes de saltar a la ruta.
+    await expect(mapa(page)).toHaveAttribute('data-encuadre', 'ruta')
     await esperarMapaQuieto(page)
   }
 }
@@ -97,44 +108,41 @@ test.beforeEach(async ({ page }) => {
   await comoUsuarioConocido(page)
 })
 
-test('recorrido completo con lluvia: espera, resguardada encuadrada, más rápida y finalizar', async ({
+test('recorrido completo con lluvia: espera, resguardada encuadrada, más rápida y cancelar', async ({
   page,
 }) => {
-  // El clima tarda 1,2 s: se ve "Buscando el camino…".
+  // El clima tarda 1,2 s: mientras tanto no hay ruta en el mapa.
   await page.route('**/api/clima/lluvia.json', async (ruta) => {
     await new Promise((r) => setTimeout(r, 1200))
     await ruta.continue()
   })
   await pedirRuta(page, '?clima=lluvia', undefined, undefined, { esperarRuta: false })
-  await expect(page.getByText('Buscando el camino…')).toBeVisible()
-  await expect(page.getByRole('progressbar', { name: 'Buscando el camino' })).toBeVisible()
+  await expect(page.getByTestId('contenido-ruta')).toContainText('Buscando el camino…')
   await expect(mapa(page)).not.toHaveAttribute('data-ruta-nodos', /.+/)
   await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', /entrada-ed-este-norte-lado-oeste/)
   await expect(page.getByText('Buscando el camino…')).toHaveCount(0)
   await esperarMapaQuieto(page)
 
-  // Más resguardada, recomendada, encuadrada, con el tramo de vereda en celeste y la leyenda.
-  await expect(chip(page, /^Más resguardada · 5 min/)).toHaveAttribute('aria-pressed', 'true')
-  await expect(chip(page, /^Más resguardada/)).toContainText('Recomendada con lluvia')
-  await expect(tarjetaResumen(page)).toContainText('5 min · 330 m')
+  // Más resguardada (con lluvia), encuadrada, con el tramo de vereda en celeste y la leyenda.
+  await expect(resumen(page)).toContainText('5 min, 330 m')
   await expect(mapa(page)).toHaveAttribute('data-ruta-partes', 'bajo-techo aire-libre bajo-techo')
   await expect(page.getByRole('list', { name: 'Referencias de la ruta' })).toBeVisible()
   expect(await enFranja(page, 'puerta-direccion-alumnos')).toBe(true)
   expect(await enFranja(page, 'puerta-dpto-cs-salud')).toBe(true)
 
-  // Más rápida.
-  await chip(page, /^Más rápida/).tap()
-  await expect(tarjetaResumen(page)).toContainText('2 min · 125 m')
-  await expect(tarjetaResumen(page)).toContainText('Incluye 55 m al aire libre')
+  // Más rápida, tocando la línea gris.
+  await tocarAlternativa(page, CRUCE_FRANJA)
+  await expect(resumen(page)).toContainText('2 min, 125 m, incluye 55 m al aire libre')
   await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', /entrada-ed-este-kinesiologia/)
 
-  // Sin indicaciones paso a paso: el camino se sigue en el mapa.
+  // Sin indicaciones paso a paso, ni "Iniciar" / "Finalizar viaje": el camino se sigue en el mapa.
   await expect(page.getByRole('button', { name: 'Indicaciones' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Iniciar', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Finalizar viaje' })).toHaveCount(0)
 
-  // Finalizar viaje: vuelve al inicio sin ruta.
-  await page.getByRole('button', { name: 'Iniciar', exact: true }).tap()
-  await page.getByRole('button', { name: 'Finalizar viaje' }).tap()
-  await expect(page.getByRole('button', { name: /^¿Desde dónde salís\?/ })).toBeVisible()
+  // Cancelar: vuelve al panel vacío sin ruta.
+  await botonCancelar(page).tap()
+  await expect(page.getByRole('button', { name: 'Destino: ¿A dónde vas?' })).toBeVisible()
   await expect(mapa(page)).not.toHaveAttribute('data-ruta-nodos', /.+/)
   await expect(page.locator('.ruta__marcador')).toHaveCount(0)
   await expect(page.getByRole('list', { name: 'Referencias de la ruta' })).toHaveCount(0)
@@ -143,8 +151,7 @@ test('recorrido completo con lluvia: espera, resguardada encuadrada, más rápid
 test('?clima=lento: "Buscando el camino…" con barra y después la ruta', async ({ page }) => {
   await pedirRuta(page, '?clima=lento', undefined, undefined, { esperarRuta: false })
   await expect(page.getByTestId('contenido-ruta')).toContainText('Buscando el camino…')
-  await expect(page.getByRole('progressbar')).toBeVisible()
-  await expect(tarjetaResumen(page)).toContainText('5 min · 330 m', { timeout: 6000 })
+  await expect(resumen(page)).toContainText('5 min, 330 m', { timeout: 6000 })
   await expect(page.getByText('Buscando el camino…')).toHaveCount(0)
 })
 
@@ -273,7 +280,7 @@ test('al arrastrar con la ruta cargada, lo que entra a la pantalla ya está dibu
 
 test('Aula 121 → Aula 110 es toda bajo techo: sin leyenda', async ({ page }) => {
   await pedirRuta(page, '?clima=seco', ['110', /^Aula 110/], ['121', /^Aula 121/])
-  await expect(tarjetaResumen(page)).toContainText('Todo bajo techo')
+  await expect(resumen(page)).toContainText('todo bajo techo')
   await expect(mapa(page)).toHaveAttribute('data-ruta-partes', 'bajo-techo')
   await expect(page.getByRole('list', { name: 'Referencias de la ruta' })).toHaveCount(0)
 })
@@ -310,42 +317,28 @@ test('un destino sin sala en el plano (una entrada al campus) sigue con el pin',
   await pedirRuta(page, '?clima=seco', ['La Paz', /^Entrada La Paz/], ['121', /^Aula 121/])
   await expect(page.locator('path.ruta__sala-destino')).toHaveCount(0)
   await expect(page.locator('.ruta__marcador--destino svg')).toHaveCount(1)
-  // Al terminar el viaje el plano vuelve a color.
-  await page.getByRole('button', { name: 'Iniciar', exact: true }).tap()
-  await page.getByRole('button', { name: 'Finalizar viaje' }).tap()
+  // Al cancelar el plano vuelve a color.
+  await botonCancelar(page).tap()
   await expect(mapa(page)).not.toHaveClass(/mapa--con-ruta/)
 })
 
 test('tocar la línea gris de la alternativa la elige', async ({ page }) => {
   await pedirRuta(page, '?clima=lluvia')
-  await expect(chip(page, /^Más resguardada/)).toHaveAttribute('aria-pressed', 'true')
-  await expect(mapa(page)).toHaveAttribute(
-    'data-ruta-alternativa',
-    /cruce--ext-cruce-franjas-1773--ext-franja-entre-edificios-oeste/,
-  )
-  await page.waitForTimeout(500)
-  await esperarMapaQuieto(page)
-  // El cruce de la franja junto al hall de los auditorios solo está en la más rápida (la línea gris).
-  const punto = await enPantalla(
-    page,
-    'cruce--ext-cruce-franjas-1773--ext-franja-entre-edificios-oeste',
-  )
-  expect(
-    await enFranja(page, 'cruce--ext-cruce-franjas-1773--ext-franja-entre-edificios-oeste'),
-  ).toBe(true)
-  await page.touchscreen.tap(punto.x, punto.y)
-  await expect(chip(page, /^Más rápida/)).toHaveAttribute('aria-pressed', 'true')
-  await expect(tarjetaResumen(page)).toContainText('2 min · 125 m')
+  // El cruce de la franja junto al hall de los auditorios solo está en la más rápida (la gris).
+  await expect(mapa(page)).not.toHaveAttribute('data-ruta-nodos', new RegExp(CRUCE_FRANJA))
+  await tocarAlternativa(page, CRUCE_FRANJA)
+  await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', new RegExp(CRUCE_FRANJA))
+  await expect(resumen(page)).toContainText('2 min, 125 m')
 })
 
-test('lluvia: cambiar a "Más rápida" sin red no muestra "Buscando el camino…"', async ({
+test('lluvia: cambiar a la más rápida sin red no vuelve a buscar el camino', async ({
   page,
   context,
 }) => {
   await pedirRuta(page, '?clima=lluvia')
   await context.setOffline(true)
-  await chip(page, /^Más rápida · 2 min/).tap()
-  await expect(tarjetaResumen(page)).toContainText('2 min · 125 m')
+  await tocarAlternativa(page, CRUCE_FRANJA)
+  await expect(resumen(page)).toContainText('2 min, 125 m')
   await expect(page.getByText('Buscando el camino…')).toHaveCount(0)
   await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', /entrada-ed-este-kinesiologia/)
   await context.setOffline(false)
@@ -397,9 +390,10 @@ test('accesibilidad: sin violaciones serias en el resultado; controles de 44 × 
   await pedirRuta(page, '?clima=lluvia')
   expect(await graves(), 'resultado').toEqual([])
   const controles = [
-    chip(page, /^Más resguardada/),
-    chip(page, /^Más rápida/),
-    page.getByRole('button', { name: 'Iniciar', exact: true }),
+    botonCancelar(page),
+    page.getByRole('button', { name: 'Ayuda', exact: true }),
+    page.getByRole('button', { name: 'Recentrar el mapa' }),
+    page.getByRole('button', { name: 'Intercambiar punto de partida y destino' }),
   ]
   for (const c of controles) {
     const b = (await c.boundingBox())!

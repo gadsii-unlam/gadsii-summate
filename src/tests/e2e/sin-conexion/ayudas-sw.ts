@@ -102,12 +102,12 @@ export async function pedirRuta(
   destino: [string, RegExp] = ['Salud', /^Dpto\. de Cs\. de la Salud/],
   origen: [string, RegExp] = ['Alumnos', /^Dirección de Alumnos/],
 ) {
-  await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
+  await page.getByRole('button', { name: /^Destino:/ }).tap()
   await elegir(page, ...destino)
-  await page.getByRole('button', { name: /^Cómo llegar$/ }).tap()
-  await page.getByRole('button', { name: /^Punto de partida/ }).tap()
+  await page.getByRole('button', { name: /^Punto de partida:/ }).tap()
   await elegir(page, ...origen)
-  await expect(page.getByTestId('contenido-ruta')).toBeVisible()
+  // En celular el resultado queda montado pero oculto (no hay hoja inferior).
+  await expect(page.getByTestId('contenido-ruta')).toBeAttached()
 }
 
 export const mapa = (page: Page) => page.locator('.mapa')

@@ -1,6 +1,8 @@
 /** Contenido de la hoja en el panel "Cómo llegar" (design.md, D1 vista 4 y D8). */
+import { buscar } from '../../busqueda/index.ts'
 import type { Lugar } from '../../datos/index.ts'
-import { BotonLugar } from '../busqueda/FilaLugar.tsx'
+import { BotonLugarSinLi } from '../busqueda/FilaLugar.tsx'
+import { IconoCerrar } from '../iconos/Iconos.tsx'
 import { useCatalogo, useLugar } from '../catalogo.ts'
 import { usePantalla } from '../estado/contexto.ts'
 import { useIntegraciones } from '../integraciones.ts'
@@ -9,16 +11,24 @@ import { ID_TITULO_HOJA } from './ContenidoInicio.tsx'
 import type { ContenidoHoja } from './ContenidoInicio.tsx'
 
 export function useContenidoComoLlegar(): ContenidoHoja {
-  const { pantalla, fase, despachar } = usePantalla()
+  const {
+    pantalla,
+    fase,
+    despachar,
+    recientes,
+    recientesOrigen,
+    quitarReciente,
+    campoPanel,
+    consultaPanel,
+  } = usePantalla()
   const catalogo = useCatalogo()
   const { estadoAcceso, ContenidoRuta, AvisoClima } = useIntegraciones()
   const { seleccion } = pantalla
   const origen = useLugar(seleccion.origen)
   const destino = useLugar(seleccion.destino)
-  const sugerencia = useLugar(seleccion.sugerenciaOrigen)
 
   // Fase "ruta": el lugar reservado para `mostrar-ruta-e-indicaciones`.
-  if (fase === 'ruta' && origen && destino) {
+  if (fase === 'ruta' && origen && destino && !campoPanel) {
     return {
       cabecera: (
         <>
@@ -26,6 +36,13 @@ export function useContenidoComoLlegar(): ContenidoHoja {
             {TEXTOS.rutaPedida(origen.nombre, destino.nombre)}
           </h2>
           {AvisoClima && <AvisoClima origen={origen} destino={destino} />}
+          <button
+            type="button"
+            className="boton boton--secundario"
+            onClick={() => despachar({ tipo: 'limpiar' })}
+          >
+            {TEXTOS.cancelar}
+          </button>
         </>
       ),
       cuerpo: <ContenidoRuta origen={origen} destino={destino} />,
@@ -34,26 +51,57 @@ export function useContenidoComoLlegar(): ContenidoHoja {
 
   const elegirOrigen = (lugar: Lugar) => despachar({ tipo: 'elegir-origen', lugarId: lugar.id })
   const elegirDestino = (lugar: Lugar) => despachar({ tipo: 'elegir-destino', lugarId: lugar.id })
-  /** Lista de entradas y referencias: elige el origen o, si ya hay origen, el destino. */
-  const listaLugares = (titulo: string, onElegir: (lugar: Lugar) => void) => (
-    <section aria-labelledby="hoja-ubicarte" className="hoja-seccion">
-      <h3 id="hoja-ubicarte" className="titulo-seccion">
-        {titulo}
-      </h3>
-      <ul className="lista-filas">
-        {[...catalogo.entradas, ...catalogo.referencias].map((l) => (
-          <BotonLugar
-            key={l.id}
-            lugar={l}
-            tipo="referencia"
-            sinAcceso={estadoAcceso(l.id) === 'sin-acceso'}
-            onElegir={onElegir}
-          />
-        ))}
-      </ul>
-    </section>
+  // El campo tocado en la tarjeta o, si no, el que falta.
+  const esOrigen = campoPanel ? campoPanel === 'origen' : !origen
+  const idsRecientes = esOrigen ? recientesOrigen : recientes
+
+  /** Una sección de la lista, con título y, para los recientes, la cruz para quitarlos. */
+  const seccion = (clave: string, titulo: string, lugares: Lugar[], reciente = false) =>
+    lugares.length > 0 && (
+      <section key={clave} aria-labelledby={`hoja-${clave}`} className="hoja-seccion">
+        <h3 id={`hoja-${clave}`} className="titulo-seccion">
+          {titulo}
+        </h3>
+        <ul className="lista-filas">
+          {lugares.map((l) => (
+            <li key={l.id} className="fila-con-quitar">
+              <BotonLugarSinLi
+                lugar={l}
+                tipo={reciente ? 'reciente' : 'referencia'}
+                sinAcceso={estadoAcceso(l.id) === 'sin-acceso'}
+                onElegir={esOrigen ? elegirOrigen : elegirDestino}
+              />
+              {reciente && (
+                <button
+                  type="button"
+                  className="boton-icono boton-icono--chico fila__quitar"
+                  aria-label={TEXTOS.quitarReciente(l.nombre)}
+                  onClick={() => quitarReciente(esOrigen ? 'origen' : 'destino', l.id)}
+                >
+                  <IconoCerrar tamano={20} />
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  const lugaresRecientes = idsRecientes
+    .map((id) => catalogo.porId.get(id))
+    .filter((l): l is Lugar => !!l)
+  const texto = consultaPanel.trim()
+  const resultados = texto ? buscar(catalogo.indice, texto).map((r) => r.lugar) : []
+  const lista = texto ? (
+    seccion('resultados', TEXTOS.resultados(resultados.length), resultados) || (
+      <p className="ayuda-breve">{TEXTOS.sinResultados(texto)}</p>
+    )
+  ) : (
+    <>
+      {seccion('recientes', TEXTOS.recientes, lugaresRecientes, true)}
+      {esOrigen && seccion('entradas', TEXTOS.entradasAlCampus, catalogo.entradas)}
+      {seccion('referencias', TEXTOS.referencias, catalogo.referencias)}
+    </>
   )
-  const lugaresParaUbicarte = listaLugares(TEXTOS.lugaresParaUbicarte, elegirOrigen)
 
   // Origen igual al destino.
   if (origen && destino && origen.id === destino.id) {
@@ -63,59 +111,16 @@ export function useContenidoComoLlegar(): ContenidoHoja {
           {TEXTOS.yaEstas(origen.nombre)}
         </h2>
       ),
-      cuerpo: lugaresParaUbicarte,
+      cuerpo: lista,
     }
   }
 
-  if (!origen) {
-    return {
-      cabecera: (
-        <>
-          {sugerencia ? (
-            <div className="sugerencia">
-              <h2 id={ID_TITULO_HOJA} className="titulo-hoja titulo-hoja--chico">
-                {TEXTOS.sugerenciaTitulo(sugerencia.nombre)}
-              </h2>
-              <p className="ayuda-breve">{TEXTOS.sugerenciaTexto}</p>
-              <button
-                type="button"
-                className="boton boton--secundario"
-                onClick={() => despachar({ tipo: 'confirmar-sugerencia' })}
-              >
-                {TEXTOS.usarOrigen}
-              </button>
-            </div>
-          ) : (
-            <h2 id={ID_TITULO_HOJA} className="titulo-hoja titulo-hoja--chico">
-              {TEXTOS.elegiOrigen}
-            </h2>
-          )}
-          <p className="ayuda-breve" data-testid="ayuda-origen">
-            {TEXTOS.origenAyuda}
-          </p>
-        </>
-      ),
-      cuerpo: lugaresParaUbicarte,
-    }
-  }
-
-  // Hay origen pero falta el destino: la lista elige el destino.
   return {
     cabecera: (
-      <>
-        <h2 id={ID_TITULO_HOJA} className="titulo-hoja titulo-hoja--chico">
-          {TEXTOS.elegiDestino}
-        </h2>
-        <button
-          type="button"
-          className="boton boton--secundario"
-          data-foco="campo-destino"
-          onClick={() => despachar({ tipo: 'abrir-busqueda', campo: 'destino' })}
-        >
-          {TEXTOS.destinoVacio}
-        </button>
-      </>
+      <h2 id={ID_TITULO_HOJA} className="titulo-hoja titulo-hoja--chico">
+        {esOrigen ? TEXTOS.elegiOrigen : TEXTOS.elegiDestino}
+      </h2>
     ),
-    cuerpo: listaLugares(TEXTOS.referencias, elegirDestino),
+    cuerpo: lista,
   }
 }

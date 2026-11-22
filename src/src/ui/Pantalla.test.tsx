@@ -1,9 +1,12 @@
 import { act, screen, waitFor, within } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CLAVES, crearAlmacen, crearAlmacenEnMemoria } from './estado/almacen.ts'
+import { ANCHO_ESCRITORIO } from './hooks.ts'
 import type { EstadoAcceso, PedidoRuta } from './integraciones.ts'
 import { TEXTOS } from './textos.ts'
 import { esperarPopstate, renderizarPantalla } from './test/renderizar.tsx'
+
+type Usuario = ReturnType<typeof renderizarPantalla>['usuario']
 
 function pedidos() {
   const lista: PedidoRuta[] = []
@@ -13,58 +16,59 @@ function pedidos() {
   return { lista, solicitarRuta }
 }
 
-/** Almacén con un reciente, para no ver la indicación de primer uso. */
+/** Almacén con un destino reciente. */
 function almacenConReciente(id = 'humanidades-121') {
   const a = crearAlmacenEnMemoria()
   a.escribir(CLAVES.recientes, [{ id, cuando: 1 }])
   return a
 }
 
-function hoja() {
-  return screen.getByRole('region', { name: (_, el) => el.classList.contains('hoja') })
+function campoOrigen(nombre: string | null = null) {
+  return screen.getByRole('button', { name: TEXTOS.campoOrigen(nombre) })
 }
 
-/** Busca un lugar desde el inicio y abre su ficha (la búsqueda del chip "Entradas" busca en todo). */
-async function abrirFicha(
-  usuario: ReturnType<typeof renderizarPantalla>['usuario'],
-  texto: string,
-  nombre: string,
-) {
-  await usuario.click(screen.getByRole('button', { name: TEXTOS.chipEntradas }))
+function campoDestino(nombre: string | null = null) {
+  return screen.getByRole('button', { name: TEXTOS.campoDestino(nombre) })
+}
+
+/** Celular: elige el destino desde su búsqueda y espera a volver al panel. */
+async function elegirDestino(usuario: Usuario, texto: string, nombre: string) {
+  await usuario.click(screen.getByRole('button', { name: /^Destino:/ }))
   await usuario.type(screen.getByRole('combobox'), texto)
+  const p = esperarPopstate()
   await usuario.click(screen.getByRole('option', { name: new RegExp(`^${nombre}`) }))
+  await act(() => p)
 }
 
-/** "Cómo llegar" sin origen ni destino: la barra abre la búsqueda del origen y `Esc` la cierra. */
-async function abrirPanelVacio(usuario: ReturnType<typeof renderizarPantalla>['usuario']) {
-  await usuario.click(screen.getByRole('button', { name: TEXTOS.barraNombre }))
+/** Celular: elige el origen desde su búsqueda (con el destino ya elegido vuelve al panel). */
+async function elegirOrigen(usuario: Usuario, texto: string, nombre: string) {
+  await usuario.click(screen.getByRole('button', { name: /^Punto de partida:/ }))
+  await usuario.type(screen.getByRole('combobox'), texto)
   const p = esperarPopstate()
-  await usuario.keyboard('{Escape}')
+  await usuario.click(screen.getByRole('option', { name: new RegExp(`^${nombre}`) }))
   await act(() => p)
+}
+
+/** Celular: Teatro como destino y Biblioteca como origen (fase ruta). */
+async function armarRuta(usuario: Usuario) {
+  await elegirDestino(usuario, 'teatro', 'Teatro')
+  await elegirOrigen(usuario, 'biblio', 'Biblioteca')
 }
 
 beforeEach(() => {
   window.history.replaceState(null, '', '/')
 })
 
-describe('inicio', () => {
-  it('muestra la barra "¿Desde dónde salís?", los chips y el mapa', () => {
+describe('inicio: "Cómo llegar"', () => {
+  it('abre directo en el panel con origen y destino vacíos, sin barra ni chips', () => {
     renderizarPantalla({ almacen: almacenConReciente() })
-    expect(screen.getByRole('search')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: TEXTOS.barraNombre })).toHaveTextContent(
-      '¿Desde dónde salís?',
-    )
+    expect(campoOrigen()).toHaveTextContent(TEXTOS.origenVacio)
+    expect(campoDestino()).toHaveTextContent(TEXTOS.destinoVacio)
     expect(screen.getByRole('region', { name: TEXTOS.mapa })).toBeInTheDocument()
-    const chips = within(screen.getByRole('list', { name: TEXTOS.chipsNombre }))
-    expect(chips.getAllByRole('button').map((b) => b.textContent)).toEqual([
-      'Biblioteca',
-      'Buffet',
-      'Salón de las Américas',
-      'Teatro',
-      'Gimnasio',
-      'Rectorado',
-      'Entradas',
-    ])
+    expect(screen.queryByRole('search')).toBeNull()
+    expect(screen.queryByRole('list', { name: TEXTOS.chipsNombre })).toBeNull()
+    expect(screen.queryByRole('button', { name: TEXTOS.volver })).toBeNull()
+    expect(window.location.hash).toBe('')
   })
 
   it('el doble del mapa se usa sin cargar Leaflet', () => {
@@ -73,31 +77,50 @@ describe('inicio', () => {
     expect((window as unknown as { L?: unknown }).L).toBeUndefined()
   })
 
-  it('cada chip abre la ficha correcta', async () => {
+  it('un enlace viejo a una ficha abre el panel vacío', () => {
+    renderizarPantalla({ hash: '#lugar/humanidades-121' })
+    expect(campoDestino()).toHaveTextContent(TEXTOS.destinoVacio)
+    expect(screen.getByTestId('mapa-doble')).toHaveAttribute('data-encuadre', 'campus')
+  })
+})
+
+describe('celular: sin hoja inferior', () => {
+  function sinHoja() {
+    expect(document.querySelector('.hoja')).toBeNull()
+    expect(screen.queryByRole('button', { name: TEXTOS.manija })).toBeNull()
+  }
+
+  it('no hay hoja deslizable en ningún momento del recorrido', async () => {
     const { usuario } = renderizarPantalla({ almacen: almacenConReciente() })
-    for (const nombre of ['Biblioteca', 'Teatro', 'Buffet']) {
-      await usuario.click(screen.getByRole('button', { name: nombre }))
-      expect(screen.getByRole('heading', { level: 2, name: nombre })).toBeInTheDocument()
-      const p = esperarPopstate()
-      await usuario.click(screen.getByRole('button', { name: TEXTOS.volver }))
-      await act(() => p)
-    }
+    sinHoja()
+    await elegirDestino(usuario, 'teatro', 'Teatro')
+    sinHoja()
+    await elegirOrigen(usuario, 'biblio', 'Biblioteca')
+    sinHoja()
+    await usuario.click(screen.getByRole('button', { name: TEXTOS.ayuda }))
+    sinHoja()
   })
 
-  it('el chip "Entradas" lista las cuatro entradas al campus', async () => {
-    const { usuario } = renderizarPantalla({ almacen: almacenConReciente() })
-    await usuario.click(screen.getByRole('button', { name: 'Entradas' }))
-    const grupo = screen.getByRole('group', { name: TEXTOS.entradasAlCampus })
-    expect(
-      within(grupo)
-        .getAllByRole('option')
-        .map((o) => o.querySelector('.fila__nombre')?.textContent),
-    ).toEqual([
-      'Entrada Florencio Varela',
-      'Entrada La Paz',
-      'Entrada Pte. Perón (norte)',
-      'Entrada Pte. Perón (sur)',
-    ])
+  it('las listas del panel quedan montadas pero ocultas (dibujan la ruta en el mapa)', async () => {
+    const { usuario } = renderizarPantalla()
+    await armarRuta(usuario)
+    const ruta = screen.getByTestId('contenido-ruta')
+    expect(ruta.closest('[hidden]')).not.toBeNull()
+  })
+
+  it('sin ruta no hay acción abajo; con ruta, "Cancelar" centrado', async () => {
+    const { usuario } = renderizarPantalla()
+    expect(document.querySelector('.accion-inferior')).toBeNull()
+    await armarRuta(usuario)
+    const accion = document.querySelector<HTMLElement>('.accion-inferior')!
+    expect(within(accion).getByRole('button', { name: TEXTOS.cancelar })).toBeInTheDocument()
+  })
+
+  it('el mapa reserva abajo solo el alto de los botones flotantes', () => {
+    renderizarPantalla()
+    const mapa = screen.getByTestId('mapa-doble')
+    // jsdom no mide: sin alto de botones no se reserva nada (antes era el alto de la hoja).
+    expect(Number(mapa.dataset.margenAbajo)).toBe(0)
   })
 })
 
@@ -127,7 +150,7 @@ describe('búsqueda', () => {
     expect(screen.queryByText(TEXTOS.ejemploBusqueda)).toBeNull()
   })
 
-  it('las flechas mueven aria-activedescendant y Enter elige', async () => {
+  it('las flechas mueven aria-activedescendant y Enter elige el destino', async () => {
     const { usuario } = renderizarPantalla({ hash: '#buscar' })
     const campo = screen.getByRole('combobox')
     await usuario.type(campo, '12')
@@ -135,20 +158,20 @@ describe('búsqueda', () => {
     const activa = document.getElementById(campo.getAttribute('aria-activedescendant') ?? '')
     expect(activa).toHaveAttribute('aria-selected', 'true')
     expect(activa).toHaveTextContent('Aula 121')
+    const p = esperarPopstate()
     await usuario.keyboard('{Enter}')
-    expect(screen.getByRole('heading', { level: 2, name: 'Aula 121' })).toBeInTheDocument()
+    await act(() => p)
+    expect(campoDestino('Aula 121')).toBeInTheDocument()
   })
 
   it('Esc cierra la búsqueda del origen y el foco queda en ese campo del panel', async () => {
     const { usuario } = renderizarPantalla()
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.barraNombre }))
+    await usuario.click(campoOrigen())
     const p = esperarPopstate()
     await usuario.keyboard('{Escape}')
     await act(() => p)
     expect(screen.queryByRole('dialog')).toBeNull()
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: TEXTOS.campoOrigen(null) })).toHaveFocus(),
-    )
+    await waitFor(() => expect(campoOrigen()).toHaveFocus())
   })
 
   it('anuncia la cantidad de resultados medio segundo después de tipear', async () => {
@@ -199,52 +222,70 @@ describe('búsqueda', () => {
     } as unknown as Storage
     const error = vi.spyOn(console, 'error')
     const { usuario } = renderizarPantalla({ almacen: crearAlmacen(roto) })
-    await abrirFicha(usuario, '121', 'Aula 121')
-    expect(screen.getByRole('heading', { level: 2, name: 'Aula 121' })).toBeInTheDocument()
+    await elegirDestino(usuario, '121', 'Aula 121')
+    expect(campoDestino('Aula 121')).toBeInTheDocument()
     expect(error).not.toHaveBeenCalled()
     error.mockRestore()
   })
+
+  it('el ejemplo de búsqueda solo aparece con el campo vacío', async () => {
+    const { usuario } = renderizarPantalla({ hash: '#buscar' })
+    expect(screen.getByText(TEXTOS.ejemploBusqueda)).toBeInTheDocument()
+    await usuario.type(screen.getByRole('combobox'), 'a')
+    expect(screen.queryByText(TEXTOS.ejemploBusqueda)).toBeNull()
+  })
 })
 
-describe('ficha y recientes', () => {
-  it('elegir un resultado abre la ficha con el foco en el nombre', async () => {
+describe('recientes', () => {
+  it('el destino elegido aparece primero en los recientes de la próxima búsqueda de destino', async () => {
     const { usuario } = renderizarPantalla()
-    await abrirFicha(usuario, '121', 'Aula 121')
-    const titulo = screen.getByRole('heading', { level: 2, name: 'Aula 121' })
-    expect(titulo).toHaveFocus()
-    expect(hoja()).toHaveAccessibleName('Aula 121')
-    expect(screen.getByText('Humanidades · Aula · Planta baja')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Cómo llegar/ })).toBeInTheDocument()
-    expect(screen.getByText(TEXTOS.puertas(1))).toBeInTheDocument()
-    expect(screen.getByTestId('mapa-doble')).toHaveAttribute('data-encuadre', 'lugar')
-    expect(screen.getByTestId('mapa-doble').dataset.marcador).not.toBe('')
+    await elegirDestino(usuario, 'teatro', 'Teatro')
+    await usuario.click(campoDestino('Teatro'))
+    const recientes = within(screen.getByRole('group', { name: TEXTOS.recientes }))
+    expect(recientes.getAllByRole('option')[0]).toHaveTextContent('Teatro')
   })
 
-  it('una ficha sin acceso muestra el estado, su explicación y mantiene "Cómo llegar"', async () => {
-    const { usuario } = renderizarPantalla({
-      integraciones: { estadoAcceso: () => 'sin-acceso' },
-    })
-    await usuario.click(screen.getByRole('button', { name: 'Biblioteca' }))
-    const ficha = hoja()
-    expect(within(ficha).getByText(TEXTOS.sinAcceso)).toBeInTheDocument()
-    expect(within(ficha).queryByText(TEXTOS.sinAccesoExplicacion)).toBeNull()
-    await usuario.click(within(ficha).getByRole('button', { name: TEXTOS.sinAccesoInfo }))
-    expect(within(ficha).getByText(TEXTOS.sinAccesoExplicacion)).toBeInTheDocument()
-    expect(within(ficha).getByRole('button', { name: /Cómo llegar/ })).toBeEnabled()
-  })
-
-  it('abrir la ficha guarda un reciente y aparece primero al volver al inicio', async () => {
+  it('los orígenes tienen sus propios recientes', async () => {
     const { usuario } = renderizarPantalla()
-    await usuario.click(screen.getByRole('button', { name: 'Teatro' }))
-    const p = esperarPopstate()
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.cerrar }))
-    await act(() => p)
-    expect(within(hoja()).getByRole('heading', { name: TEXTOS.recientes })).toBeInTheDocument()
-    expect(within(hoja()).getAllByRole('button', { name: /Teatro/ })[0]).toBeInTheDocument()
-    expect(screen.getByTestId('mapa-doble').dataset.marcador).toBe('')
+    await elegirDestino(usuario, 'teatro', 'Teatro')
+    await elegirOrigen(usuario, 'biblio', 'Biblioteca')
+    await usuario.click(campoOrigen('Biblioteca'))
+    const recientes = within(screen.getByRole('group', { name: TEXTOS.recientes }))
+    expect(
+      recientes.getAllByRole('option').map((o) => o.querySelector('.fila__nombre')?.textContent),
+    ).toEqual(['Biblioteca'])
   })
 
-  it('el mismo nombre y edificio en resultado, ficha, tarjeta, recientes y campo de destino', async () => {
+  it('la cruz de un reciente lo quita sin elegirlo', async () => {
+    const { usuario } = renderizarPantalla({ almacen: almacenConReciente() })
+    await usuario.click(campoDestino())
+    expect(screen.getByRole('group', { name: TEXTOS.recientes })).toBeInTheDocument()
+    await usuario.click(screen.getByTitle(TEXTOS.quitarReciente('Aula 121')))
+    expect(screen.queryByRole('group', { name: TEXTOS.recientes })).toBeNull()
+    // Sigue en la búsqueda: la cruz no elige el lugar.
+    expect(screen.getByRole('dialog', { name: TEXTOS.buscarLugar })).toBeInTheDocument()
+  })
+
+  it('con el teclado, Supr sobre un reciente activo lo quita', async () => {
+    const { usuario } = renderizarPantalla({ almacen: almacenConReciente() })
+    await usuario.click(campoDestino())
+    const reciente = within(screen.getByRole('group', { name: TEXTOS.recientes })).getAllByRole(
+      'option',
+    )[0]!
+    expect(reciente).toHaveAttribute('aria-keyshortcuts', 'Delete')
+    await usuario.keyboard('{ArrowDown}{Delete}')
+    expect(screen.queryByRole('group', { name: TEXTOS.recientes })).toBeNull()
+    expect(screen.getByRole('dialog', { name: TEXTOS.buscarLugar })).toBeInTheDocument()
+  })
+
+  it('Supr sobre una opción que no es reciente no hace nada', async () => {
+    const { usuario } = renderizarPantalla({ hash: '#buscar' })
+    const antes = screen.getAllByRole('option').length
+    await usuario.keyboard('{ArrowDown}{Delete}')
+    expect(screen.getAllByRole('option')).toHaveLength(antes)
+  })
+
+  it('el mismo nombre y edificio en resultado, campo de destino y recientes', async () => {
     const { usuario } = renderizarPantalla({ hash: '#buscar' })
     const nombre = 'Lab. de Microscopía'
     const detalle = 'Derecho y Ciencia Política · Laboratorio'
@@ -252,15 +293,11 @@ describe('ficha y recientes', () => {
     const fila = screen.getAllByRole('option')[0]!
     expect(fila.querySelector('.fila__nombre')?.textContent).toBe(nombre)
     expect(fila.querySelector('.fila__detalle')?.textContent).toBe(detalle)
+    const p = esperarPopstate()
     await usuario.click(fila)
-    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe(nombre)
-    expect(document.querySelector('.tarjeta-titulo__nombre')?.textContent).toBe(nombre)
-    expect(document.querySelector('.ficha__detalle')?.textContent).toBe(`${detalle} · Planta baja`)
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    expect(screen.getByRole('button', { name: TEXTOS.campoDestino(nombre) })).toHaveTextContent(
-      nombre,
-    )
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.campoDestino(nombre) }))
+    await act(() => p)
+    expect(campoDestino(nombre)).toHaveTextContent(nombre)
+    await usuario.click(campoDestino(nombre))
     const reciente = within(screen.getByRole('group', { name: TEXTOS.recientes })).getAllByRole(
       'option',
     )[0]!
@@ -270,190 +307,82 @@ describe('ficha y recientes', () => {
 })
 
 describe('panel "Cómo llegar"', () => {
-  it('desde la ficha se abre con el destino; desde la barra, vacío', async () => {
-    const { usuario } = renderizarPantalla()
-    await abrirPanelVacio(usuario)
-    expect(screen.getByRole('button', { name: TEXTOS.campoOrigen(null) })).toHaveTextContent(
-      TEXTOS.origenVacio,
-    )
-    expect(screen.getByRole('button', { name: TEXTOS.campoDestino(null) })).toHaveTextContent(
-      TEXTOS.destinoVacio,
-    )
-    const p = esperarPopstate()
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.volver }))
-    await act(() => p)
-    await abrirFicha(usuario, '121', 'Aula 121')
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    expect(
-      screen.getByRole('button', { name: TEXTOS.campoDestino('Aula 121') }),
-    ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: TEXTOS.campoOrigen(null) })).toBeInTheDocument()
-  })
-
-  it('la barra pide primero el origen y después, sola, el destino', async () => {
+  it('elegir el origen sin destino pasa, en la misma entrada, a buscar el destino', async () => {
     const { lista, solicitarRuta } = pedidos()
     const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.barraNombre }))
+    await usuario.click(campoOrigen())
     expect(screen.getByRole('dialog', { name: TEXTOS.elegirPartida })).toBeInTheDocument()
     await usuario.type(screen.getByRole('combobox'), 'biblio')
     await usuario.click(screen.getByRole('option', { name: /^Biblioteca/ }))
-    // La misma entrada del historial pasa a buscar el destino.
     expect(screen.getByRole('dialog', { name: TEXTOS.buscarLugar })).toBeInTheDocument()
     expect(screen.getByRole('combobox')).toHaveAccessibleName(TEXTOS.destinoVacio)
     await usuario.type(screen.getByRole('combobox'), '121')
     const p = esperarPopstate()
     await usuario.click(screen.getByRole('option', { name: /^Aula 121/ }))
     await act(() => p)
-    expect(
-      screen.getByRole('button', { name: TEXTOS.campoOrigen('Biblioteca') }),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: TEXTOS.campoDestino('Aula 121') }),
-    ).toBeInTheDocument()
+    expect(campoOrigen('Biblioteca')).toBeInTheDocument()
+    expect(campoDestino('Aula 121')).toBeInTheDocument()
     expect(lista.map((x) => [x.origen, x.destino])).toEqual([['biblioteca', 'humanidades-121']])
-    // Atrás desde el panel vuelve al inicio.
-    const q = esperarPopstate()
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.volver }))
-    await act(() => q)
-    expect(screen.getByRole('button', { name: TEXTOS.barraNombre })).toBeInTheDocument()
   })
 
-  it('elegir el origen en la hoja abre la búsqueda del destino si falta', async () => {
+  it('orden de la búsqueda de origen: entradas al campus y después referencias', async () => {
     const { usuario } = renderizarPantalla()
-    await abrirPanelVacio(usuario)
-    await usuario.click(within(hoja()).getByRole('button', { name: /Entrada Florencio Varela/ }))
-    expect(screen.getByRole('dialog', { name: TEXTOS.buscarLugar })).toBeInTheDocument()
-  })
-
-  it('la cruz del origen lo borra y conserva el destino', async () => {
-    const { usuario } = renderizarPantalla()
-    await usuario.click(screen.getByRole('button', { name: 'Biblioteca' }))
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    expect(screen.queryByRole('button', { name: TEXTOS.borrarOrigen })).toBeNull()
-    await usuario.click(within(hoja()).getByRole('button', { name: /Entrada Florencio Varela/ }))
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.borrarOrigen }))
-    expect(screen.getByRole('button', { name: TEXTOS.campoOrigen(null) })).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: TEXTOS.campoDestino('Biblioteca') }),
-    ).toBeInTheDocument()
-  })
-
-  it('el origen vacío explica que no se usa la ubicación; con origen, no', async () => {
-    const { usuario } = renderizarPantalla()
-    await usuario.click(screen.getByRole('button', { name: 'Biblioteca' }))
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    expect(screen.getByText(TEXTOS.origenAyuda)).toBeInTheDocument()
-    await usuario.click(within(hoja()).getByRole('button', { name: /Entrada Florencio Varela/ }))
-    expect(screen.queryByText(TEXTOS.origenAyuda)).toBeNull()
-  })
-
-  it('la sugerencia no pide la ruta hasta confirmarla, y al confirmar la pide una vez', async () => {
-    const almacen = almacenConReciente()
-    almacen.escribir(CLAVES.ultimoOrigen, 'entrada-campus-florencio-varela')
-    const { lista, solicitarRuta } = pedidos()
-    const { usuario } = renderizarPantalla({ almacen, integraciones: { solicitarRuta } })
-    await usuario.click(screen.getByRole('button', { name: 'Biblioteca' }))
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    expect(screen.getByRole('button', { name: TEXTOS.campoOrigen(null) })).toHaveTextContent(
-      TEXTOS.origenVacio,
-    )
-    expect(screen.getByText('¿Salís de Entrada Florencio Varela?')).toBeInTheDocument()
-    expect(solicitarRuta).not.toHaveBeenCalled()
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.usarOrigen }))
-    expect(solicitarRuta).toHaveBeenCalledTimes(1)
-    expect(lista[0]).toMatchObject({
-      origen: 'entrada-campus-florencio-varela',
-      destino: 'biblioteca',
-    })
-    expect(
-      screen.getByRole('button', { name: TEXTOS.campoOrigen('Entrada Florencio Varela') }),
-    ).toBeInTheDocument()
-  })
-
-  it('sin origen guardado no hay sugerencia', async () => {
-    const { usuario } = renderizarPantalla()
-    await abrirPanelVacio(usuario)
-    expect(screen.queryByRole('button', { name: TEXTOS.usarOrigen })).toBeNull()
-  })
-
-  it('orden de la búsqueda de origen y de la hoja: sugerencia, entradas, referencias', async () => {
-    const almacen = almacenConReciente()
-    almacen.escribir(CLAVES.ultimoOrigen, 'teatro')
-    const { usuario } = renderizarPantalla({ almacen })
-    await abrirPanelVacio(usuario)
-    const enHoja = within(hoja())
-      .getAllByRole('button')
-      .map((b) => b.textContent ?? '')
-    const iSug = enHoja.indexOf(TEXTOS.usarOrigen)
-    const iEntrada = enHoja.findIndex((t) => t.startsWith('Entrada Florencio Varela'))
-    const iBiblio = enHoja.findIndex((t) => t.startsWith('Biblioteca'))
-    expect(iSug).toBeGreaterThanOrEqual(0)
-    expect(iSug).toBeLessThan(iEntrada)
-    expect(iEntrada).toBeLessThan(iBiblio)
-
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.campoOrigen(null) }))
-    expect(screen.getByRole('heading', { name: TEXTOS.tituloOrigen })).toBeInTheDocument()
-    expect(screen.getByRole('dialog', { name: TEXTOS.elegirPartida })).toBeInTheDocument()
-    const nombres = screen
+    await usuario.click(campoOrigen())
+    const dialogo = screen.getByRole('dialog', { name: TEXTOS.elegirPartida })
+    expect(within(dialogo).queryByRole('group', { name: TEXTOS.recientes })).toBeNull()
+    const nombres = within(dialogo)
       .getAllByRole('option')
       .map((o) => o.querySelector('.fila__nombre')?.textContent)
-    expect(nombres[0]).toBe('¿Salís de Teatro?')
-    expect(nombres[1]).toBe('Entrada Florencio Varela')
+    expect(nombres[0]).toBe('Entrada Florencio Varela')
     expect(nombres.indexOf('Biblioteca')).toBeGreaterThan(
       nombres.indexOf('Entrada Pte. Perón (sur)'),
     )
   })
 
+  it('la cruz del origen lo borra y conserva el destino', async () => {
+    const { usuario } = renderizarPantalla()
+    await elegirDestino(usuario, 'biblio', 'Biblioteca')
+    expect(screen.queryByRole('button', { name: TEXTOS.borrarOrigen })).toBeNull()
+    await elegirOrigen(usuario, 'florencio', 'Entrada Florencio Varela')
+    await usuario.click(screen.getByRole('button', { name: TEXTOS.borrarOrigen }))
+    expect(campoOrigen()).toBeInTheDocument()
+    expect(campoDestino('Biblioteca')).toBeInTheDocument()
+  })
+
   it('elegir el origen en la búsqueda actualiza solo ese campo y pide la ruta', async () => {
     const { lista, solicitarRuta } = pedidos()
     const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
-    await abrirFicha(usuario, '121', 'Aula 121')
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.campoOrigen(null) }))
-    await usuario.type(screen.getByRole('combobox'), 'biblio')
-    const p = esperarPopstate()
-    await usuario.click(screen.getByRole('option', { name: /^Biblioteca/ }))
-    await act(() => p)
-    expect(
-      screen.getByRole('button', { name: TEXTOS.campoOrigen('Biblioteca') }),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: TEXTOS.campoDestino('Aula 121') }),
-    ).toBeInTheDocument()
+    await elegirDestino(usuario, '121', 'Aula 121')
+    expect(solicitarRuta).not.toHaveBeenCalled()
+    await elegirOrigen(usuario, 'biblio', 'Biblioteca')
+    expect(campoOrigen('Biblioteca')).toBeInTheDocument()
+    expect(campoDestino('Aula 121')).toBeInTheDocument()
     expect(lista.map((x) => [x.origen, x.destino])).toEqual([['biblioteca', 'humanidades-121']])
   })
 
   it('cerrar la búsqueda de destino sin elegir no cambia nada ni repite el pedido', async () => {
     const { solicitarRuta } = pedidos()
     const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
-    await usuario.click(screen.getByRole('button', { name: 'Teatro' }))
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    await usuario.click(within(hoja()).getByRole('button', { name: /Biblioteca/ }))
+    await armarRuta(usuario)
     expect(solicitarRuta).toHaveBeenCalledTimes(1)
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.campoDestino('Teatro') }))
+    await usuario.click(campoDestino('Teatro'))
     const p = esperarPopstate()
     await usuario.click(
       within(screen.getByRole('dialog')).getByRole('button', { name: TEXTOS.volver }),
     )
     await act(() => p)
-    expect(
-      screen.getByRole('button', { name: TEXTOS.campoOrigen('Biblioteca') }),
-    ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: TEXTOS.campoDestino('Teatro') })).toBeInTheDocument()
+    expect(campoOrigen('Biblioteca')).toBeInTheDocument()
+    expect(campoDestino('Teatro')).toBeInTheDocument()
     expect(solicitarRuta).toHaveBeenCalledTimes(1)
   })
 
   it('intercambiar con los dos datos pide la ruta en el sentido nuevo y lo anuncia', async () => {
     const { lista, solicitarRuta } = pedidos()
     const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
-    await usuario.click(screen.getByRole('button', { name: 'Teatro' }))
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    await usuario.click(within(hoja()).getByRole('button', { name: /Biblioteca/ }))
+    await armarRuta(usuario)
     await usuario.click(screen.getByRole('button', { name: TEXTOS.intercambiar }))
-    expect(screen.getByRole('button', { name: TEXTOS.campoOrigen('Teatro') })).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: TEXTOS.campoDestino('Biblioteca') }),
-    ).toBeInTheDocument()
+    expect(campoOrigen('Teatro')).toBeInTheDocument()
+    expect(campoDestino('Biblioteca')).toBeInTheDocument()
     expect(lista.map((x) => x.origen)).toEqual(['biblioteca', 'teatro'])
     await waitFor(() =>
       expect(screen.getByTestId('anunciador')).toHaveTextContent(
@@ -465,51 +394,72 @@ describe('panel "Cómo llegar"', () => {
   it('intercambiar con el origen vacío deja el destino vacío y no pide nada', async () => {
     const { solicitarRuta } = pedidos()
     const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
-    await usuario.click(screen.getByRole('button', { name: 'Teatro' }))
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
+    await elegirDestino(usuario, 'teatro', 'Teatro')
     await usuario.click(screen.getByRole('button', { name: TEXTOS.intercambiar }))
-    expect(screen.getByRole('button', { name: TEXTOS.campoOrigen('Teatro') })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: TEXTOS.campoDestino(null) })).toHaveTextContent(
-      '¿A dónde vas?',
-    )
+    expect(campoOrigen('Teatro')).toBeInTheDocument()
+    expect(campoDestino()).toHaveTextContent('¿A dónde vas?')
     expect(solicitarRuta).not.toHaveBeenCalled()
   })
 
   it('sin destino no se pide la ruta aunque se elija el origen', async () => {
     const { solicitarRuta } = pedidos()
     const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
-    await abrirPanelVacio(usuario)
-    await usuario.click(within(hoja()).getByRole('button', { name: /Biblioteca/ }))
-    expect(screen.getByRole('button', { name: TEXTOS.campoDestino(null) })).toHaveTextContent(
-      '¿A dónde vas?',
-    )
+    await usuario.click(campoOrigen())
+    await usuario.type(screen.getByRole('combobox'), 'biblio')
+    await usuario.click(screen.getByRole('option', { name: /^Biblioteca/ }))
+    // Ya pasó a buscar el destino: se cierra sin elegir.
+    const p = esperarPopstate()
+    await usuario.keyboard('{Escape}')
+    await act(() => p)
+    expect(campoOrigen('Biblioteca')).toBeInTheDocument()
+    expect(campoDestino()).toHaveTextContent('¿A dónde vas?')
     expect(solicitarRuta).not.toHaveBeenCalled()
   })
 
   it('borrar el destino cancela el pedido y conserva el origen', async () => {
     const { lista, solicitarRuta } = pedidos()
     const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
-    await usuario.click(screen.getByRole('button', { name: 'Teatro' }))
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    await usuario.click(within(hoja()).getByRole('button', { name: /Biblioteca/ }))
+    await armarRuta(usuario)
     expect(screen.getByTestId('contenido-ruta')).toBeInTheDocument()
     await usuario.click(screen.getByRole('button', { name: TEXTOS.borrarDestino }))
     expect(lista[0]?.signal.aborted).toBe(true)
     expect(screen.queryByTestId('contenido-ruta')).toBeNull()
-    expect(
-      screen.getByRole('button', { name: TEXTOS.campoOrigen('Biblioteca') }),
-    ).toBeInTheDocument()
+    expect(campoOrigen('Biblioteca')).toBeInTheDocument()
     expect(solicitarRuta).toHaveBeenCalledTimes(1)
   })
 
-  it('origen igual al destino: "Ya estás en…" y no se pide ruta', async () => {
+  it('"Cancelar" borra origen y destino, cancela el pedido y vuelve a encuadrar el campus', async () => {
+    const { lista, solicitarRuta } = pedidos()
+    const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
+    await armarRuta(usuario)
+    expect(screen.getByTestId('mapa-doble')).toHaveAttribute('data-encuadre', 'ruta')
+    await usuario.click(screen.getByRole('button', { name: TEXTOS.cancelar }))
+    expect(lista[0]?.signal.aborted).toBe(true)
+    expect(campoOrigen()).toBeInTheDocument()
+    expect(campoDestino()).toBeInTheDocument()
+    expect(screen.queryByTestId('contenido-ruta')).toBeNull()
+    expect(screen.queryByRole('button', { name: TEXTOS.cancelar })).toBeNull()
+    expect(screen.getByTestId('mapa-doble')).toHaveAttribute('data-encuadre', 'campus')
+  })
+
+  it('con un solo punto el mapa se acerca a ese punto; con los dos, a la ruta', async () => {
+    const { usuario } = renderizarPantalla()
+    const mapa = screen.getByTestId('mapa-doble')
+    expect(mapa).toHaveAttribute('data-encuadre', 'campus')
+    await elegirDestino(usuario, 'teatro', 'Teatro')
+    expect(mapa).toHaveAttribute('data-encuadre', 'lugar')
+    expect(mapa.dataset.marcador).not.toBe('')
+    await elegirOrigen(usuario, 'biblio', 'Biblioteca')
+    expect(mapa).toHaveAttribute('data-encuadre', 'ruta')
+  })
+
+  it('origen igual al destino no pide ruta', async () => {
     const { solicitarRuta } = pedidos()
     const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
-    await usuario.click(screen.getByRole('button', { name: 'Biblioteca' }))
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    await usuario.click(within(hoja()).getByRole('button', { name: /Biblioteca/ }))
-    expect(screen.getByText(TEXTOS.yaEstas('Biblioteca'))).toBeInTheDocument()
+    await elegirDestino(usuario, 'biblio', 'Biblioteca')
+    await elegirOrigen(usuario, 'biblio', 'Biblioteca')
     expect(solicitarRuta).not.toHaveBeenCalled()
+    expect(screen.queryByRole('button', { name: TEXTOS.cancelar })).toBeNull()
   })
 
   it('el espacio ContenidoRuta aparece solo en la fase ruta (y se puede reemplazar)', async () => {
@@ -532,113 +482,20 @@ describe('panel "Cómo llegar"', () => {
     const { usuario } = renderizarPantalla({
       integraciones: { ContenidoRuta: MiRuta, AvisoClima: Clima },
     })
-    await usuario.click(screen.getByRole('button', { name: 'Teatro' }))
-    expect(screen.queryByText(/Ruta de/)).toBeNull()
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
+    await elegirDestino(usuario, 'teatro', 'Teatro')
     expect(screen.queryByText(/Ruta de/)).toBeNull()
     expect(screen.queryByText('Llueve')).toBeNull()
-    await usuario.click(within(hoja()).getByRole('button', { name: /Biblioteca/ }))
+    await elegirOrigen(usuario, 'biblio', 'Biblioteca')
     expect(screen.getByText('Ruta de Biblioteca a Teatro')).toBeInTheDocument()
-    expect(screen.getByText('Llueve')).toBeInTheDocument()
-  })
-
-  it('Atrás desde la ruta vuelve a la ficha sin pedir otra ruta', async () => {
-    const { solicitarRuta } = pedidos()
-    const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
-    await usuario.click(screen.getByRole('button', { name: 'Teatro' }))
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    await usuario.click(within(hoja()).getByRole('button', { name: /Biblioteca/ }))
-    expect(solicitarRuta).toHaveBeenCalledTimes(1)
-    const p = esperarPopstate()
-    act(() => window.history.back())
-    await act(() => p)
-    expect(screen.getByRole('heading', { level: 2, name: 'Teatro' })).toBeInTheDocument()
-    expect(solicitarRuta).toHaveBeenCalledTimes(1)
+    // En celular el aviso del clima va debajo de la tarjeta de arriba.
+    expect(screen.getByText('Llueve').closest('.avisos-arriba__clima')).not.toBeNull()
   })
 })
 
-describe('hoja inferior', () => {
-  it('la manija cambia la altura con el teclado y lo anuncia', async () => {
-    const { usuario } = renderizarPantalla({ almacen: almacenConReciente() })
-    const manija = screen.getByRole('button', { name: TEXTOS.manija })
-    expect(manija).toHaveAccessibleDescription(TEXTOS.altura.colapsada)
-    manija.focus()
-    await usuario.keyboard('{Enter}')
-    expect(manija).toHaveAccessibleDescription(TEXTOS.altura.media)
-    await usuario.keyboard('{ArrowUp}')
-    expect(manija).toHaveAccessibleDescription(TEXTOS.altura.expandida)
-    await usuario.keyboard('{ArrowDown}{ArrowDown}')
-    expect(manija).toHaveAccessibleDescription(TEXTOS.altura.colapsada)
-    await waitFor(() =>
-      expect(screen.getByTestId('anunciador')).toHaveTextContent(TEXTOS.altura.colapsada),
-    )
-  })
-
-  it('en la altura colapsada el contenido oculto es inert y el foco no entra', async () => {
-    const { usuario } = renderizarPantalla({ almacen: almacenConReciente() })
-    const cuerpo = document.querySelector('.hoja__cuerpo')!
-    expect(cuerpo).toHaveAttribute('inert')
-    const manija = screen.getByRole('button', { name: TEXTOS.manija })
-    manija.focus()
-    await usuario.keyboard('{Enter}')
-    expect(cuerpo).not.toHaveAttribute('inert')
-  })
-
-  it('publica el alto visible para el encuadre del mapa al anclar en otra altura', async () => {
-    const { usuario } = renderizarPantalla({ almacen: almacenConReciente() })
-    const mapa = screen.getByTestId('mapa-doble')
-    const antes = Number(mapa.dataset.margenAbajo)
-    expect(antes).toBeGreaterThan(0)
-    screen.getByRole('button', { name: TEXTOS.manija }).focus()
-    await usuario.keyboard('{Enter}')
-    expect(Number(mapa.dataset.margenAbajo)).toBeGreaterThan(antes)
-  })
-})
-
-describe('ayuda contextual', () => {
-  it('primer uso: aparece sin recientes, en altura media y la barra sigue usable', () => {
-    renderizarPantalla()
-    expect(screen.getByText(TEXTOS.primerUso)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: TEXTOS.entendido })).toBeInTheDocument()
-    expect(hoja()).toHaveAttribute('data-altura', 'media')
-    expect(screen.getByRole('button', { name: TEXTOS.barraNombre })).toBeEnabled()
-  })
-
-  it('primer uso: no aparece con recientes', () => {
-    renderizarPantalla({ almacen: almacenConReciente() })
-    expect(screen.queryByText(TEXTOS.primerUso)).toBeNull()
-    expect(within(hoja()).getByRole('heading', { name: TEXTOS.recientes })).toBeInTheDocument()
-  })
-
-  it('primer uso: después de "Entendido" no vuelve', async () => {
-    const almacen = crearAlmacenEnMemoria()
-    const { usuario, unmount } = renderizarPantalla({ almacen })
-    await usuario.click(screen.getByRole('button', { name: TEXTOS.entendido }))
-    expect(screen.queryByText(TEXTOS.primerUso)).toBeNull()
-    unmount()
-    renderizarPantalla({ almacen })
-    expect(screen.queryByText(TEXTOS.primerUso)).toBeNull()
-  })
-
-  it('el ejemplo de búsqueda solo aparece con el campo vacío', async () => {
-    const { usuario } = renderizarPantalla({ hash: '#buscar' })
-    expect(screen.getByText(TEXTOS.ejemploBusqueda)).toBeInTheDocument()
-    await usuario.type(screen.getByRole('combobox'), 'a')
-    expect(screen.queryByText(TEXTOS.ejemploBusqueda)).toBeNull()
-  })
-
-  it('la explicación de "Sin acceso ahora" solo aparece al tocar (i) y si no hay acceso', async () => {
-    const { usuario } = renderizarPantalla()
-    await usuario.click(screen.getByRole('button', { name: 'Biblioteca' }))
-    expect(screen.queryByRole('button', { name: TEXTOS.sinAccesoInfo })).toBeNull()
-    expect(screen.queryByText(TEXTOS.sinAccesoExplicacion)).toBeNull()
-  })
-
+describe('ayuda', () => {
   it('el botón (?) abre la ayuda con pasos, leyenda y aviso de ubicación; Atrás la cierra sin cambiar la selección', async () => {
     const { usuario } = renderizarPantalla({ almacen: almacenConReciente() })
-    await usuario.click(screen.getByRole('button', { name: 'Teatro' }))
-    await usuario.click(screen.getByRole('button', { name: /Cómo llegar/ }))
-    await usuario.click(within(hoja()).getByRole('button', { name: /Biblioteca/ }))
+    await armarRuta(usuario)
     await usuario.click(screen.getByRole('button', { name: TEXTOS.ayuda }))
     const ayuda = screen.getByRole('dialog', { name: TEXTOS.ayudaTitulo })
     for (const paso of TEXTOS.ayudaPasos) expect(within(ayuda).getByText(paso)).toBeInTheDocument()
@@ -652,9 +509,83 @@ describe('ayuda contextual', () => {
     act(() => window.history.back())
     await act(() => p)
     expect(screen.queryByRole('dialog')).toBeNull()
+    expect(campoOrigen('Biblioteca')).toBeInTheDocument()
+    expect(campoDestino('Teatro')).toBeInTheDocument()
+  })
+})
+
+describe('PC: barra lateral', () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      'matchMedia',
+      (consulta: string) =>
+        ({
+          matches: consulta === `(min-width: ${ANCHO_ESCRITORIO}px)`,
+          media: consulta,
+          addEventListener: () => {},
+          removeEventListener: () => {},
+        }) as unknown as MediaQueryList,
+    )
+  })
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  function panel() {
+    return screen.getByRole('region', { name: (_, el) => el.classList.contains('hoja') })
+  }
+
+  it('el panel es fijo: sin manija', () => {
+    renderizarPantalla()
+    expect(panel()).toHaveAttribute('data-altura', 'panel')
+    expect(screen.queryByRole('button', { name: TEXTOS.manija })).toBeNull()
+  })
+
+  it('el campo que falta es un cuadro de texto y la barra lateral lista sus opciones', () => {
+    renderizarPantalla()
+    expect(screen.getByRole('textbox', { name: TEXTOS.campoOrigen(null) })).toBeInTheDocument()
+    expect(within(panel()).getByRole('heading', { name: TEXTOS.elegiOrigen })).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: TEXTOS.campoOrigen('Biblioteca') }),
+      within(panel()).getByRole('heading', { name: TEXTOS.entradasAlCampus }),
     ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: TEXTOS.campoDestino('Teatro') })).toBeInTheDocument()
+  })
+
+  it('escribir filtra la lista y elegir pasa al destino; con los dos, pide la ruta', async () => {
+    const { lista, solicitarRuta } = pedidos()
+    const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
+    await usuario.type(screen.getByRole('textbox', { name: TEXTOS.campoOrigen(null) }), 'biblio')
+    await usuario.click(within(panel()).getByRole('button', { name: /^Biblioteca/ }))
+    expect(campoOrigen('Biblioteca')).toBeInTheDocument()
+    expect(within(panel()).getByRole('heading', { name: TEXTOS.elegiDestino })).toBeInTheDocument()
+    await usuario.type(screen.getByRole('textbox', { name: TEXTOS.campoDestino(null) }), '121')
+    await usuario.click(within(panel()).getByRole('button', { name: /^Aula 121/ }))
+    expect(lista.map((x) => [x.origen, x.destino])).toEqual([['biblioteca', 'humanidades-121']])
+    expect(within(panel()).getByRole('button', { name: TEXTOS.cancelar })).toBeInTheDocument()
+  })
+
+  it('sin resultados lo dice en la barra lateral', async () => {
+    const { usuario } = renderizarPantalla()
+    await usuario.type(screen.getByRole('textbox', { name: TEXTOS.campoOrigen(null) }), 'zzz')
+    expect(within(panel()).getByText(TEXTOS.sinResultados('zzz'))).toBeInTheDocument()
+  })
+
+  it('los recientes aparecen en la barra lateral y la cruz los quita', async () => {
+    const { usuario } = renderizarPantalla({ almacen: almacenConReciente() })
+    // Con el destino como campo activo se ven sus recientes.
+    await usuario.click(campoDestino())
+    expect(within(panel()).getByRole('heading', { name: TEXTOS.recientes })).toBeInTheDocument()
+    await usuario.click(
+      within(panel()).getByRole('button', { name: TEXTOS.quitarReciente('Aula 121') }),
+    )
+    expect(within(panel()).queryByRole('heading', { name: TEXTOS.recientes })).toBeNull()
+  })
+
+  it('origen igual al destino: "Ya estás en…" y no se pide ruta', async () => {
+    const { solicitarRuta } = pedidos()
+    const { usuario } = renderizarPantalla({ integraciones: { solicitarRuta } })
+    await usuario.click(within(panel()).getByRole('button', { name: /^Biblioteca/ }))
+    await usuario.click(within(panel()).getByRole('button', { name: /^Biblioteca/ }))
+    expect(screen.getByText(TEXTOS.yaEstas('Biblioteca'))).toBeInTheDocument()
+    expect(solicitarRuta).not.toHaveBeenCalled()
   })
 })

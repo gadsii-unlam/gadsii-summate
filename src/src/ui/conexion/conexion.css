@@ -172,6 +172,26 @@
   position: static;
 }
 
+/* Celular: la barra va en la columna `.avisos-arriba` de Pantalla, debajo de la tarjeta. */
+.aviso-conexion-arriba > .aviso-conexion {
+  position: static;
+}
+
+.aviso-conexion-arriba > .aviso-conexion {
+  box-shadow: var(--elevacion-2);
+}
+
+.aviso-conexion__cerrar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--toque-min);
+  height: var(--toque-min);
+  margin-left: calc(-1 * var(--esp-2));
+  border-radius: 50%;
+  color: inherit;
+}
+
 .pila-avisos > .aviso-cierres {
   align-self: flex-start;
   padding: var(--esp-1) var(--esp-3);

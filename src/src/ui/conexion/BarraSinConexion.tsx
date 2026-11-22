@@ -5,6 +5,7 @@
  * Debajo puede mostrar "Cierres sin actualizar desde las HH:MM".
  */
 import type { CSSProperties } from 'react'
+import { IconoCerrar } from '../iconos/Iconos.tsx'
 import { textoCierresSinActualizar, type OrigenDatos } from '../../conexion/index.ts'
 import { posicionBarra, type MedidasPantalla } from './posicion.ts'
 import { TEXTOS_CONEXION as T } from './textos.ts'
@@ -24,6 +25,8 @@ export interface PropsBarraSinConexion {
   medidas?: MedidasPantalla
   /** Origen de los cierres usados: si no es la red, se muestra la hora de la copia. */
   origenCierres?: OrigenDatos | null
+  /** Si está, muestra una cruz para cerrarla. */
+  onCerrar?: () => void
   /** Zona horaria IANA de la hora de los cierres (por defecto la del dispositivo). */
   zonaHoraria?: string
 }
@@ -34,6 +37,7 @@ export default function BarraSinConexion({
   onReintentar,
   medidas,
   origenCierres,
+  onCerrar,
   zonaHoraria,
 }: PropsBarraSinConexion) {
   if (!visible) return null
@@ -59,6 +63,16 @@ export default function BarraSinConexion({
         {reintentando && <span className="aviso-conexion__indicador" aria-hidden="true" />}
         {reintentando ? T.reintentando : T.reintentar}
       </button>
+      {onCerrar && (
+        <button
+          type="button"
+          className="aviso-conexion__cerrar"
+          aria-label={T.cerrarSinConexion}
+          onClick={onCerrar}
+        >
+          <IconoCerrar />
+        </button>
+      )}
     </div>
   )
 }

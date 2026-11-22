@@ -25,7 +25,7 @@ test('después de la primera visita abre sin conexión y el mapa sale del servic
       u.pathname === '/' || u.pathname.startsWith('/data/') || u.pathname.startsWith('/assets/'),
     async () => {
       await page.reload()
-      await expect(page.getByRole('button', { name: /^¿Desde dónde salís\?/ })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Destino: ¿A dónde vas?' })).toBeVisible()
       await esperarPlano(page)
     },
   )
@@ -48,7 +48,7 @@ test('sin conexión, la búsqueda encuentra Dir. de Alumnos', async ({ page, con
   await context.setOffline(true)
   await page.reload()
 
-  await page.getByRole('button', { name: 'Entradas', exact: true }).tap()
+  await page.getByRole('button', { name: /^Destino:/ }).tap()
   await page.getByRole('combobox').fill('dir de alumnos')
   await expect(
     page.getByRole('option', { name: /^Dirección de Alumnos Ciencias Económicas/ }).first(),
@@ -62,8 +62,8 @@ test('una ruta cualquiera de la SPA abre sin conexión (NavigationRoute)', async
   await abrir(page)
   await esperarServiceWorker(page)
   await context.setOffline(true)
-  await page.goto('/?clima=lluvia#lugar/puerta-aula-121')
-  await expect(page.getByRole('heading', { level: 2, name: 'Aula 121' })).toBeVisible()
+  await page.goto('/?clima=lluvia#buscar')
+  await expect(page.getByRole('dialog', { name: 'Buscar lugar' })).toBeVisible()
 })
 
 test('la app es instalable según Chrome (manifiesto, íconos y service worker)', async ({

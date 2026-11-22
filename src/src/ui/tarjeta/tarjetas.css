@@ -96,7 +96,9 @@
 
 .como-llegar {
   align-items: stretch;
-  padding: var(--esp-2) var(--esp-1);
+  /* Mismo margen a la izquierda de los campos que a la derecha del botón de intercambiar. */
+  padding: var(--esp-3);
+  gap: var(--esp-3);
   border-radius: var(--radio-hoja);
 }
 
@@ -168,4 +170,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+/* PC: campo activo como cuadro de texto. */
+.campo--escribiendo {
+  cursor: text;
+  outline: 2px solid var(--color-primario);
+}
+.campo__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  outline: none;
 }
