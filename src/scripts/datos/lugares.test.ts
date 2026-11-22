@@ -292,9 +292,11 @@ describe('entradas, referencias, alias, piso y caja', () => {
     ).toBe(true)
   })
 
-  it('hay 10 referencias, entre ellas la Biblioteca', () => {
-    expect(catalogo.lugares.filter((l) => l.referencia)).toHaveLength(10)
+  it('hay 12 referencias, entre ellas la Biblioteca, el Comedor y Dirección de Alumnos', () => {
+    expect(catalogo.lugares.filter((l) => l.referencia)).toHaveLength(12)
     expect(lugar('biblioteca')?.referencia).toBe(true)
+    expect(lugar('comedor-universitario')?.referencia).toBe(true)
+    expect(lugar('direccion-alumnos')?.referencia).toBe(true)
   })
 
   it('el número de aula es alias y el piso por defecto es PB', () => {
