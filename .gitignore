@@ -24,3 +24,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Salida temporal del MCP de Playwright (snapshots, capturas y logs de consola)
+.playwright-mcp/
