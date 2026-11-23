@@ -169,7 +169,7 @@ describe('orquestación', () => {
     orq.elegirCriterio('resguardada')
     const e = orq.estado()
     expect(e.tipo === 'listo' && e.plan.criterioPrincipal).toBe('resguardada')
-    const otro = await orq.calcular({ ...ECO_HUM, destino: ['puerta-lab-microscopia'] })
+    const otro = await orq.calcular({ origen: ['puerta-aula-103'], destino: ['puerta-aula-309'] })
     expect(otro?.requiereEleccion).toBe(false)
     expect(otro?.criterioPrincipal).toBe('resguardada')
     expect(otro?.estadoClima).toBe('no-disponible')

@@ -22,6 +22,7 @@ export {
   type OpcionesPreparacion,
 } from './grafo-ruteable.ts'
 export { VELOCIDAD_CAMINATA_M_S, calcularRuta, costoArista, rutaDesdeNodos } from './astar.ts'
+export { calcularRutaConLluvia, type ConsultaConLluvia } from './lluvia.ts'
 export { cargarGrafoRuteable, olvidarGrafoRuteable, type OpcionesCarga } from './carga.ts'
 export {
   PASO_REDONDEO_M,

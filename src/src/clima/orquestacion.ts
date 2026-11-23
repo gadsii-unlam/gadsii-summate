@@ -1,5 +1,6 @@
 import {
   calcularRuta,
+  calcularRutaConLluvia,
   type Criterio,
   type GrafoRuteable,
   type ResultadoRuta,
@@ -141,7 +142,7 @@ export function crearOrquestadorRuta(opciones: OpcionesOrquestador): Orquestador
     if (mia !== generacion) return null
     const base = { origen: consulta.origen, destino: consulta.destino, excluidos }
     const masCorta = calcularRuta(g, { ...base, criterio: 'mas-corta' })
-    const resguardada = calcularRuta(g, { ...base, criterio: 'resguardada' })
+    const resguardada = calcularRutaConLluvia(g, base)
     const clima = await climaPromesa
     if (mia !== generacion) return null
 
@@ -178,7 +179,7 @@ export function crearOrquestadorRuta(opciones: OpcionesOrquestador): Orquestador
     const [g, excluidos] = await Promise.all([grafo, obtenerExcluidos()])
     const base = { origen: consulta.origen, destino: consulta.destino, excluidos }
     const masCorta = calcularRuta(g, { ...base, criterio: 'mas-corta' })
-    const resguardada = calcularRuta(g, { ...base, criterio: 'resguardada' })
+    const resguardada = calcularRutaConLluvia(g, base)
     const clima = await climaPromesa
     // La elección del usuario con el clima caído sigue valiendo si el clima sigue caído.
     const elegido = clima.tipo === 'ok' ? undefined : memoria.elegido()
