@@ -17,7 +17,7 @@
 
 Este punto se escribió leyendo `docs/brief.md` versión por versión (`git show` de cada commit: v1 `f4d2d5a`, v2 `35f4b44`, v3 `718a410`, v4 `15eda3e`, v5 `6347a22`, v6 `ebcd996`), y no de memoria.
 
-**Qué creíamos en agosto (versión 1, 25/08).**
+**Qué creíamos en agosto (versión 1).**
 
 - **Producto:** una aplicación web con cinco funcionalidades: ruta más corta sobre un mapa, estado de atención de puntos de interés, servicio más cercano, administración de cierres y rutas adaptadas al clima con una API real.
 - **Usuario:** un Navegante ingresante o de primer año, declarado «todavía hipotético»: «se apoya en la experiencia del equipo, pero aún no fue validado con usuarios reales». El segmento lo definíamos por haber pasado nosotros por esa etapa.
@@ -58,7 +58,7 @@ Pasamos de «mostrar una ruta» a «guiar hasta la puerta del aula y mostrar el 
 - Exclusión de tramos cerrados y alternativa «resguardada» con lluvia.
 - PWA que sigue mostrando la ruta cargada si se corta la señal.
 
-Está publicado en Cloudflare Workers. Se comprobó en la URL pública que responde, que el grafo publicado tiene 660 nodos y 690 aristas, que `cierres.json` está vacío, que los cuatro archivos del clima simulado (`seco`, `lluvia`, `lento` y `error`) están en `/api/clima/` y que el código publicado trae los textos «Sin acceso ahora», «Buscando el camino…», «Sin conexión» y «Reintentar». Además se recorrió a mano el MVP publicado en Chrome (21/11/2026):
+Está publicado en Cloudflare Workers, y el deploy es automático con GitHub Actions. Cada push corre lint, chequeo de tipos, tests unitarios, la validación de `cierres.json` contra el grafo y los tests E2E en Chromium móvil. Si el push es a `main` y todo pasa, se publica solo. En las demás ramas y en los pull requests corren las mismas verificaciones, sin deploy. Se comprobó en la URL pública que responde, que el grafo publicado tiene 660 nodos y 690 aristas, que `cierres.json` está vacío, que los cuatro archivos del clima simulado (`seco`, `lluvia`, `lento` y `error`) están en `/api/clima/` y que el código publicado trae los textos «Sin acceso ahora», «Buscando el camino…», «Sin conexión» y «Reintentar». Además se recorrió a mano el MVP publicado en Chrome:
 
 - **Ayuda de primer uso:** al abrir aparece «Para empezar» con el botón «Entendido».
 - **Ruta sin botón de cálculo:** Entrada Florencio Varela → Aula 255 se calcula sola al elegir el destino, y «Iniciar» acerca el mapa al origen.
@@ -69,7 +69,7 @@ El MVP no da indicaciones paso a paso y no contempla edificios de más de un pis
 **Qué quedó simulado.**
 
 - El clima, que se lee de archivos JSON fijos en lugar de una API real.
-- Los cierres, que se cargan a mano en `cierres.json` y se publican con un deploy. El de T2 se cargó para la prueba y se retiró después, por eso el archivo versionado está vacío.
+- Los cierres, que se cargan a mano en `cierres.json` y se publican al subir el cambio a `main`. El deploy ya es automático, pero cargar un cierre sigue exigiendo tocar el repositorio. El de T2 se cargó para la prueba y se retiró después, por eso el archivo versionado está vacío.
 
 **Qué quedó diferido.**
 
@@ -77,7 +77,7 @@ El MVP no da indicaciones paso a paso y no contempla edificios de más de un pis
 - Los horarios de atención de puntos de interés y el servicio más cercano (funciones 2 y 3).
 - El backend con autenticación y base de datos.
 
-**Resultado de la prueba con usuarios del TP5 y qué se hizo con él.** U1 y U3 (28/10) y U2 (30/10) resolvieron tres tareas en el campus.
+**Resultado de la prueba con usuarios del TP5 y qué se hizo con él.** U1, U2 y U3 resolvieron tres tareas en el campus.
 
 | | Resultado | Condición para sostener | ¿Se cumple? |
 | --- | --- | --- | --- |
@@ -104,14 +104,14 @@ Cinco decisiones, una por eje (quién, qué, cómo se usa, con qué y cómo se m
 | 1 | **Quién:** el usuario primario es el Navegante ingresante o de primer año, y no el administrador ni la comunidad en general (TP1). | TP2: 4 de 5 no encontraron un aula o sector entre dos y seis veces, perdieron entre cinco y diez minutos y llegaron tarde al menos una vez. | Diseñar para el administrador y para estudiantes avanzados o personal. | **Sí.** En el TP5 volvió a confirmarse el supuesto crítico. El matiz está en la decisión 5 (cómo elegimos a quién probar). |
 | 2 | **Qué:** recorte funcional del MVP (TP3): solo la ruta más corta, con cierres precargados y clima simulado. Fuera, el panel de cierres, la API real, los horarios y el servicio más cercano. | El MVP existe para probar la hipótesis de valor (llegar sin pedir indicaciones ni tomar un acceso cerrado), y para eso no hacen falta las otras funciones. | Probar el clima real y dos de las cinco funciones del producto original. | **Sí, para el MVP.** Pero el cierre cargado a mano obligó a dos deploys en la prueba (ver decisión 4). |
 | 3 | **Cómo se usa:** estructura B, mapa único con panel (eficiencia), en lugar de A (asistente de pasos) o C (confirmaciones) (TP3). | TP2: la consulta ocurre antes de una clase o examen con poco margen, y con señal irregular una sola carga es mejor que cinco pantallas. Detalle en `docs/diseno/propuesta-final.md`. | Facilidad de aprendizaje en el primer uso y una pantalla de revisión previa. | **En parte.** El TP4 mostró que el origen precargado podía llevar a un punto de partida equivocado: lo mantuvimos como sugerencia que hay que confirmar y sumamos ayuda breve. Y el TP5 falló en seguir la ruta adentro del edificio. |
-| 4 | **Con qué:** arquitectura sin backend: ruta calculada en el teléfono, PWA y datos como archivos estáticos con deploy (TP5). La propuso la herramienta, no el equipo. | TP2: 5 de 5 tienen datos móviles con señal irregular. En el TP5, U3 perdió la señal 20 s y la ruta cargada siguió a la vista. | Cargar datos sin tocar código y tener los cierres al día: el cierre de T2 requirió cargarlo el día anterior, publicar, y retirarlo y volver a publicar. | **Para el MVP sí, para la visión no.** Un cierre real no puede esperar a un deploy (TP6). |
+| 4 | **Con qué:** arquitectura sin backend: ruta calculada en el teléfono, PWA y datos como archivos estáticos con deploy (TP5). La propuso la herramienta, no el equipo. | TP2: 5 de 5 tienen datos móviles con señal irregular. En el TP5, U3 perdió la señal 20 s y la ruta cargada siguió a la vista. | Cargar datos sin tocar código y tener los cierres al día: el cierre de T2 requirió cargarlo el día anterior, publicar, y retirarlo y volver a publicar. | **Para el MVP sí, para la visión no.** Un cierre real no puede esperar a un deploy (TP6). El deploy automático acorta la espera, pero no saca el cierre del repositorio. |
 | 5 | **Cómo se mide:** el criterio de éxito del TP5: M1 con umbral fijo de 5 minutos desde la entrega del celular, 2 de 3 para sostener, probado con U1 a U3. | Lo escribimos y commiteamos antes de la prueba para no ajustarlo al resultado. Elegimos 2 de 3 porque con tres personas no se puede pedir el 80 % del criterio original (4 de 5). | Un umbral que sirviera para destinos de distinta distancia, y probar con gente que no conociera el campus. | **No, esta es la que cambiaríamos.** Ver abajo. |
 
 **La que hoy cambiaríamos: la decisión 5.** Tiene tres defectos que se vieron recién con la evidencia:
 
 - **El umbral de 5 minutos es fijo.** El campus es grande y no todos los destinos están a la misma distancia. Un tiempo único castiga el destino lejano y premia el cercano.
 - **El reloj arranca en la entrega del celular.** Con otro punto de partida (desde que aparece la ruta), M1 pasa de 1 de 3 a 2 de 3. La decisión de pivotar se apoyó en el patrón (dos de tres con dificultad en el mismo lugar), no en el número.
-- **Los usuarios ya conocían parte del campus.** Eran tres de los cinco encuestados del TP2, que iban de una a cuatro veces por semana, y la prueba fue a fines de octubre. U2 conocía el Aula 108 y hubo que cambiarle la tarea a la 112, y en T2 dijo «Primero fui por el camino más directo, que es el que yo conozco», justo lo que lo llevó a la cinta. El segmento sigue siendo el correcto (ingresantes y primer año), pero probamos con quienes ya llevaban un cuatrimestre.
+- **Los usuarios ya conocían parte del campus.** Eran tres de los cinco encuestados del TP2, que iban de una a cuatro veces por semana. U2 conocía el Aula 108 y hubo que cambiarle la tarea a la 112, y en T2 dijo «Primero fui por el camino más directo, que es el que yo conozco», justo lo que lo llevó a la cinta. El segmento sigue siendo el correcto (ingresantes y primer año), pero probamos con quienes ya llevaban un cuatrimestre.
 
 Hoy mediríamos la llegada a la puerta con un tiempo proporcional a la distancia y sumaríamos a ingresantes en sus primeras semanas.
 
@@ -127,12 +127,12 @@ Si el producto saliera a producción en el ámbito de la UNLaM:
 - Las funciones 2 y 3, que nunca se construyeron.
 - La guía de llegada dentro del edificio del pivote (piso, pasillo y puerta del aula), que hoy no existe: el MVP solo marca las entradas con flechas. Como punto de partida, en el repositorio quedó el generador de indicaciones que se sacó del MVP (`src/src/rutas/indicaciones.ts`). La interfaz no lo usa.
 
-**¿Qué riesgo del TP6 habría que resolver primero?** El subsistema de cierres. Hoy es un archivo editado a mano y un deploy, y con señal irregular la app puede mostrar una copia vieja sin avisar. Además, en el TP5 dos de tres usuarios no miraron el cierre hasta llegar a la cinta, aunque el desvío estaba en pantalla. Antes del backend, el aviso del cierre tiene que verse antes de empezar a caminar.
+**¿Qué riesgo del TP6 habría que resolver primero?** El subsistema de cierres. Hoy es un archivo editado a mano y un push a `main` que dispara el deploy, y con señal irregular la app puede mostrar una copia vieja sin avisar. Además, en el TP5 dos de tres usuarios no miraron el cierre hasta llegar a la cinta, aunque el desvío estaba en pantalla. Antes del backend, el aviso del cierre tiene que verse antes de empezar a caminar.
 
-**¿Quién lo mantendría y qué haría falta?** No lo sabemos y lo declaramos como límite: ningún TP relevó sistemas, políticas de acceso a datos ni responsables en la UNLaM. Hoy lo mantiene el equipo, y los cierres los carga quien edita un archivo y publica. Para que lo tome un rol de la universidad haría falta:
+**¿Quién lo mantendría y qué haría falta?** No lo sabemos y lo declaramos como límite: ningún TP relevó sistemas, políticas de acceso a datos ni responsables en la UNLaM. Hoy lo mantiene el equipo, y los cierres los carga quien edita el archivo y lo sube a `main`. Para que lo tome un rol de la universidad haría falta:
 
 - **Documentación:** ya existen `src/README.md`, la guía `src/docs/cierres.md` y los `design.md` de OpenSpec. Faltaría un manual para quien carga cierres sin tocar código.
-- **Accesos:** la cuenta de Cloudflare, el repositorio, y una fuente institucional de datos del plano, que hoy es un SVG propio del equipo.
+- **Accesos:** la cuenta de Cloudflare, el repositorio con los secrets del deploy en GitHub Actions, y una fuente institucional de datos del plano, que hoy es un SVG propio del equipo.
 - **Capacitación:** para el rol que cargue los cierres.
 - **Presupuesto:** las funciones del MVP no necesitan backend, y el hosting estático es gratuito. La versión final sí lo necesita, para el panel de cierres y la API de clima, pero el costo seguiría siendo muy bajo. Con el volumen de un campus, el plan gratuito de Cloudflare Workers y D1 alcanza (5 GB y 100.000 escrituras por día). Si hiciera falta superarlo, el plan pago cuesta US$ 5 por mes. Open-Meteo es gratuito para uso no comercial hasta 10.000 consultas por día. Con una consulta cacheada cada 15 minutos, se harían unas 100 por día. Es una estimación sobre precios publicados (noviembre de 2026), no un presupuesto relevado con la UNLaM.
 
@@ -143,7 +143,7 @@ Si el producto saliera a producción en el ámbito de la UNLaM:
 | Sí | Sin backend, clima simulado, cierres cargados a mano, sin funciones 2 y 3, plano propio del campus en SVG. | Decisiones de alcance del TP3 que el equipo tomó para probar la hipótesis. |
 | Sí, pero heredada | Sin backend: la decisión la tomó la herramienta. | El equipo había decidido no hacer panel; la herramienta eligió el mecanismo. |
 | No | `App.tsx` de 512 líneas que hace los fetch, arma el orquestador, el monitor de conexión y los cierres, restaura el recorrido y provee 5 contextos. | Nadie lo decidió: salió de sumar cambios de OpenSpec uno tras otro. |
-| No | Los tests en WebKit (Safari de iPhone) se corren a mano. | Nadie lo decidió. |
+| No | El CI corre los E2E solo en Chromium móvil: los de WebKit (Safari de iPhone) se siguen corriendo a mano. | Nadie lo decidió. |
 | No | Ningún dato institucional relevado sobre infraestructura o mantenimiento. | Nadie lo decidió. |
 
 ### 5. La retrospectiva del trabajo con IA
@@ -187,14 +187,14 @@ Las respuestas se apoyan en `docs/prompts.md` (la línea indica la fila de la ta
 
 | Línea base | Hito | Commit candidato | Tag |
 | --- | --- | --- | --- |
-| LB1 | Entrega del TP1 (25/08) | `42a4411` | `v0.1.0` |
-| LB2 | Entrega del TP2 (01/09) | `35f4b44` | `v0.2.0` |
-| LB3 | Entrega del TP3 (08/09) | `25315ab` | `v0.3.0` |
+| LB1 | Entrega del TP1 | `42a4411` | `v0.1.0` |
+| LB2 | Entrega del TP2 | `35f4b44` | `v0.2.0` |
+| LB3 | Entrega del TP3 | `25315ab` | `v0.3.0` |
 | LB4 | Entrega del TP4 | `25315ab`, el que ya señala `tp4-entrega` y se le informó al equipo evaluador | `v0.3.1` |
-| LB5 | Entrega del TP5, MVP funcionando (03/11) | `00d1d3f` | `v1.0.0` |
-| LB6 | Entrega del TP6 (10/11) | `cf269cf` | `v1.1.0` |
+| LB5 | Entrega del TP5, MVP funcionando | `00d1d3f` | `v1.0.0` |
+| LB6 | Entrega del TP6 | `cf269cf` | `v1.1.0` |
 | LB7 | TP7 | No existe: el TP7 no se hizo | — |
-| LB8 | Entrega del TPI (24/11) | el commit final del TPI | `v1.2.0` |
+| LB8 | Entrega del TPI | el commit final del TPI | `v1.2.0` |
 
 Los tags no se crean ni se suben hasta que el equipo confirme.
 
@@ -208,4 +208,4 @@ Los tags no se crean ni se suben hasta que el equipo confirme.
 - El **supuesto 2 nunca se comparó** contra un mapa estático: queda sin evidencia.
 - **No relevamos** la infraestructura de la UNLaM ni quién mantendría el producto.
 - El **TP7 no se hizo**: las líneas base no tenían tags hasta el TPI.
-- **Fechas de la evidencia del TP5:** el registro dice que las sesiones fueron el 28/10 y el 30/10, y el informe del TP5 dice que el criterio de éxito se escribió y commiteó antes de la prueba. En git, el commit del criterio (`66ffe3b`) es del 02/11 y el del MVP (`113f1c1`) del 03/11, posteriores a las sesiones. El criterio se acordó internamente antes de las sesiones, pero se plasmó por escrito recién cuando el equipo tuvo todo lo necesario para completar el TP; por eso el historial de git no lo prueba y la afirmación del informe es más fuerte de lo que el repositorio sostiene.
+- **Fechas de la evidencia del TP5:** el informe del TP5 dice que el criterio de éxito se escribió y commiteó antes de la prueba. En git, el commit del criterio (`66ffe3b`) y el del MVP (`113f1c1`) son posteriores a las sesiones que figuran en el registro. El criterio se acordó internamente antes de las sesiones, pero se plasmó por escrito recién cuando el equipo tuvo todo lo necesario para completar el TP; por eso el historial de git no lo prueba y la afirmación del informe es más fuerte de lo que el repositorio sostiene.
