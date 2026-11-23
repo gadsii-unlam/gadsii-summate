@@ -95,9 +95,9 @@ describe('clima conectado a la pantalla (Aula 309 → Aula 103)', () => {
     const rapida = screen.getByRole('button', { name: /^Más rápida/ })
     expect(resguardada).toHaveAttribute('aria-pressed', 'false')
     expect(rapida).toHaveAttribute('aria-pressed', 'false')
-    expect(resguardada).toHaveTextContent('8 min · 120 m al aire libre')
-    expect(resguardada).toHaveTextContent('+3 min · 150 m menos al aire libre')
-    expect(rapida).toHaveTextContent('5 min · 270 m al aire libre')
+    expect(resguardada).toHaveTextContent('7 min · 90 m al aire libre')
+    expect(resguardada).toHaveTextContent('+2 min · 90 m menos al aire libre')
+    expect(rapida).toHaveTextContent('5 min · 180 m al aire libre')
     expect(screen.getByTestId('recomendada')).toHaveTextContent('ninguna ruta')
     expect(screen.queryByText('No pudimos consultar el clima')).not.toBeInTheDocument()
 

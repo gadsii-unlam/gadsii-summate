@@ -14,10 +14,12 @@ import {
   franjaMapa,
 } from './ayudas.ts'
 
-// Ruta e indicaciones (mostrar-ruta-e-indicaciones). El ejemplo es Dirección de Alumnos (Edificio
-// Oeste) → Dpto. de Cs. de la Salud (Edificio Este): la más corta (2 min · 125 m, cruza la franja
-// entre edificios por el hall de Kinesiología) y la resguardada (5 min · 330 m, por los pasillos
-// norte; entra al Edificio Este por la entrada oeste del pasillo norte).
+// Ruta e indicaciones (mostrar-ruta-e-indicaciones). El ejemplo sin lluvia es Dirección de Alumnos
+// (Edificio Oeste) → Dpto. de Cs. de la Salud (Edificio Este): 2 min · 125 m, cruza la franja entre
+// edificios por el hall de Kinesiología. Con lluvia ese par da una sola ruta, así que los recorridos
+// con lluvia usan Aula 208 → Aula 417: la más rápida (4 min · 265 m, sale por Socioculturales) y la
+// recomendada con lluvia (7 min · 510 m: sale por Socioculturales, la entrada más cercana al 208,
+// cruza al acceso sur del Gimnasio y sigue bajo techo hasta el 417).
 //
 // En celular no hay hoja inferior: el resultado (y su anuncio para lectores de pantalla) queda
 // montado pero oculto, y la alternativa se elige tocando la línea gris en el mapa.
@@ -83,7 +85,10 @@ async function tocarAlternativa(page: Page, nodo: string) {
   await page.touchscreen.tap(punto.x, punto.y)
 }
 
-const CRUCE_FRANJA = 'cruce--ext-cruce-franjas-1773--ext-franja-entre-edificios-oeste'
+/** Cruce de la franja entre edificios que solo usa la más rápida del Aula 208 al Aula 417. */
+const CRUCE_FRANJA = 'cruce--ext-cruce-franjas-2328--ext-franja-entre-edificios-este'
+const AULA_417: [string, RegExp] = ['417', /^Aula 417/]
+const AULA_208: [string, RegExp] = ['208', /^Aula 208/]
 
 /** Pide la ruta de `origen` a `destino` y espera a que esté dibujada. */
 async function pedirRuta(
@@ -116,24 +121,27 @@ test('recorrido completo con lluvia: espera, resguardada encuadrada, más rápid
     await new Promise((r) => setTimeout(r, 1200))
     await ruta.continue()
   })
-  await pedirRuta(page, '?clima=lluvia', undefined, undefined, { esperarRuta: false })
+  await pedirRuta(page, '?clima=lluvia', AULA_417, AULA_208, { esperarRuta: false })
   await expect(page.getByTestId('contenido-ruta')).toContainText('Buscando el camino…')
   await expect(mapa(page)).not.toHaveAttribute('data-ruta-nodos', /.+/)
-  await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', /entrada-ed-este-norte-lado-oeste/)
+  await expect(mapa(page)).toHaveAttribute(
+    'data-ruta-nodos',
+    /entrada-ed-oeste-socioculturales .*acceso-gimnasio-sur/,
+  )
   await expect(page.getByText('Buscando el camino…')).toHaveCount(0)
   await esperarMapaQuieto(page)
 
-  // Más resguardada (con lluvia), encuadrada, con el tramo de vereda en celeste y la leyenda.
-  await expect(resumen(page)).toContainText('5 min, 330 m')
+  // Más resguardada (con lluvia), encuadrada, con el tramo de franja en celeste y la leyenda.
+  await expect(resumen(page)).toContainText('7 min, 510 m, incluye 60 m al aire libre')
   await expect(mapa(page)).toHaveAttribute('data-ruta-partes', 'bajo-techo aire-libre bajo-techo')
   await expect(page.getByRole('list', { name: 'Referencias de la ruta' })).toBeVisible()
-  expect(await enFranja(page, 'puerta-direccion-alumnos')).toBe(true)
-  expect(await enFranja(page, 'puerta-dpto-cs-salud')).toBe(true)
+  expect(await enFranja(page, 'puerta-aula-208')).toBe(true)
+  expect(await enFranja(page, 'puerta-aula-417')).toBe(true)
 
   // Más rápida, tocando la línea gris.
   await tocarAlternativa(page, CRUCE_FRANJA)
-  await expect(resumen(page)).toContainText('2 min, 125 m, incluye 55 m al aire libre')
-  await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', /entrada-ed-este-kinesiologia/)
+  await expect(resumen(page)).toContainText('4 min, 265 m, incluye 195 m al aire libre')
+  await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', /entrada-ed-este-400-500-lado-oeste/)
 
   // Sin indicaciones paso a paso, ni "Iniciar" / "Finalizar viaje": el camino se sigue en el mapa.
   await expect(page.getByRole('button', { name: 'Indicaciones' })).toHaveCount(0)
@@ -149,9 +157,9 @@ test('recorrido completo con lluvia: espera, resguardada encuadrada, más rápid
 })
 
 test('?clima=lento: "Buscando el camino…" con barra y después la ruta', async ({ page }) => {
-  await pedirRuta(page, '?clima=lento', undefined, undefined, { esperarRuta: false })
+  await pedirRuta(page, '?clima=lento', AULA_417, AULA_208, { esperarRuta: false })
   await expect(page.getByTestId('contenido-ruta')).toContainText('Buscando el camino…')
-  await expect(resumen(page)).toContainText('5 min, 330 m', { timeout: 6000 })
+  await expect(resumen(page)).toContainText('7 min, 510 m', { timeout: 6000 })
   await expect(page.getByText('Buscando el camino…')).toHaveCount(0)
 })
 
@@ -323,24 +331,24 @@ test('un destino sin sala en el plano (una entrada al campus) sigue con el pin',
 })
 
 test('tocar la línea gris de la alternativa la elige', async ({ page }) => {
-  await pedirRuta(page, '?clima=lluvia')
-  // El cruce de la franja junto al hall de los auditorios solo está en la más rápida (la gris).
+  await pedirRuta(page, '?clima=lluvia', AULA_417, AULA_208)
+  // Ese cruce de la franja solo está en la más rápida (la gris).
   await expect(mapa(page)).not.toHaveAttribute('data-ruta-nodos', new RegExp(CRUCE_FRANJA))
   await tocarAlternativa(page, CRUCE_FRANJA)
   await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', new RegExp(CRUCE_FRANJA))
-  await expect(resumen(page)).toContainText('2 min, 125 m')
+  await expect(resumen(page)).toContainText('4 min, 265 m')
 })
 
 test('lluvia: cambiar a la más rápida sin red no vuelve a buscar el camino', async ({
   page,
   context,
 }) => {
-  await pedirRuta(page, '?clima=lluvia')
+  await pedirRuta(page, '?clima=lluvia', AULA_417, AULA_208)
   await context.setOffline(true)
   await tocarAlternativa(page, CRUCE_FRANJA)
-  await expect(resumen(page)).toContainText('2 min, 125 m')
+  await expect(resumen(page)).toContainText('4 min, 265 m')
   await expect(page.getByText('Buscando el camino…')).toHaveCount(0)
-  await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', /entrada-ed-este-kinesiologia/)
+  await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', /entrada-ed-oeste-socioculturales/)
   await context.setOffline(false)
 })
 

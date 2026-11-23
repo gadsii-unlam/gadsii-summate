@@ -36,6 +36,7 @@ describe('config.json', () => {
       metrosPorPx: 0.18,
       toleranciaOrtogonalPx: 0.6,
       diagonalesPermitidas: ['arista__cruce-camino-diagonal-franja__cruce-camino-diagonal-vereda'],
+      puertasDePaso: ['acceso-gimnasio-norte', 'acceso-gimnasio-sur'],
       respaldo: { escala: 1 },
     })
   })

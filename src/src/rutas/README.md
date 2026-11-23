@@ -40,10 +40,30 @@ Ejemplos (los mismos que verifican los tests de `astar.test.ts`):
 | ----------------------------------------------------- | ------------------------------------------ | -------------------------------- |
 | `puerta-aula-121` → `puerta-aula-110`                 | 481,11 px, 0 m afuera, 1 min               | igual                            |
 | `entrada-campus-florencio-varela` → `puerta-aula-121` | 1106,57 px, 403,72 px afuera, 3 min        | igual                            |
-| `puerta-aula-309` → `puerta-aula-103`                 | 2174,55 px, 1488 px afuera, 5 min          | 3202,07 px, 645 px afuera, 8 min |
-| `puerta-aula-121` → `puerta-lab-microscopia`          | 2070,73 px (≈ 373 m), 5 min                | 5489,83 px, 14 min               |
+| `puerta-aula-309` → `puerta-aula-103`                 | 2029,86 px, 1012 px afuera, 5 min          | 2844,86 px, 480 px afuera, 7 min |
+| `puerta-aula-121` → `puerta-lab-microscopia`          | 2070,73 px (≈ 373 m), 5 min                | 3053,83 px, 8 min                |
 | `puerta-aula-121` → Gimnasio (2 accesos)              | entra por `acceso-gimnasio-sur`, 946,73 px | —                                |
 | `entrada-campus-florencio-varela` → `puerta-aula-101` | 458,47 px, usa el camino diagonal          | —                                |
+
+## Ruta con lluvia (`lluvia.ts`)
+
+`calcularRutaConLluvia(grafo, { origen, destino, excluidos })` es la ruta que se recomienda con lluvia (criterio `resguardada`; la usa `src/clima/orquestacion.ts`). Minimizar el exterior en todo el recorrido daba rodeos enormes (Aula 208 → Aula 417: 860 m por la pasarela norte para ahorrar 160 m de lluvia), así que entre edificios la regla es otra.
+
+**Regla base, mirando la punta de llegada:**
+
+1. **Edificio de llegada:** el grupo de nodos unidos por aristas bajo techo que contiene las puertas de llegada y tiene nodos `entrada`. Si la llegada no está en un edificio, o la otra punta está en el mismo edificio, la regla no se aplica.
+2. **Entrada:** la del edificio más cercana a la puerta de llegada, caminando bajo techo (Dijkstra desde la llegada). Si no se puede llegar a ella (cierres), se prueba la siguiente.
+3. **Hasta la entrada:** `resguardada` (menos exterior, desempata por distancia) desde la otra punta, sin pasar por adentro del edificio de llegada: se llega a la entrada desde afuera.
+4. **Desde la entrada:** el camino más corto bajo techo hasta la llegada.
+
+**Simetría:** la regla base se aplica tomando como llegada el destino y también el origen (esa segunda ruta se invierte). Se descartan las que no son más cortas que la `resguardada` pura (no ahorran rodeo y tienen más exterior). De las que quedan gana la de menos exterior y, a igual exterior, la más corta. Si no queda ninguna, se usa la `resguardada` pura. Así la vuelta es siempre la ida invertida.
+
+| Origen ↔ destino    | Más rápida              | Con lluvia                                                                                        |
+| ------------------- | ----------------------- | ------------------------------------------------------------------------------------------------- |
+| Aula 208 ↔ Aula 417 | 263,5 m, 193,5 m afuera | 507,9 m, 59,4 m afuera (sale por Socioculturales, cruza al Gimnasio y sigue bajo techo)           |
+| Aula 309 ↔ Aula 103 | 365,4 m, 182,2 m afuera | 512,1 m, 86,4 m afuera (la `resguardada` pura: la regla por entradas daba 660 m con 125 m afuera) |
+
+`calcularRuta` también es simétrica en los empates: con varios caminos de igual costo, la búsqueda arranca siempre desde el extremo con el nodo de menor índice, y si ese extremo es el destino, el camino se devuelve invertido. Tests en `lluvia.test.ts` y `simetria.test.ts`.
 
 ## Por qué la heurística es admisible
 

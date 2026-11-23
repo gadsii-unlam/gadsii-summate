@@ -154,6 +154,7 @@ export function prepararGrafoRuteable(
   const nodos: NodoRuteable[] = nodosOrdenados.map((nodo, indice) => ({
     id: nodo.id,
     indice,
+    tipo: nodo.tipo,
     x: nodo.x,
     y: nodo.y,
     cx: coords[indice]!.cx,

@@ -75,7 +75,7 @@ describe('reevaluación de la vigencia (2.4)', () => {
 
   it('la obra vigente se evita en todo cálculo y lleva aviso de desvío', () => {
     const c = crearControladorCierres({ grafo, cierres: cierresEjemplo(), lugares: LUGARES })
-    const r = c.calcularRuta({ ...consultaEnfermeria, criterio: 'resguardada' })
+    const r = c.calcularRuta(consultaEnfermeria)
     expect(r.tipo === 'ruta' && r.nodos).not.toContain('entrada-ed-sur-oeste-sur')
     expect(r.tipo === 'ruta' && r.desvio?.texto).toBe(
       'Evitamos un tramo cerrado: Obra en la entrada oeste del Edificio Sur',

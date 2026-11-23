@@ -43,7 +43,7 @@ describe('cargarGrafoRuteable (integración con el grafo.json real)', () => {
     await expect(cargarGrafoRuteable({ fetch: falla })).rejects.toThrow(/HTTP 404/)
     const bien = vi.fn(async () => respuesta(structuredClone(GRAFO_CAMPUS)))
     const grafo = await cargarGrafoRuteable({ fetch: bien })
-    expect(grafo.aristas).toHaveLength(690)
+    expect(grafo.aristas).toHaveLength(711)
     expect(bien).toHaveBeenCalledOnce()
   })
 })

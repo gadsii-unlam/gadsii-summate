@@ -31,8 +31,8 @@ describe('pipeline (grafo y lugares)', () => {
       'nodos',
       'aristas',
     ])
-    expect(grafo.nodos).toHaveLength(660)
-    expect(grafo.aristas).toHaveLength(690)
+    expect(grafo.nodos).toHaveLength(671)
+    expect(grafo.aristas).toHaveLength(711)
     expect([grafo.ancho, grafo.alto, grafo.metrosPorPx]).toEqual([2810, 3745, 0.18])
     // Los nombres y categorías del plano van al catálogo, no al grafo.
     expect(Object.keys(grafo.nodos[0]!)).toEqual(['id', 'tipo', 'depto', 'x', 'y', 'piso'])

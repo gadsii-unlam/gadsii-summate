@@ -45,6 +45,6 @@ test('sirve el grafo, los lugares, el plano y su SVG con el tipo de contenido co
     nodos: unknown[]
     aristas: unknown[]
   }
-  expect(grafo.nodos).toHaveLength(660)
-  expect(grafo.aristas).toHaveLength(690)
+  expect(grafo.nodos).toHaveLength(671)
+  expect(grafo.aristas).toHaveLength(711)
 })

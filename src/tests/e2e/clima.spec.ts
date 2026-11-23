@@ -34,7 +34,7 @@ test('?clima=lluvia: recomienda la ruta más resguardada y deja la más rápida 
   await expect(mapa(page)).toHaveAttribute('data-ruta-nodos', /puerta-/)
   await expect(mapa(page)).toHaveAttribute('data-ruta-alternativa', /.+/)
   await expect(page.getByTestId('ruta-resultado').locator('[role="status"]')).toContainText(
-    'Ruta encontrada: 8 min',
+    'Ruta encontrada: 7 min',
   )
 })
 

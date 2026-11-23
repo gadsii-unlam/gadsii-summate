@@ -11,13 +11,18 @@ import {
 } from './ayudas-sw.ts'
 
 // Recorridos sin conexión (tolerar-senal-irregular, tareas 2.2, 4.2 a 4.5, 5.3, 5.5 y 8.1):
-// Dirección de Alumnos → Dpto. de Cs. de la Salud.
+// Dirección de Alumnos → Dpto. de Cs. de la Salud. Los recorridos que necesitan dos rutas con lluvia
+// usan Aula 208 → Aula 417 (con lluvia, Alumnos → Salud da una sola ruta).
 
 test.use({ serviceWorkers: 'allow', timezoneId: 'America/Argentina/Buenos_Aires' })
 
 const PREGUNTA = 'No pudimos consultar el clima. ¿Cómo querés ir?'
 const destinoSalud = /^Destino: Dpto\. de Cs\. de la Salud/
 const origenAlumnos = /^Punto de partida: Dirección de Alumnos/
+const destino417 = /^Destino: Aula 417/
+const origen208 = /^Punto de partida: Aula 208/
+const AULA_417: [string, RegExp] = ['417', /^Aula 417/]
+const AULA_208: [string, RegExp] = ['208', /^Aula 208/]
 const botonCancelar = (page: import('@playwright/test').Page) =>
   page.getByRole('button', { name: 'Cancelar', exact: true })
 const reintentarBarra = (page: import('@playwright/test').Page) =>
@@ -56,7 +61,7 @@ test('ruta nueva sin señal: avisa el clima, deja elegir el criterio y muestra "
   await page.reload()
   await expect(page.getByRole('button', { name: 'Destino: ¿A dónde vas?' })).toBeVisible()
 
-  await pedirRuta(page)
+  await pedirRuta(page, AULA_417, AULA_208)
   await expect(page.getByText(PREGUNTA)).toBeVisible()
   await expect(barraSinConexion(page)).toContainText('Sin conexión')
   await page
@@ -64,9 +69,9 @@ test('ruta nueva sin señal: avisa el clima, deja elegir el criterio y muestra "
     .getByRole('button', { name: /^Más resguardada/ })
     .tap()
   const nodos = await nodosRuta(page)
-  expect(nodos[0]).toMatch(/^puerta-direccion-alumnos/)
-  expect(nodos.at(-1)).toMatch(/^puerta-dpto-cs-salud/)
-  await expect(page.getByRole('button', { name: destinoSalud })).toBeVisible()
+  expect(nodos[0]).toMatch(/^puerta-aula-208/)
+  expect(nodos.at(-1)).toMatch(/^puerta-aula-417/)
+  await expect(page.getByRole('button', { name: destino417 })).toBeVisible()
   // En celular el "Reintentar" es el de la barra "Sin conexión" (el del clima no se muestra).
   await expect(reintentarBarra(page)).toBeVisible()
 })
@@ -77,12 +82,12 @@ test('lluvia consultada antes del corte: sin red no se usa y el clima queda desc
 }) => {
   await abrir(page, '/?clima=lluvia')
   await esperarServiceWorker(page)
-  await pedirRuta(page)
+  await pedirRuta(page, AULA_417, AULA_208)
   await expect(page.getByText('Llueve · te recomendamos la ruta más resguardada')).toBeAttached()
   await botonCancelar(page).tap()
 
   await context.setOffline(true)
-  await pedirRuta(page)
+  await pedirRuta(page, AULA_417, AULA_208)
   await expect(page.getByText(PREGUNTA)).toBeVisible()
   await expect(page.getByText('Llueve · te recomendamos la ruta más resguardada')).toHaveCount(0)
 })
@@ -229,7 +234,7 @@ test('recargar sin conexión restaura la misma ruta "Más resguardada"; a las 3 
   await page.clock.install({ time: new Date('2026-10-22T13:40:00-03:00') })
   await abrir(page, '/?clima=lluvia')
   await esperarServiceWorker(page)
-  await pedirRuta(page)
+  await pedirRuta(page, AULA_417, AULA_208)
   const antes = await nodosRuta(page)
   // Con lluvia se muestra la resguardada: la más rápida queda como alternativa en gris.
   const alternativa = await mapa(page).getAttribute('data-ruta-alternativa')
@@ -246,8 +251,8 @@ test('recargar sin conexión restaura la misma ruta "Más resguardada"; a las 3 
   )
   for (const r of respuestas) expect(r.fromServiceWorker(), r.url()).toBe(true)
   await expect(mapa(page)).toHaveAttribute('data-ruta-alternativa', alternativa!)
-  await expect(page.getByRole('button', { name: destinoSalud })).toBeVisible()
-  await expect(page.getByRole('button', { name: origenAlumnos })).toBeVisible()
+  await expect(page.getByRole('button', { name: destino417 })).toBeVisible()
+  await expect(page.getByRole('button', { name: origen208 })).toBeVisible()
   await expect(page.getByText(PREGUNTA)).toHaveCount(0)
   await expect(barraSinConexion(page)).toContainText('Sin conexión')
 

@@ -39,6 +39,12 @@ const redondear1 = (valor: number): number => Math.round(valor * 10) / 10
  * Orden de los chequeos: ids desconocidos en origen o destino → `consulta-invalida`;
  * puerta compartida → `mismo-lugar`; sin puertas de origen o destino disponibles (vacías o
  * excluidas) → `sin-ruta`; si la búsqueda no llega → `sin-ruta` con motivo `sin-camino`.
+ *
+ * Simetría: el grafo no es dirigido y el costo es el mismo en los dos sentidos, pero con varios
+ * caminos empatados el desempate depende de desde dónde arranca la búsqueda. Para que la vuelta
+ * sea exactamente la ida invertida, la búsqueda arranca siempre desde el extremo que contiene el
+ * nodo de menor índice (los dos conjuntos son disjuntos acá, así que nunca empatan) y, si ese
+ * extremo es el destino, el camino encontrado se devuelve en el sentido de la consulta.
  */
 export function calcularRuta(grafo: GrafoRuteable, consulta: ConsultaRuta): ResultadoRuta {
   const { criterio } = consulta
@@ -69,6 +75,11 @@ export function calcularRuta(grafo: GrafoRuteable, consulta: ConsultaRuta): Resu
     .sort((a, b) => a - b)
   if (destinos.length === 0) return { tipo: 'sin-ruta', motivo: 'destino-sin-puertas' }
 
+  // Sentido canónico de la búsqueda (ver "Simetría" arriba).
+  const invertida = destinos[0]! < origenes[0]!
+  const desde = invertida ? destinos : origenes
+  const hacia = invertida ? origenes : destinos
+
   const n = grafo.nodos.length
   const bloqueado = new Uint8Array(n)
   if (nodosExcluidos) {
@@ -85,9 +96,9 @@ export function calcularRuta(grafo: GrafoRuteable, consulta: ConsultaRuta): Resu
     }
   }
   const esDestino = new Uint8Array(n)
-  for (const d of destinos) esDestino[d] = 1
+  for (const d of hacia) esDestino[d] = 1
 
-  const manhattan = crearHeuristica(grafo, destinos)
+  const manhattan = crearHeuristica(grafo, hacia)
   const escala = escalaHeuristica(criterio)
   const g = new Float64Array(n).fill(Infinity)
   const cerrado = new Uint8Array(n)
@@ -95,7 +106,7 @@ export function calcularRuta(grafo: GrafoRuteable, consulta: ConsultaRuta): Resu
   const aristaPrevia = new Int32Array(n).fill(-1)
   const cola = new HeapMin()
 
-  for (const o of origenes) {
+  for (const o of desde) {
     g[o] = 0
     const h = escala * manhattan(o)
     cola.insertar({ f: h, h, nodo: o, g: 0 })
@@ -127,7 +138,7 @@ export function calcularRuta(grafo: GrafoRuteable, consulta: ConsultaRuta): Resu
   }
 
   if (llegada === -1) return { tipo: 'sin-ruta', motivo: 'sin-camino' }
-  return construirResultado(grafo, criterio, llegada, previo, aristaPrevia, expandidos)
+  return construirResultado(grafo, criterio, llegada, previo, aristaPrevia, expandidos, invertida)
 }
 
 /**
@@ -181,6 +192,8 @@ function construirResultado(
   previo: Int32Array,
   aristaPrevia: Int32Array,
   expandidos: number,
+  /** `true` si la búsqueda corrió del destino al origen: el camino ya sale en el sentido pedido. */
+  invertida = false,
 ): RutaEncontrada {
   const indicesNodos: number[] = [llegada]
   const indicesAristas: number[] = []
@@ -188,9 +201,24 @@ function construirResultado(
     indicesAristas.push(aristaPrevia[v]!)
     indicesNodos.push(previo[v]!)
   }
-  indicesNodos.reverse()
-  indicesAristas.reverse()
+  if (!invertida) {
+    indicesNodos.reverse()
+    indicesAristas.reverse()
+  }
+  return armarRuta(grafo, criterio, indicesNodos, indicesAristas, expandidos)
+}
 
+/**
+ * Arma el resultado a partir de los índices de los nodos y de las aristas del camino, en orden
+ * (`indicesAristas[i]` une `indicesNodos[i]` con `indicesNodos[i + 1]`).
+ */
+export function armarRuta(
+  grafo: GrafoRuteable,
+  criterio: Criterio,
+  indicesNodos: readonly number[],
+  indicesAristas: readonly number[],
+  expandidos: number,
+): RutaEncontrada {
   const polilinea: PuntoMapa[] = []
   const agregar = (x: number, y: number): void => {
     const ultimo = polilinea[polilinea.length - 1]

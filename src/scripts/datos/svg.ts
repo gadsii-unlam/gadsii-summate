@@ -282,7 +282,10 @@ function rangoGrafo(svg: string): { inicio: number; fin: number } | null {
 export function quitarGrafo(svg: string): string {
   const rango = rangoGrafo(svg)
   if (!rango) return svg
-  const fin = svg[rango.fin] === '\n' ? rango.fin + 1 : rango.fin
+  // El salto de línea que sigue al grupo se va con él, sea LF o CRLF (en Windows el archivo se baja
+  // con CRLF; en el CI, con LF).
+  const salto = svg.startsWith('\r\n', rango.fin) ? 2 : svg[rango.fin] === '\n' ? 1 : 0
+  const fin = rango.fin + salto
   return svg.slice(0, rango.inicio) + svg.slice(fin)
 }
 

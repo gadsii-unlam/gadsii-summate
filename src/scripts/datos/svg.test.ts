@@ -71,9 +71,9 @@ describe('grafo dibujado en el plano', () => {
     expect(elementosDeConstruccion(svgPrueba)).toHaveLength(4)
   })
 
-  it('mapa-unlam.svg tiene 660 nodos y 690 aristas en el grupo grafo, y el plano base está limpio', () => {
+  it('mapa-unlam.svg tiene 671 nodos y 711 aristas en el grupo grafo, y el plano base está limpio', () => {
     const { nodos, aristas } = leerGrafoSvg(readFileSync(join(RAIZ, 'mapa-unlam.svg'), 'utf8'))
-    expect([nodos.length, aristas.length]).toEqual([660, 690])
+    expect([nodos.length, aristas.length]).toEqual([671, 711])
     const base = readFileSync(join(DIR_DATOS_FUENTE, 'mapa-base.svg'), 'utf8')
     expect(elementosDeConstruccion(base)).toEqual([])
   })

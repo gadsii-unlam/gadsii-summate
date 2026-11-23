@@ -5897,6 +5897,22 @@
    "piso": 0
   },
   {
+   "id": "cruce--gimnasio-norte-sur--gimnasio-este-oeste",
+   "tipo": "pasillo",
+   "depto": "edificio-este",
+   "x": 972,
+   "y": 2626,
+   "piso": 0
+  },
+  {
+   "id": "cruce--gimnasio-este-oeste--este-pasillo-lateral-este",
+   "tipo": "pasillo",
+   "depto": "edificio-este",
+   "x": 1667,
+   "y": 2626,
+   "piso": 0
+  },
+  {
    "id": "puerta-bano-hombres-laboratorios-medios",
    "tipo": "puerta",
    "depto": "edificio-este",
@@ -8309,7 +8325,7 @@
    "tipo": "pasillo",
    "depto": "edificio-sur",
    "x": 1162,
-   "y": 3102.94,
+   "y": 3069.19,
    "piso": 0
   },
   {
@@ -8349,7 +8365,7 @@
    "tipo": "pasillo",
    "depto": "edificio-sur",
    "x": 1162,
-   "y": 3137.91,
+   "y": 3110.3,
    "piso": 0
   },
   {
@@ -8373,7 +8389,7 @@
    "tipo": "pasillo",
    "depto": "edificio-sur",
    "x": 1162,
-   "y": 3174.99,
+   "y": 3153.51,
    "piso": 0
   },
   {
@@ -8389,7 +8405,7 @@
    "tipo": "pasillo",
    "depto": "edificio-sur",
    "x": 1162,
-   "y": 3211.54,
+   "y": 3196.2,
    "piso": 0
   },
   {
@@ -8413,7 +8429,7 @@
    "tipo": "pasillo",
    "depto": "edificio-sur",
    "x": 1162,
-   "y": 3250.26,
+   "y": 3241.05,
    "piso": 0
   },
   {
@@ -8437,7 +8453,7 @@
    "tipo": "pasillo",
    "depto": "edificio-sur",
    "x": 1162,
-   "y": 3285.31,
+   "y": 3282.3,
    "piso": 0
   },
   {
@@ -8905,26 +8921,26 @@
    "tipo": "puerta",
    "depto": "edificio-sur",
    "x": 1137.97,
-   "y": 3102.94,
+   "y": 3069.19,
    "piso": 0,
    "nombre": "Aula 107",
    "categoria": "aula",
    "sala": [
     [
      1137.97,
-     3119.63
+     3089.07
     ],
     [
      1137.97,
-     3082.56
+     3045.87
     ],
     [
      1044.38,
-     3082.56
+     3045.87
     ],
     [
      1044.38,
-     3119.63
+     3089.07
     ]
    ]
   },
@@ -8989,26 +9005,26 @@
    "tipo": "puerta",
    "depto": "edificio-sur",
    "x": 1137.97,
-   "y": 3137.91,
+   "y": 3110.3,
    "piso": 0,
    "nombre": "Aula 106",
    "categoria": "aula",
    "sala": [
     [
      1137.97,
-     3156.44
+     3132.02
     ],
     [
      1137.97,
-     3119.37
+     3088.57
     ],
     [
      1044.38,
-     3119.37
+     3088.57
     ],
     [
      1044.38,
-     3156.44
+     3132.02
     ]
    ]
   },
@@ -9073,26 +9089,26 @@
    "tipo": "puerta",
    "depto": "edificio-sur",
    "x": 1137.97,
-   "y": 3174.99,
+   "y": 3153.51,
    "piso": 0,
    "nombre": "Aula 105",
    "categoria": "aula",
    "sala": [
     [
      1137.97,
-     3193.25
+     3174.97
     ],
     [
      1137.97,
-     3156.19
+     3131.52
     ],
     [
      1044.38,
-     3156.19
+     3131.52
     ],
     [
      1044.38,
-     3193.25
+     3174.97
     ]
    ]
   },
@@ -9129,26 +9145,26 @@
    "tipo": "puerta",
    "depto": "edificio-sur",
    "x": 1137.97,
-   "y": 3211.54,
+   "y": 3196.2,
    "piso": 0,
    "nombre": "Aula 104",
    "categoria": "aula",
    "sala": [
     [
      1137.97,
-     3230.07
+     3217.92
     ],
     [
      1137.97,
-     3193.01
+     3174.47
     ],
     [
      1044.38,
-     3193.01
+     3174.47
     ],
     [
      1044.38,
-     3230.07
+     3217.92
     ]
    ]
   },
@@ -9240,26 +9256,26 @@
    "tipo": "puerta",
    "depto": "edificio-sur",
    "x": 1137.97,
-   "y": 3250.26,
+   "y": 3241.05,
    "piso": 0,
    "nombre": "Aula 103",
    "categoria": "aula",
    "sala": [
     [
      1137.97,
-     3266.89
+     3260.87
     ],
     [
      1137.97,
-     3229.82
+     3217.42
     ],
     [
      1044.38,
-     3229.82
+     3217.42
     ],
     [
      1044.38,
-     3266.89
+     3260.87
     ]
    ]
   },
@@ -9324,26 +9340,26 @@
    "tipo": "puerta",
    "depto": "edificio-sur",
    "x": 1137.97,
-   "y": 3285.31,
+   "y": 3282.3,
    "piso": 0,
    "nombre": "Aula 102",
    "categoria": "aula",
    "sala": [
     [
-     1044.38,
-     3266.64
-    ],
-    [
-     1044.38,
-     3303.57
-    ],
-    [
      1137.97,
      3303.57
     ],
     [
      1137.97,
-     3266.64
+     3260.37
+    ],
+    [
+     1044.38,
+     3260.37
+    ],
+    [
+     1044.38,
+     3303.57
     ]
    ]
   },
@@ -10155,7 +10171,7 @@
    "tipo": "pasillo",
    "depto": "central",
    "x": 838,
-   "y": 3020,
+   "y": 3022,
    "piso": 0
   },
   {
@@ -10276,6 +10292,78 @@
    "depto": "central",
    "x": 1800,
    "y": 3548,
+   "piso": 0
+  },
+  {
+   "id": "cruce--ext-acceso-gimnasio-sur--ext-paso-galeria-sur",
+   "tipo": "pasillo",
+   "depto": "central",
+   "x": 972,
+   "y": 2884,
+   "piso": 0
+  },
+  {
+   "id": "cruce--sur-galeria-norte--sur-galeria-oeste",
+   "tipo": "pasillo",
+   "depto": "central",
+   "x": 1033,
+   "y": 2884,
+   "piso": 0
+  },
+  {
+   "id": "cruce--sur-galeria-norte--ext-acceso-sur-norte",
+   "tipo": "pasillo",
+   "depto": "central",
+   "x": 1336,
+   "y": 2884,
+   "piso": 0
+  },
+  {
+   "id": "cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-oeste",
+   "tipo": "pasillo",
+   "depto": "central",
+   "x": 838,
+   "y": 2884,
+   "piso": 0
+  },
+  {
+   "id": "cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-este",
+   "tipo": "pasillo",
+   "depto": "central",
+   "x": 920,
+   "y": 2884,
+   "piso": 0
+  },
+  {
+   "id": "cruce--ext-acceso-sur-oeste-norte--ext-franja-entre-edificios-este",
+   "tipo": "pasillo",
+   "depto": "central",
+   "x": 920,
+   "y": 3022,
+   "piso": 0
+  },
+  {
+   "id": "cruce--ext-acceso-sur-oeste-norte--ext-paso-mastil",
+   "tipo": "pasillo",
+   "depto": "central",
+   "x": 884,
+   "y": 3022,
+   "piso": 0
+  },
+  {
+   "id": "cruce--ext-paso-centro-copiado--ext-paso-mastil",
+   "tipo": "pasillo",
+   "depto": "central",
+   "x": 884,
+   "y": 3083,
+   "piso": 0
+  },
+  {
+   "id": "cruce--ext-paso-mastil-teatro--ext-paso-mastil",
+   "tipo": "pasillo",
+   "depto": "central",
+   "x": 884,
+   "y": 3172,
    "piso": 0
   },
   {
@@ -10617,7 +10705,7 @@
    "tipo": "puerta",
    "depto": "central",
    "x": 803,
-   "y": 3020,
+   "y": 3022,
    "piso": 0,
    "nombre": "Enfermería",
    "sala": [
@@ -14325,6 +14413,34 @@
    "peso": 571
   },
   {
+   "id": "arista__acceso-gimnasio-norte__cruce--gimnasio-norte-sur--gimnasio-este-oeste",
+   "a": "acceso-gimnasio-norte",
+   "b": "cruce--gimnasio-norte-sur--gimnasio-este-oeste",
+   "exterior": false,
+   "peso": 90
+  },
+  {
+   "id": "arista__cruce--gimnasio-norte-sur--gimnasio-este-oeste__acceso-gimnasio-sur",
+   "a": "cruce--gimnasio-norte-sur--gimnasio-este-oeste",
+   "b": "acceso-gimnasio-sur",
+   "exterior": false,
+   "peso": 90
+  },
+  {
+   "id": "arista__cruce--gimnasio-norte-sur--gimnasio-este-oeste__cruce--gimnasio-este-oeste--este-pasillo-lateral-este",
+   "a": "cruce--gimnasio-norte-sur--gimnasio-este-oeste",
+   "b": "cruce--gimnasio-este-oeste--este-pasillo-lateral-este",
+   "exterior": false,
+   "peso": 695
+  },
+  {
+   "id": "arista__cruce--este-hall-vestuarios--este-pasillo-lateral-este__cruce--gimnasio-este-oeste--este-pasillo-lateral-este",
+   "a": "cruce--este-hall-vestuarios--este-pasillo-lateral-este",
+   "b": "cruce--gimnasio-este-oeste--este-pasillo-lateral-este",
+   "exterior": false,
+   "peso": 133
+  },
+  {
    "id": "arista__puerta-bano-hombres-laboratorios-medios__pasillo-frente-bano-hombres-laboratorios-medios",
    "a": "puerta-bano-hombres-laboratorios-medios",
    "b": "pasillo-frente-bano-hombres-laboratorios-medios",
@@ -14987,49 +15103,49 @@
    "a": "cruce--sur-pasillo-norte-108-119--sur-pasillo-102-107",
    "b": "pasillo-frente-aula-107",
    "exterior": false,
-   "peso": 80.94
+   "peso": 47.19
   },
   {
    "id": "arista__pasillo-frente-aula-107__pasillo-frente-aula-106",
    "a": "pasillo-frente-aula-107",
    "b": "pasillo-frente-aula-106",
    "exterior": false,
-   "peso": 34.97
+   "peso": 41.11
   },
   {
    "id": "arista__pasillo-frente-aula-106__pasillo-frente-aula-105",
    "a": "pasillo-frente-aula-106",
    "b": "pasillo-frente-aula-105",
    "exterior": false,
-   "peso": 37.08
+   "peso": 43.21
   },
   {
    "id": "arista__pasillo-frente-aula-105__pasillo-frente-aula-104",
    "a": "pasillo-frente-aula-105",
    "b": "pasillo-frente-aula-104",
    "exterior": false,
-   "peso": 36.55
+   "peso": 42.69
   },
   {
    "id": "arista__pasillo-frente-aula-104__pasillo-frente-aula-103",
    "a": "pasillo-frente-aula-104",
    "b": "pasillo-frente-aula-103",
    "exterior": false,
-   "peso": 38.72
+   "peso": 44.85
   },
   {
    "id": "arista__pasillo-frente-aula-103__pasillo-frente-aula-102",
    "a": "pasillo-frente-aula-103",
    "b": "pasillo-frente-aula-102",
    "exterior": false,
-   "peso": 35.05
+   "peso": 41.25
   },
   {
    "id": "arista__pasillo-frente-aula-102__cruce--sur-pasillo-sur-101-130--sur-pasillo-102-107",
    "a": "pasillo-frente-aula-102",
    "b": "cruce--sur-pasillo-sur-101-130--sur-pasillo-102-107",
    "exterior": false,
-   "peso": 32.69
+   "peso": 35.7
   },
   {
    "id": "arista__entrada-ed-sur-norte__cruce--sur-pasillo-norte-108-119--sur-pasillo-131-134",
@@ -15662,25 +15778,32 @@
    "peso": 49
   },
   {
-   "id": "arista__cruce--ext-plaza-sur-gimnasio--ext-franja-entre-edificios-oeste__cruce--ext-paso-sur-edificio-oeste--ext-franja-entre-edificios-oeste",
+   "id": "arista__cruce--ext-plaza-sur-gimnasio--ext-franja-entre-edificios-oeste__cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-oeste",
    "a": "cruce--ext-plaza-sur-gimnasio--ext-franja-entre-edificios-oeste",
+   "b": "cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-oeste",
+   "exterior": true,
+   "peso": 54
+  },
+  {
+   "id": "arista__cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-oeste__cruce--ext-paso-sur-edificio-oeste--ext-franja-entre-edificios-oeste",
+   "a": "cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-oeste",
    "b": "cruce--ext-paso-sur-edificio-oeste--ext-franja-entre-edificios-oeste",
    "exterior": true,
-   "peso": 70
+   "peso": 16
   },
   {
    "id": "arista__cruce--ext-paso-sur-edificio-oeste--ext-franja-entre-edificios-oeste__pasillo-frente-enfermeria",
    "a": "cruce--ext-paso-sur-edificio-oeste--ext-franja-entre-edificios-oeste",
    "b": "pasillo-frente-enfermeria",
    "exterior": true,
-   "peso": 120
+   "peso": 122
   },
   {
    "id": "arista__pasillo-frente-enfermeria__pasillo-frente-centro-copiado",
    "a": "pasillo-frente-enfermeria",
    "b": "pasillo-frente-centro-copiado",
    "exterior": true,
-   "peso": 63
+   "peso": 61
   },
   {
    "id": "arista__pasillo-frente-centro-copiado__cruce--ext-paso-mastil-teatro--ext-franja-entre-edificios-oeste",
@@ -16019,11 +16142,18 @@
    "peso": 538.91
   },
   {
-   "id": "arista__cruce--ext-paso-mastil-teatro--ext-franja-entre-edificios-oeste__cruce--ext-paso-mastil-teatro--ext-vereda-oeste-edificio-sur",
+   "id": "arista__cruce--ext-paso-mastil-teatro--ext-franja-entre-edificios-oeste__cruce--ext-paso-mastil-teatro--ext-paso-mastil",
    "a": "cruce--ext-paso-mastil-teatro--ext-franja-entre-edificios-oeste",
+   "b": "cruce--ext-paso-mastil-teatro--ext-paso-mastil",
+   "exterior": true,
+   "peso": 46
+  },
+  {
+   "id": "arista__cruce--ext-paso-mastil-teatro--ext-paso-mastil__cruce--ext-paso-mastil-teatro--ext-vereda-oeste-edificio-sur",
+   "a": "cruce--ext-paso-mastil-teatro--ext-paso-mastil",
    "b": "cruce--ext-paso-mastil-teatro--ext-vereda-oeste-edificio-sur",
    "exterior": true,
-   "peso": 195
+   "peso": 149
   },
   {
    "id": "arista__acceso-teatro__cruce--ext-acceso-teatro--ext-franja-entre-edificios-oeste",
@@ -16066,13 +16196,6 @@
    "b": "cruce--ext-plaza-sur-gimnasio--ext-acceso-gimnasio-sur",
    "exterior": true,
    "peso": 114
-  },
-  {
-   "id": "arista__cruce--ext-plaza-sur-gimnasio--ext-acceso-sur-norte__entrada-ed-sur-norte",
-   "a": "cruce--ext-plaza-sur-gimnasio--ext-acceso-sur-norte",
-   "b": "entrada-ed-sur-norte",
-   "exterior": true,
-   "peso": 65
   },
   {
    "id": "arista__cruce--ext-acceso-sur-oeste-norte--ext-vereda-oeste-edificio-sur__cruce--ext-paso-mastil-teatro--ext-vereda-oeste-edificio-sur",
@@ -16150,6 +16273,118 @@
    "b": "cruce-camino-diagonal-vereda",
    "exterior": true,
    "peso": 232.71
+  },
+  {
+   "id": "arista__cruce--ext-plaza-sur-gimnasio--ext-acceso-gimnasio-sur__cruce--ext-acceso-gimnasio-sur--ext-paso-galeria-sur",
+   "a": "cruce--ext-plaza-sur-gimnasio--ext-acceso-gimnasio-sur",
+   "b": "cruce--ext-acceso-gimnasio-sur--ext-paso-galeria-sur",
+   "exterior": true,
+   "peso": 54
+  },
+  {
+   "id": "arista__cruce--ext-acceso-gimnasio-sur--ext-paso-galeria-sur__cruce--sur-galeria-norte--sur-galeria-oeste",
+   "a": "cruce--ext-acceso-gimnasio-sur--ext-paso-galeria-sur",
+   "b": "cruce--sur-galeria-norte--sur-galeria-oeste",
+   "exterior": true,
+   "peso": 61
+  },
+  {
+   "id": "arista__cruce--ext-plaza-sur-gimnasio--ext-acceso-sur-norte__cruce--sur-galeria-norte--ext-acceso-sur-norte",
+   "a": "cruce--ext-plaza-sur-gimnasio--ext-acceso-sur-norte",
+   "b": "cruce--sur-galeria-norte--ext-acceso-sur-norte",
+   "exterior": true,
+   "peso": 54
+  },
+  {
+   "id": "arista__cruce--sur-galeria-norte--ext-acceso-sur-norte__entrada-ed-sur-norte",
+   "a": "cruce--sur-galeria-norte--ext-acceso-sur-norte",
+   "b": "entrada-ed-sur-norte",
+   "exterior": true,
+   "peso": 11
+  },
+  {
+   "id": "arista__cruce--sur-galeria-norte--sur-galeria-oeste__cruce--sur-galeria-norte--ext-acceso-sur-norte",
+   "a": "cruce--sur-galeria-norte--sur-galeria-oeste",
+   "b": "cruce--sur-galeria-norte--ext-acceso-sur-norte",
+   "exterior": true,
+   "peso": 303
+  },
+  {
+   "id": "arista__cruce--sur-galeria-norte--sur-galeria-oeste__cruce--ext-acceso-sur-oeste-norte--ext-vereda-oeste-edificio-sur",
+   "a": "cruce--sur-galeria-norte--sur-galeria-oeste",
+   "b": "cruce--ext-acceso-sur-oeste-norte--ext-vereda-oeste-edificio-sur",
+   "exterior": true,
+   "peso": 138
+  },
+  {
+   "id": "arista__cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-oeste__cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-este",
+   "a": "cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-oeste",
+   "b": "cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-este",
+   "exterior": true,
+   "peso": 82
+  },
+  {
+   "id": "arista__cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-este__cruce--ext-acceso-gimnasio-sur--ext-paso-galeria-sur",
+   "a": "cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-este",
+   "b": "cruce--ext-acceso-gimnasio-sur--ext-paso-galeria-sur",
+   "exterior": true,
+   "peso": 52
+  },
+  {
+   "id": "arista__cruce--ext-plaza-sur-gimnasio--ext-franja-entre-edificios-este__cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-este",
+   "a": "cruce--ext-plaza-sur-gimnasio--ext-franja-entre-edificios-este",
+   "b": "cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-este",
+   "exterior": true,
+   "peso": 54
+  },
+  {
+   "id": "arista__cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-este__cruce--ext-acceso-sur-oeste-norte--ext-franja-entre-edificios-este",
+   "a": "cruce--ext-paso-galeria-sur--ext-franja-entre-edificios-este",
+   "b": "cruce--ext-acceso-sur-oeste-norte--ext-franja-entre-edificios-este",
+   "exterior": true,
+   "peso": 138
+  },
+  {
+   "id": "arista__pasillo-frente-enfermeria__cruce--ext-acceso-sur-oeste-norte--ext-paso-mastil",
+   "a": "pasillo-frente-enfermeria",
+   "b": "cruce--ext-acceso-sur-oeste-norte--ext-paso-mastil",
+   "exterior": true,
+   "peso": 46
+  },
+  {
+   "id": "arista__cruce--ext-acceso-sur-oeste-norte--ext-paso-mastil__cruce--ext-acceso-sur-oeste-norte--ext-franja-entre-edificios-este",
+   "a": "cruce--ext-acceso-sur-oeste-norte--ext-paso-mastil",
+   "b": "cruce--ext-acceso-sur-oeste-norte--ext-franja-entre-edificios-este",
+   "exterior": true,
+   "peso": 36
+  },
+  {
+   "id": "arista__cruce--ext-acceso-sur-oeste-norte--ext-franja-entre-edificios-este__cruce--ext-acceso-sur-oeste-norte--ext-vereda-oeste-edificio-sur",
+   "a": "cruce--ext-acceso-sur-oeste-norte--ext-franja-entre-edificios-este",
+   "b": "cruce--ext-acceso-sur-oeste-norte--ext-vereda-oeste-edificio-sur",
+   "exterior": true,
+   "peso": 113
+  },
+  {
+   "id": "arista__cruce--ext-acceso-sur-oeste-norte--ext-paso-mastil__cruce--ext-paso-centro-copiado--ext-paso-mastil",
+   "a": "cruce--ext-acceso-sur-oeste-norte--ext-paso-mastil",
+   "b": "cruce--ext-paso-centro-copiado--ext-paso-mastil",
+   "exterior": true,
+   "peso": 61
+  },
+  {
+   "id": "arista__cruce--ext-paso-centro-copiado--ext-paso-mastil__cruce--ext-paso-mastil-teatro--ext-paso-mastil",
+   "a": "cruce--ext-paso-centro-copiado--ext-paso-mastil",
+   "b": "cruce--ext-paso-mastil-teatro--ext-paso-mastil",
+   "exterior": true,
+   "peso": 89
+  },
+  {
+   "id": "arista__pasillo-frente-centro-copiado__cruce--ext-paso-centro-copiado--ext-paso-mastil",
+   "a": "pasillo-frente-centro-copiado",
+   "b": "cruce--ext-paso-centro-copiado--ext-paso-mastil",
+   "exterior": true,
+   "peso": 46
   },
   {
    "id": "arista__puerta-bano-hombres-franja-entre-edificios__pasillo-frente-bano-hombres-franja-entre-edificios",

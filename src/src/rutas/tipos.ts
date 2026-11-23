@@ -1,3 +1,5 @@
+import type { TipoNodo } from '../datos/index.ts'
+
 /**
  * Tipos públicos del motor de rutas (design.md de calcular-ruta-astar, decisión 9).
  *
@@ -71,6 +73,8 @@ export type ResultadoRuta =
 export interface NodoRuteable {
   readonly id: string
   readonly indice: number
+  /** `puerta`, `pasillo` o `entrada` (entrada de un edificio o del campus). */
+  readonly tipo: TipoNodo
   readonly x: number
   readonly y: number
   readonly cx: number

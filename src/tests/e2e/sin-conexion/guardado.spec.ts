@@ -28,33 +28,33 @@ test('cada paso del recorrido deja en localStorage lo esperado, y "Cancelar" lo 
 
   // Elegir el destino (sin ruta todavía).
   await page.getByRole('button', { name: /^Destino:/ }).tap()
-  await page.getByRole('combobox').fill('Salud')
+  await page.getByRole('combobox').fill('417')
   await page
-    .getByRole('option', { name: /^Dpto\. de Cs\. de la Salud/ })
+    .getByRole('option', { name: /^Aula 417/ })
     .first()
     .tap()
   await expect
     .poll(() => guardado(page))
     .toMatchObject({
       esquema: 1,
-      destino: 'dpto-cs-salud',
+      destino: 'aula-417',
       rutas: [],
     })
   expect((await guardado(page))?.origen).toBeUndefined()
 
   // Confirmar el origen: se muestra la ruta "Más resguardada" (llueve).
   await page.getByRole('button', { name: /^Punto de partida/ }).tap()
-  await page.getByRole('combobox').fill('Alumnos')
+  await page.getByRole('combobox').fill('208')
   await page
-    .getByRole('option', { name: /^Dirección de Alumnos/ })
+    .getByRole('option', { name: /^Aula 208/ })
     .first()
     .tap()
   const nodos = await nodosRuta(page)
   await expect
     .poll(() => guardado(page))
     .toMatchObject({
-      origen: 'direccion-alumnos',
-      destino: 'dpto-cs-salud',
+      origen: 'aula-208',
+      destino: 'aula-417',
       alternativaMostrada: 'resguardada',
       climaUsado: 'lluvia',
     })

@@ -5,6 +5,7 @@ import type { CatalogoLugares, Lugar } from '../../../datos/index.ts'
 import {
   NOMBRES_ENTRADAS,
   calcularRuta,
+  calcularRutaConLluvia,
   prepararDatosIndicaciones,
   type Criterio,
 } from '../../../rutas/index.ts'
@@ -57,7 +58,7 @@ export function planReal(
   const plan = recomendar(
     clima,
     calcularRuta(g, { ...base, criterio: 'mas-corta' }),
-    calcularRuta(g, { ...base, criterio: 'resguardada' }),
+    calcularRutaConLluvia(g, base),
     criterioElegido,
   )
   return { plan, origen, destino }

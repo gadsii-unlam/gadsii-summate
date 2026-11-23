@@ -11,6 +11,10 @@ import { EVENTO_FINALIZAR_VIAJE } from './textos.ts'
 
 const DIR = 'direccion-alumnos'
 const SALUD = 'dpto-cs-salud'
+// Con lluvia, Dirección de Alumnos → Dpto. de Cs. de la Salud ya da una sola ruta (la de entrar por
+// la entrada más cercana es la más rápida); para tener dos opciones se usa Aula 208 → Aula 417.
+const A208 = 'aula-208'
+const A417 = 'aula-417'
 
 function renderResultado(
   origenId: string,
@@ -51,24 +55,28 @@ describe('resumen anunciado', () => {
 describe('ruta para el mapa', () => {
   it('con lluvia publica la resguardada y deja la más rápida como alternativa', () => {
     const alCambiarSeleccion = vi.fn()
-    renderResultado(DIR, SALUD, 'lluvia', { alCambiarSeleccion })
+    renderResultado(A208, A417, 'lluvia', { alCambiarSeleccion })
     const ultima = alCambiarSeleccion.mock.lastCall![0]
     expect(ultima.criterio).toBe('resguardada')
     expect(ultima.alternativa.criterio).toBe('mas-corta')
-    expect(screen.getByRole('status')).toHaveTextContent('Ruta encontrada: 5 min, 330 m')
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Ruta encontrada: 7 min, 510 m, incluye 60 m al aire libre',
+    )
   })
 
   it('elegir la otra desde afuera (la línea gris del mapa) cambia la ruta al instante y sin red', () => {
     const red = vi.spyOn(globalThis, 'fetch')
     const alCambiarSeleccion = vi.fn()
-    const { plan, origen, destino } = planReal(DIR, SALUD, CLIMA.lluvia)
+    const { plan, origen, destino } = planReal(A208, A417, CLIMA.lluvia)
     const props = { origen, destino, estado: plan, alCambiarSeleccion }
     const { rerender } = render(<ResultadoRuta {...props} />)
     rerender(<ResultadoRuta {...props} elegida="mas-corta" />)
     const ultima = alCambiarSeleccion.mock.lastCall![0]
     expect(ultima.criterio).toBe('mas-corta')
     expect(ultima.alternativa.criterio).toBe('resguardada')
-    expect(screen.getByRole('status')).toHaveTextContent('Ruta encontrada: 2 min, 125 m')
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Ruta encontrada: 4 min, 265 m, incluye 195 m al aire libre',
+    )
     expect(screen.queryByText('Buscando el camino…')).toBeNull()
     expect(red).not.toHaveBeenCalled()
     red.mockRestore()
@@ -161,7 +169,7 @@ describe('el viaje empieza y termina solo', () => {
 
   it('sin ruta lista no hay viaje que finalizar', () => {
     const alFinalizar = vi.fn()
-    const { plan, origen, destino } = planReal(DIR, SALUD, CLIMA.caido)
+    const { plan, origen, destino } = planReal(A208, A417, CLIMA.caido)
     const { unmount } = render(
       <ResultadoRuta origen={origen} destino={destino} estado={plan} alFinalizar={alFinalizar} />,
     )
@@ -172,7 +180,7 @@ describe('el viaje empieza y termina solo', () => {
 
 describe('estados que muestra otro cambio', () => {
   it('con el clima caído y sin elegir criterio no muestra nada (la elección es de adaptar-ruta-al-clima)', () => {
-    const { plan, origen, destino } = planReal(DIR, SALUD, CLIMA.caido)
+    const { plan, origen, destino } = planReal(A208, A417, CLIMA.caido)
     expect(plan.requiereEleccion).toBe(true)
     render(<ResultadoRuta origen={origen} destino={destino} estado={plan} />)
     expect(screen.queryByTestId('ruta-resultado')).toBeNull()
@@ -181,7 +189,7 @@ describe('estados que muestra otro cambio', () => {
 
   it('con el clima caído y un criterio elegido, publica ese criterio', () => {
     const alCambiarSeleccion = vi.fn()
-    const { plan, origen, destino } = planReal(DIR, SALUD, CLIMA.caido, 'resguardada')
+    const { plan, origen, destino } = planReal(A208, A417, CLIMA.caido, 'resguardada')
     render(
       <ResultadoRuta
         origen={origen}

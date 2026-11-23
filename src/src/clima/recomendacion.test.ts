@@ -39,7 +39,7 @@ const ENTRADA = rutas('entrada-campus-florencio-varela', 'puerta-aula-121') // i
 describe('datos de los ejemplos', () => {
   it('coinciden con el design', () => {
     expect(ruta(ECO_HUM.corta)).toMatchObject({ tiempoMin: 5 })
-    expect(ruta(ECO_HUM.resguardada)).toMatchObject({ tiempoMin: 8 })
+    expect(ruta(ECO_HUM.resguardada)).toMatchObject({ tiempoMin: 7 })
     expect(ruta(INTERIOR.corta).exteriorM).toBe(0)
     expect(ruta(ENTRADA.corta).exteriorM).toBeGreaterThan(0)
   })
@@ -211,7 +211,7 @@ describe('recomendar', () => {
     const techada: RutaEncontrada = { ...ruta(ECO_HUM.resguardada), exteriorM: 0, exteriorPx: 0 }
     const plan = recomendar(LLUEVE, ECO_HUM.corta, techada)
     expect(plan.etiquetaPrincipal).toBe('Techada')
-    expect(plan.comparacion?.resguardada.texto).toBe('8 min · Sin tramos al aire libre')
+    expect(plan.comparacion?.resguardada.texto).toBe('7 min · Sin tramos al aire libre')
     expect(plan.comparacion?.resguardada.textoAireLibre).toBe('Sin tramos al aire libre')
   })
 
@@ -224,16 +224,16 @@ describe('recomendar', () => {
 })
 
 describe('comparación entre alternativas', () => {
-  it('309 → 103 con lluvia: "8 min · 120 m" (+3 min · 150 m menos) frente a "5 min · 270 m"', () => {
+  it('309 → 103 con lluvia: "7 min · 90 m" (+2 min · 90 m menos) frente a "5 min · 180 m"', () => {
     const c = compararAlternativas(ruta(ECO_HUM.resguardada), ruta(ECO_HUM.corta))
-    expect(c.resguardada.texto).toBe('8 min · 120 m')
-    expect(c.resguardada.textoAireLibre).toBe('120 m al aire libre')
-    expect(c.masRapida.texto).toBe('5 min · 270 m')
+    expect(c.resguardada.texto).toBe('7 min · 90 m')
+    expect(c.resguardada.textoAireLibre).toBe('90 m al aire libre')
+    expect(c.masRapida.texto).toBe('5 min · 180 m')
     expect(c.diferencia).toEqual({
-      minutos: 3,
-      textoMinutos: '+3 min',
-      metrosMenosAlAireLibre: 150,
-      texto: '+3 min · 150 m menos al aire libre',
+      minutos: 2,
+      textoMinutos: '+2 min',
+      metrosMenosAlAireLibre: 90,
+      texto: '+2 min · 90 m menos al aire libre',
     })
   })
 
@@ -242,7 +242,7 @@ describe('comparación entre alternativas', () => {
     const igualTiempo = { ...ruta(ECO_HUM.resguardada), tiempoMin: corta.tiempoMin }
     const c = compararAlternativas(igualTiempo, corta)
     expect(c.diferencia.textoMinutos).toBe('mismo tiempo')
-    expect(c.diferencia.texto).toBe('mismo tiempo · 150 m menos al aire libre')
+    expect(c.diferencia.texto).toBe('mismo tiempo · 90 m menos al aire libre')
   })
 
   it('la diferencia usa los valores redondeados que ve el usuario', () => {
