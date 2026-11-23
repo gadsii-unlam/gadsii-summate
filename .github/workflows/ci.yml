@@ -83,7 +83,7 @@ jobs:
             src/test-results/
           retention-days: 14
 
-  # Publica en Cloudflare Workers (https://donde-queda.donde-queda.workers.dev) solo con un push a
+  # Publica en Cloudflare Workers (https://donde-queda.unlam.workers.dev) solo con un push a
   # main y solo si pasaron la verificación y los E2E. Necesita los secrets CLOUDFLARE_API_TOKEN y
   # CLOUDFLARE_ACCOUNT_ID en Settings → Secrets and variables → Actions.
   deploy:

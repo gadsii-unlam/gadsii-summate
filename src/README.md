@@ -10,7 +10,7 @@ Segmento de la comunidad UNLaM: Ingresantes y estudiantes de primer año que tod
 
 SPA estática con React + Vite + TypeScript, pensada primero para el celular. No tiene backend: la ruta se calcula en el navegador y los datos (grafo, lugares, cierres, clima simulado) se publican como archivos estáticos. La decisión y los casos que justificarían agregar un backend están en [`openspec/changes/configurar-base-app/design.md`](openspec/changes/configurar-base-app/design.md) (D1, "¿Hace falta backend?").
 
-**URL pública:** <https://donde-queda.donde-queda.workers.dev> (Cloudflare Workers).
+**URL pública:** <https://donde-queda.unlam.workers.dev> (Cloudflare Workers).
 
 ### Cómo levantar el proyecto
 
@@ -88,8 +88,9 @@ El plano es `mapa-unlam.svg` (raíz del repo): el dibujo del campus (2810 × 374
 
 ### Integración continua y hosting
 
-- GitHub Actions (`.github/workflows/ci.yml`) corre lint, formato, tipos, tests y build en cada push y pull request, y después los e2e. El reporte de datos del campus queda siempre como artefacto (`reporte-datos`); si fallan los e2e, también el de Playwright.
-- Cloudflare Workers (`wrangler.toml`, assets estáticos) publica `dist/` con HTTPS: `npm run build && npx wrangler deploy` (la primera vez, `npx wrangler login`). `public/_headers` tiene la caché y `not_found_handling = "single-page-application"` hace el fallback de la SPA.
+- GitHub Actions (`.github/workflows/ci.yml`) corre lint, formato, tipos, tests y build en cada push y pull request, y después los e2e (en Chromium móvil). El reporte de datos del campus queda siempre como artefacto (`reporte-datos`); si fallan los e2e, también el de Playwright.
+- El job `deploy` publica en Cloudflare Workers solo con un push a `main` que pasó la verificación y los e2e, sin pasos manuales. Necesita los secrets `CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID` en GitHub.
+- Cloudflare Workers (`wrangler.toml`, assets estáticos) publica `dist/` con HTTPS. A mano, si hiciera falta: `npm run build && npx wrangler deploy` (la primera vez, `npx wrangler login`). `public/_headers` tiene la caché y `not_found_handling = "single-page-application"` hace el fallback de la SPA.
 
 ### Funcionamiento sin conexión (service worker)
 
