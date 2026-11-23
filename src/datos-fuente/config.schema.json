@@ -23,6 +23,12 @@
       "items": { "type": "string", "pattern": "^arista__.+__.+$" },
       "uniqueItems": true
     },
+    "puertasDePaso": {
+      "description": "Ids de las puertas que se pueden atravesar: tienen más de una arista porque unen dos tramos (por ejemplo, los accesos del Gimnasio, que se cruza por adentro). Cualquier otra puerta con más de una arista da un aviso.",
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
     "respaldo": {
       "type": "object",
       "additionalProperties": false,

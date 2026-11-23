@@ -36,7 +36,7 @@ describe('heurística euclídea', () => {
       }
     }
     // Incluye la arista diagonal, que mide la euclídea hacia arriba.
-    expect(chequeos).toBe(51 * 690 * 2)
+    expect(chequeos).toBe(51 * 711 * 2)
   })
 
   it('es admisible: h(n) ≤ distancia real (Dijkstra) para todos los nodos y 30 destinos', () => {

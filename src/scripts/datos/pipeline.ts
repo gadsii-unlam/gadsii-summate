@@ -79,7 +79,14 @@ export async function prepararDatos(op: OpcionesPipeline): Promise<ResultadoPipe
   problemas.push(...estructura.problemas)
   if (!estructura.grafo) return fallar()
   const fuente = estructura.grafo
-  problemas.push(...validarGrafo(fuente, config.toleranciaOrtogonalPx, config.diagonalesPermitidas))
+  problemas.push(
+    ...validarGrafo(
+      fuente,
+      config.toleranciaOrtogonalPx,
+      config.diagonalesPermitidas,
+      config.puertasDePaso,
+    ),
+  )
   if (errores(problemas).length > 0) return fallar()
   const { grafo, problemas: avisosGrafo } = enriquecerGrafo(
     fuente,

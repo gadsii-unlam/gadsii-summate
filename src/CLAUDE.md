@@ -38,7 +38,7 @@ grafo
 ### Reglas del grafo
 
 - Aristas horizontales o verticales (tolerancia 0,6 px). Un camino que de verdad es diagonal se declara en `diagonalesPermitidas` de `datos-fuente/config.json`. Hoy hay uno: el camino diagonal de la entrada Florencio Varela al Edificio Sur (`arista__cruce-camino-diagonal-franja__cruce-camino-diagonal-vereda`).
-- Cada puerta tiene una sola arista, hacia el punto de pasillo de enfrente.
+- Cada puerta tiene una sola arista, hacia el punto de pasillo de enfrente. La excepción son las puertas que se atraviesan, declaradas en `puertasDePaso` de `datos-fuente/config.json`. Hoy son los dos accesos del Gimnasio, que se cruza por adentro (pasillo interno entre el acceso norte, el acceso sur y el pasillo lateral del Edificio Este).
 - El grafo tiene que ser conexo y ningún nodo puede quedar sin aristas.
 - **Al aire libre:** las aristas de `aristas-exteriores` y la de la escalera. El resto, bajo techo.
 

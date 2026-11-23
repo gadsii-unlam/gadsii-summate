@@ -179,6 +179,14 @@ describe('validarGrafo', () => {
     ])
   })
 
+  it('una puerta de paso (puertasDePaso) puede tener varias aristas sin aviso', () => {
+    const g = base()
+    g.nodos.push(nodo('puerta-salud-101', 0, 50))
+    g.aristas.push(arista('puerta-salud-101', 'pasillo-salud-01'))
+    g.aristas.push(arista('puerta-salud-101', 'pasillo-salud-03'))
+    expect(validarGrafo(g, 0.6, [], ['puerta-salud-101'])).toEqual([])
+  })
+
   it('rechaza un grafo sin la forma esperada', () => {
     expect(leerEstructura({ nodos: [] }).grafo).toBeNull()
     expect(
@@ -303,7 +311,12 @@ describe('con el grafo real', () => {
   const config = leerConfig()
   const curados = leerCurados()
   const fuente = leerEstructura(leerGrafoFuente()).grafo as GrafoFuente
-  const problemas = validarGrafo(fuente, config.toleranciaOrtogonalPx, config.diagonalesPermitidas)
+  const problemas = validarGrafo(
+    fuente,
+    config.toleranciaOrtogonalPx,
+    config.diagonalesPermitidas,
+    config.puertasDePaso,
+  )
   const { grafo } = enriquecerGrafo(fuente, config.metrosPorPx, curados.exteriorForzado)
   const aristaEntre = (a: string, b: string) =>
     grafo.aristas.find((x) => (x.a === a && x.b === b) || (x.a === b && x.b === a))
@@ -312,11 +325,11 @@ describe('con el grafo real', () => {
     expect(problemas).toEqual([])
   })
 
-  it('tiene 660 nodos (291 puertas, 348 pasillos, 21 entradas; 25 en el 1er piso) y 690 aristas', () => {
-    expect(grafo.nodos).toHaveLength(660)
-    expect(grafo.aristas).toHaveLength(690)
+  it('tiene 671 nodos (291 puertas, 359 pasillos, 21 entradas; 25 en el 1er piso) y 711 aristas', () => {
+    expect(grafo.nodos).toHaveLength(671)
+    expect(grafo.aristas).toHaveLength(711)
     const cuenta = (t: string) => grafo.nodos.filter((n) => n.tipo === t).length
-    expect([cuenta('puerta'), cuenta('pasillo'), cuenta('entrada')]).toEqual([291, 348, 21])
+    expect([cuenta('puerta'), cuenta('pasillo'), cuenta('entrada')]).toEqual([291, 359, 21])
     expect(grafo.nodos.filter((n) => n.piso === 1)).toHaveLength(25)
     expect(grafo.nodos.find((n) => n.id === 'entrada-campus-florencio-varela')).toEqual({
       id: 'entrada-campus-florencio-varela',
@@ -328,13 +341,11 @@ describe('con el grafo real', () => {
     })
   })
 
-  it('tiene 113 aristas exteriores y 577 interiores, como las agrupa el plano', () => {
-    expect(grafo.aristas.filter((a) => a.exterior)).toHaveLength(113)
-    expect(grafo.aristas.filter((a) => !a.exterior)).toHaveLength(577)
+  it('tiene 130 aristas exteriores y 581 interiores, como las agrupa el plano', () => {
+    expect(grafo.aristas.filter((a) => a.exterior)).toHaveLength(130)
+    expect(grafo.aristas.filter((a) => !a.exterior)).toHaveLength(581)
     const sur = 'entrada-ed-sur-norte'
-    expect(aristaEntre(sur, 'cruce--ext-plaza-sur-gimnasio--ext-acceso-sur-norte')?.exterior).toBe(
-      true,
-    )
+    expect(aristaEntre(sur, 'cruce--sur-galeria-norte--ext-acceso-sur-norte')?.exterior).toBe(true)
     expect(
       aristaEntre(sur, 'cruce--sur-pasillo-norte-108-119--sur-pasillo-131-134')?.exterior,
     ).toBe(false)

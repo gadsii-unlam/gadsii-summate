@@ -40,8 +40,8 @@ Ejemplos (los mismos que verifican los tests de `astar.test.ts`):
 | ----------------------------------------------------- | ------------------------------------------ | -------------------------------- |
 | `puerta-aula-121` → `puerta-aula-110`                 | 481,11 px, 0 m afuera, 1 min               | igual                            |
 | `entrada-campus-florencio-varela` → `puerta-aula-121` | 1106,57 px, 403,72 px afuera, 3 min        | igual                            |
-| `puerta-aula-309` → `puerta-aula-103`                 | 2174,55 px, 1488 px afuera, 5 min          | 3202,07 px, 645 px afuera, 8 min |
-| `puerta-aula-121` → `puerta-lab-microscopia`          | 2070,73 px (≈ 373 m), 5 min                | 5489,83 px, 14 min               |
+| `puerta-aula-309` → `puerta-aula-103`                 | 2029,86 px, 1012 px afuera, 5 min          | 2844,86 px, 480 px afuera, 7 min |
+| `puerta-aula-121` → `puerta-lab-microscopia`          | 2070,73 px (≈ 373 m), 5 min                | 3053,83 px, 8 min                |
 | `puerta-aula-121` → Gimnasio (2 accesos)              | entra por `acceso-gimnasio-sur`, 946,73 px | —                                |
 | `entrada-campus-florencio-varela` → `puerta-aula-101` | 458,47 px, usa el camino diagonal          | —                                |
 

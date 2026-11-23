@@ -170,15 +170,18 @@ function componentes(ids: readonly string[], vecinos: Map<string, string[]>): st
 /**
  * Validaciones del grafo (design.md, D5). Devuelve **todos** los problemas juntos: los errores
  * frenan el build, los avisos solo se reportan. Una arista en diagonal es un error salvo que esté
- * en `diagonalesPermitidas`.
+ * en `diagonalesPermitidas`. Una puerta con más de una arista da un aviso salvo que esté en
+ * `puertasDePaso` (puertas que se atraviesan, como los accesos del Gimnasio).
  */
 export function validarGrafo(
   grafo: GrafoFuente,
   toleranciaOrtogonalPx: number,
   diagonalesPermitidas: readonly string[] = [],
+  puertasDePaso: readonly string[] = [],
 ): Problema[] {
   const problemas: Problema[] = []
   const permitidas = new Set(diagonalesPermitidas)
+  const dePaso = new Set(puertasDePaso)
 
   // Ids de nodo únicos.
   const nodos = new Map<string, NodoFuente>()
@@ -338,7 +341,7 @@ export function validarGrafo(
   }
   for (const n of nodos.values()) {
     const grado = vecinos.get(n.id)?.length ?? 0
-    if (n.tipo === 'puerta' && grado > 1) {
+    if (n.tipo === 'puerta' && grado > 1 && !dePaso.has(n.id)) {
       problemas.push(
         aviso('puerta-varias-aristas', `La puerta ${n.id} tiene ${grado} aristas (se espera 1).`, [
           n.id,

@@ -14,6 +14,8 @@ export interface ConfigDatos {
   toleranciaOrtogonalPx: number
   /** Aristas que pueden ir en diagonal (caminos que en el campus son diagonales de verdad). */
   diagonalesPermitidas?: string[]
+  /** Puertas que se pueden atravesar (unen dos tramos, como los accesos del Gimnasio). */
+  puertasDePaso?: string[]
   respaldo: { escala: number }
 }
 

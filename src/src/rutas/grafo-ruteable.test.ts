@@ -28,13 +28,13 @@ const arista = (id: string, a: string, b: string, px: number) => ({
 })
 
 describe('prepararGrafoRuteable con el grafo real', () => {
-  it('carga los 660 nodos y las 690 aristas con longitudes enteras en centésimas', () => {
+  it('carga los 671 nodos y las 711 aristas con longitudes enteras en centésimas', () => {
     const grafo = grafoReal()
-    expect(grafo.nodos).toHaveLength(660)
-    expect(grafo.aristas).toHaveLength(690)
-    expect(grafo.longitudTotal).toBe(3_805_275)
-    expect(grafo.aristas.reduce((s, a) => s + a.longitud, 0)).toBe(3_805_275)
-    expect(grafo.aristas.filter((a) => a.exterior)).toHaveLength(113)
+    expect(grafo.nodos).toHaveLength(671)
+    expect(grafo.aristas).toHaveLength(711)
+    expect(grafo.longitudTotal).toBe(4_033_375)
+    expect(grafo.aristas.reduce((s, a) => s + a.longitud, 0)).toBe(4_033_375)
+    expect(grafo.aristas.filter((a) => a.exterior)).toHaveLength(130)
     expect(grafo.aristas.every((a) => Number.isInteger(a.longitud))).toBe(true)
     expect(grafo.nodos.every((n) => Number.isInteger(n.cx) && Number.isInteger(n.cy))).toBe(true)
     expect(grafo.longitudTotal).toBeLessThan(K_COSTO)

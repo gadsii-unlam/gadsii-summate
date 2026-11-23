@@ -29,12 +29,12 @@ const ARISTA_PRINCIPAL =
   'arista__cruce--ext-calle-sur-rectorado--ext-franja-entre-edificios-oeste__entrada-campus-florencio-varela'
 
 describe('exclusión de los tramos cerrados (3.1)', () => {
-  it('sin cierres, Enfermería → Aula 101 pasa por entrada-ed-sur-oeste-sur (≈ 594 px)', () => {
+  it('sin cierres, Enfermería → Aula 101 pasa por entrada-ed-sur-oeste-sur (≈ 592 px)', () => {
     const r = calcularRutaConCierres(grafo, consulta('enfermeria', 'aula-101'), [])
     expect(r.tipo).toBe('ruta')
     if (r.tipo !== 'ruta') return
     expect(r.nodos).toContain('entrada-ed-sur-oeste-sur')
-    expect(r.distanciaPx).toBeCloseTo(593.75, 2)
+    expect(r.distanciaPx).toBeCloseTo(591.75, 2)
     expect(r.desvio).toBeNull()
   })
 
@@ -47,8 +47,9 @@ describe('exclusión de los tramos cerrados (3.1)', () => {
       expect(r.nodos).not.toContain('entrada-ed-sur-oeste-sur')
       expect(r.aristas.some((a) => a.includes('entrada-ed-sur-oeste-sur'))).toBe(false)
       if (criterio === 'mas-corta') {
-        expect(r.distanciaPx).toBeCloseTo(1083.57, 2)
-        expect(r.distanciaM).toBeCloseTo(195, 0)
+        // Entra por la entrada oeste-norte, por el paso del Mástil.
+        expect(r.distanciaPx).toBeCloseTo(781.57, 2)
+        expect(r.distanciaM).toBeCloseTo(141, 0)
       }
     },
   )
@@ -187,7 +188,7 @@ describe('motivo de "Sin ruta disponible" (3.3)', () => {
 })
 
 describe('aviso de desvío (3.4)', () => {
-  it('aparece para Enfermería → Aula 101 con la obra vigente', () => {
+  it('aparece para Enfermería → Aula 101 con la obra vigente (más corta)', () => {
     for (const criterio of CRITERIOS) {
       const r = calcularRutaConCierres(
         grafo,
@@ -195,10 +196,8 @@ describe('aviso de desvío (3.4)', () => {
         cierresEjemplo(),
       )
       if (criterio === 'resguardada') {
-        // La resguardada habitual también pasa por el paso interior.
-        expect(r.tipo === 'ruta' && r.desvio?.texto).toBe(
-          'Evitamos un tramo cerrado: Obra en la entrada oeste del Edificio Sur',
-        )
+        // La resguardada habitual entra por la entrada oeste-norte: no pasa por la obra.
+        expect(r.tipo === 'ruta' && r.desvio).toBeNull()
         continue
       }
       expect(r.tipo === 'ruta' && r.desvio).toEqual({
