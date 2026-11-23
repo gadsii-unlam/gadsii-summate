@@ -10,7 +10,7 @@ La app es una SPA en React + Vite + TypeScript, sin backend (ver `README.md`).
 
 ## El plano: `mapa-unlam.svg`
 
-Está en la raíz del repo y es la **única fuente** del dibujo y del grafo. El dibujo actual (con la pista de atletismo y la columna oeste del Edificio Sur de 7 aulas) se exportó sin los atributos `data-*` del grafo (los nodos y aristas eran `<path>`), así que `mapa-unlam.svg` combina ese dibujo con el grupo `grafo` del plano anterior, que tenía los mismos nodos y aristas. Mide 2810 × 3745 px (≈ 0,18 m por px, `metrosPorPx` en `datos-fuente/config.json`). El grafo está al final, en el grupo `<g id="grafo">`, con sus propios estilos:
+Está en la raíz del repo y es la **única fuente** del dibujo y del grafo. El dibujo actual (con la pista de atletismo y la columna oeste del Edificio Sur, hoy de 6 aulas) se exportó sin los atributos `data-*` del grafo (los nodos y aristas eran `<path>`), así que `mapa-unlam.svg` combina ese dibujo con el grupo `grafo` del plano anterior, que tenía los mismos nodos y aristas. Mide 2810 × 3745 px (≈ 0,18 m por px, `metrosPorPx` en `datos-fuente/config.json`). El grafo está al final, en el grupo `<g id="grafo">`, con sus propios estilos:
 
 ```
 grafo
@@ -77,7 +77,7 @@ Los tipos están en `src/datos/tipos.ts`.
 - **Escalera de la Radio:** en el plano mide 181 px (≈ 33 m) porque el 1er piso está dibujado más al norte que la planta baja. Además, se tomó como al aire libre.
 - **Galería del 1er piso:** se tomó como bajo techo, porque en el plano sus aristas no están en `aristas-exteriores`.
 - **Baños del natatorio:** las puertas son de ámbito exterior, pero sus aristas están en el grupo interior del Edificio Este. Se respeta el grupo, así que son tramos bajo techo.
-- **Dos aulas 108 en el plano:** la primera de la fila de arriba del Edificio Sur y la primera de la columna oeste. Se tomó como Aula 108 la de la fila de arriba (la que ya estaba); la de la columna no tiene puerta en el grafo. Las puertas del 102 al 107 se movieron a la altura de los rombitos del dibujo nuevo.
+- **Aula 108 del Edificio Sur:** el plano traía dos, la primera de la fila de arriba y la primera de la columna oeste. Se dejó la de la fila de arriba y se borró la de la columna; las aulas 102 a 107 se repartieron el alto que ocupaban las siete (42,95 px cada una) y sus puertas y nodos se movieron con ellas.
 - **Posibles aulas faltantes** (números ausentes entre dos aulas existentes): 10, 205 y 264.
 - **Nombres poco descriptivos que vienen del plano:** "Lab (1)" y "Lab (2)" en el Edificio Este.
 - **Departamentos dudosos:** del plano anterior salen la 501, 502, 503 y 507 en Derecho y la 601 a 612 en Salud. Las aulas 250 y 307, que el plano anterior no tenía, se asignaron por sus vecinas (Arquitectura y Formación Continua). Los laboratorios de la galería del 1er piso, Lab. Web, Lab. C, Aula Magna y los servicios no tienen departamento.
