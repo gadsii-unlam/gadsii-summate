@@ -21,25 +21,6 @@
 
 /* Escritorio: el mapa empieza donde termina el panel lateral (ANCHO_PANEL). Si quedara debajo,
    los límites del plano no dejarían llevar a la vista lo que tapa el panel al hacer zoom. */
-/* Celular: el mapa se funde con la zona de la barra de estado en vez de cortarse con una línea.
-   Arranca del mismo gris que pinta iOS ahí (el fondo de la página). Va sobre el mapa y debajo de
-   la tarjeta y los botones; no recibe toques. */
-.pantalla:not(.pantalla--escritorio)::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 32px;
-  z-index: calc(var(--capa-botones) - 1);
-  background: linear-gradient(
-    to bottom,
-    var(--color-fondo-mapa),
-    color-mix(in srgb, var(--color-fondo-mapa) 0%, transparent)
-  );
-  pointer-events: none;
-}
-
 .pantalla--escritorio .pantalla__mapa {
   left: 408px;
 }
